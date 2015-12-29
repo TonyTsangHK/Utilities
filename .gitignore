@@ -1,0 +1,10 @@
+build
+dist
+nbproject
+manifest.mf
+build.xml
+/out
+test/dummy
+.gradle
+.idea
+*.iml

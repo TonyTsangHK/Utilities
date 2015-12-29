@@ -1,0 +1,43 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+version = '1.0.3'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+libsDirName = 'libs'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile files("${System.properties['java.home']}/lib/plugin.jar")
+
+    testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'test'
+        }
+    }
+}
+
+test {
+    useTestNG() {
+        suites 'test/AllTest.xml'
+    }
+
+    testLogging.showStandardStreams = true
+}
