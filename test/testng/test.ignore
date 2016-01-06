@@ -1,0 +1,25 @@
+# This is a comment line
+
+# ignore all *.txt
+*.txt
+
+# unignore unignore.txt
+!unignore.txt
+
+# ignore all A.java under a folder
+a/**/A.java
+
+# ignore all content under b
+b/
+
+# ignore all content under c
+c/**
+
+# ignore all .ignore extension file
+*.ignore
+
+# ignore attt.cpp/bttt.cpp/cttt.cpp
+[abc]ttt.cpp
+
+# ignore all .ignoremore extension file
+**/*.ignoremore

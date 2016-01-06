@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
-version = '1.0.3'
+version = '1.0.4'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -30,6 +30,10 @@ sourceSets {
     test {
         java {
             srcDir 'test'
+        }
+        resources {
+            srcDirs = ['test']
+            exclude '**/*.java'
         }
     }
 }
