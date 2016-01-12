@@ -238,7 +238,7 @@ public class FileUtil {
     }
     
     public static List<File> findPossibleDirectories(File currDir, String parameter) {
-        List<File> possibles = new ArrayList<File>();
+        List<File> possibles = new ArrayList<>();
         
         if (currDir == null || !currDir.exists() || currDir.isFile()) {
             return possibles;
@@ -248,28 +248,28 @@ public class FileUtil {
         
         File parent = pathInfo.getParent();
         
-        if (parent == null || !parent.exists() || parent.isFile()) {
+        if (parent == null || parent.listFiles() == null || !parent.exists() || parent.isFile()) {
+            return possibles;
+        } else {
+            for (File f : parent.listFiles()) {
+                if (
+                        f.isDirectory() &&
+                        (
+                            CaseSensitive && f.getName().startsWith(pathInfo.getPrefix()) ||
+                                !CaseSensitive &&
+                                f.getName().toLowerCase().startsWith(pathInfo.getPrefix().toLowerCase())
+                        )
+                ) {
+                    possibles.add(f);
+                }
+            }
+
             return possibles;
         }
-        
-        for (File f : parent.listFiles()) {
-            if (
-                    f.isDirectory() && 
-                    (
-                        CaseSensitive && f.getName().startsWith(pathInfo.getPrefix()) || 
-                            !CaseSensitive && 
-                            f.getName().toLowerCase().startsWith(pathInfo.getPrefix().toLowerCase())
-                    )
-            ) {
-                possibles.add(f);
-            }
-        }
-        
-        return possibles;
     }
     
     public static List<File> findPossibleDirectorieAndFiles(File currDir, String parameter) {
-        List<File> possibles = new ArrayList<File>();
+        List<File> possibles = new ArrayList<>();
         
         if (currDir == null || !currDir.exists() || currDir.isFile()) {
             return possibles;
@@ -300,7 +300,7 @@ public class FileUtil {
     }
     
     public static List<String> findPossibleDrive(String parameter) {
-        List<String> drvs = new ArrayList<String>();
+        List<String> drvs = new ArrayList<>();
         
         for (File f : File.listRoots()) {
             if (f.getPath().toLowerCase().startsWith(parameter.toLowerCase())) {
@@ -400,7 +400,7 @@ public class FileUtil {
         if (l == 2) {
             pb.unread(signature); //push back the signature to the stream
             if( signature[0] == (byte) 0x1f && signature[1] == (byte) 0x8b ) {
-                //check if matches standard gzip maguc number
+                //check if matches standard gzip magic number
                 return new GZIPInputStream(pb);
             } else {
                 return pb;

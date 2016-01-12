@@ -4,10 +4,7 @@ import static org.testng.Assert.*;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import utils.data.sort.HeapSort;
-import utils.data.sort.IntroSort;
-import utils.data.sort.MergeSort;
-import utils.data.sort.SinglePivotQuickSort;
+import utils.data.sort.*;
 import utils.math.MathUtil;
 
 public class TestSorter {
@@ -19,7 +16,7 @@ public class TestSorter {
         array = new Integer[testSize];
         
         for (int i = 0; i < array.length; i++) {
-            array[i] = new Integer(MathUtil.randomInteger(0, testSize));
+            array[i] = MathUtil.randomInteger(0, testSize);
         }
     }
     
@@ -50,19 +47,20 @@ public class TestSorter {
         
         checkValidOrder();
     }
-    
-    /*
+
     @Test
-    public void testSmoothSort() {
-        SmoothSort.smoothSort(array);
-        
+    public void testMultiSort() {
+        MultiSort.sort(array);
+
         checkValidOrder();
     }
-    */
     
     private void checkValidOrder() {
         for (int i = 1; i < array.length; i++) {
-            assertTrue(array[i-1].intValue() <= array[i].intValue(), "(" + (i-1) + "): " + array[i-1] + ", (" + i + "): " + array[i]);
+            assertTrue(
+                array[i - 1] <= array[i],
+                String.format("Invalid order detected, (%d): %d > (%d): %d", i-1, array[i-1], i, array[i])
+            );
         }
     }
 }
