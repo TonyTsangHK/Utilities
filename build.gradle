@@ -15,8 +15,6 @@ repositories {
 }
 
 dependencies {
-    compile files("${System.properties['java.home']}/lib/plugin.jar")
-
     testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
 }
 
