@@ -1,10 +1,7 @@
-/*
- * key value pair holder
- */
-
 package utils.data;
 
 /**
+ * Key value pair holder
  *
  * @author TonyTsang
  */
@@ -54,6 +51,11 @@ public class KeyValuePair<K, E> {
         } else {
             hash = 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
     @SuppressWarnings("rawtypes")
