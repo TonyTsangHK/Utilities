@@ -51,6 +51,16 @@ public class FileUtil {
             }
         }
     }
+
+    public static String getFileName(String path) {
+        String[] parts = path.split("/|\\\\");
+
+        if (parts.length > 0) {
+            return parts[parts.length-1];
+        } else {
+            return "";
+        }
+    }
     
     public static String replaceExtension(File file, String newExtension) {
         return getNamePart(file) + "." + newExtension;
@@ -268,7 +278,7 @@ public class FileUtil {
         }
     }
     
-    public static List<File> findPossibleDirectorieAndFiles(File currDir, String parameter) {
+    public static List<File> findPossibleDirectoriesAndFiles(File currDir, String parameter) {
         List<File> possibles = new ArrayList<>();
         
         if (currDir == null || !currDir.exists() || currDir.isFile()) {
