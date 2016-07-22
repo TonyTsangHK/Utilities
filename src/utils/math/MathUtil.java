@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +26,36 @@ public class MathUtil {
     public static final BigDecimal SIXTEEN = new BigDecimal("16");
     public static final BigDecimal HUNDRED = new BigDecimal("100");
     public static final BigDecimal THOUSAND = new BigDecimal("1000");
-    
+
+    // Use of secure random, default false
+    private static boolean USE_SECURE_RANDOM = false;
+
+    public static final int[] FIRST_PRIMES = {
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
+        73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151,
+        157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233,
+        239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317,
+        331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419,
+        421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503,
+        509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607,
+        613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701,
+        709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811,
+        821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911,
+        919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013,
+        1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087, 1091,
+        1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181,
+        1187, 1193, 1201, 1213, 1217, 1223, 1229, 1231, 1237, 1249, 1259, 1277,
+        1279, 1283, 1289, 1291, 1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361,
+        1367, 1373, 1381, 1399, 1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451,
+        1453, 1459, 1471, 1481, 1483, 1487, 1489, 1493, 1499, 1511, 1523, 1531,
+        1543, 1549, 1553, 1559, 1567, 1571, 1579, 1583, 1597, 1601, 1607, 1609,
+        1613, 1619, 1621, 1627, 1637, 1657, 1663, 1667, 1669, 1693, 1697, 1699,
+        1709, 1721, 1723, 1733, 1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789,
+        1801, 1811, 1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889,
+        1901, 1907, 1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997,
+        1999, 2003, 2011, 2017, 2027, 2029, 2039, 2053
+    };
+
     /**
      * Default iterations for square root calculation
      */
@@ -76,8 +108,44 @@ public class MathUtil {
      */
     private static void initRandom() {
         if (randomGenerator == null) {
-            randomGenerator = new Random();
+            if (USE_SECURE_RANDOM) {
+                try {
+                    randomGenerator = SecureRandom.getInstanceStrong();
+                } catch (NoSuchAlgorithmException e) {
+                    randomGenerator = new SecureRandom();
+                }
+            } else {
+                randomGenerator = new Random();
+            }
         }
+    }
+
+    /**
+     * Set usage of secure random
+     * - It is fine to use Random, for its non-blocking nature
+     * - Use secure random, if you really want TRULY RANDOM generation and it is provided at OS level, and it is also a computational random after all.
+     *
+     * @param useSecureRandom secure random flag
+     */
+    public static void setUseSecureRandom(boolean useSecureRandom) {
+        if (USE_SECURE_RANDOM != useSecureRandom) {
+            USE_SECURE_RANDOM = useSecureRandom;
+
+            // re-initialize randomGenerator
+            randomGenerator = null;
+            initRandom();
+        }
+    }
+
+    /**
+     * Create a random generator with given seed
+     *
+     * @param seed given seed
+     *
+     * @return Random generate with given random seed.
+     */
+    public static Random createRandomGenerator(long seed) {
+        return new Random(seed);
     }
 
     /**
@@ -424,7 +492,7 @@ public class MathUtil {
     /**
      * Divide two number and return the quotient in BigDecimal form with scale and rounding mode
      *
-     * @param n1 operand 1, divident
+     * @param n1 operand 1, dividend
      * @param n2 operand 2, divisor
      * @param scale scale of the quotient
      * @param roundingMode rounding mode
@@ -740,7 +808,7 @@ public class MathUtil {
                                 n = n.divide(curr, precision, RoundingMode.HALF_UP);
                                 result = result.add(fraction);
                             } else if (c == 0) {
-                                result.add(fraction);
+                                result = result.add(fraction);
                                 break;
                             }
 
@@ -774,7 +842,7 @@ public class MathUtil {
                                 n = n.divide(curr, precision, RoundingMode.HALF_UP);
                                 result = result.add(fraction);
                             } else if (c == 0) {
-                                result.add(fraction);
+                                result = result.add(fraction);
                                 break;
                             }
 
@@ -1053,7 +1121,7 @@ public class MathUtil {
      * @return the least common multiple
      */
     public static BigInteger lcm(BigInteger n1, BigInteger n2) {
-        BigInteger small = BigInteger.ZERO, big = BigInteger.ZERO;
+        BigInteger small, big;
         if (n1.compareTo(n2) < 0) {
             small = n1;
             big   = n2;
@@ -1092,22 +1160,60 @@ public class MathUtil {
         } else {
             int tMin = Math.min(min, max), tMax = Math.max(min, max);
             int possibleIntegers = max - min + 1;
-            SortedListAvl<Integer> list = new SortedListAvl<Integer>();
+            SortedListAvl<Integer> list = new SortedListAvl<>();
             for (int i = 0; i < size; i++) {
                 if (distinct && i >= possibleIntegers) {
                     break;
                 }
-                Integer v = new Integer(randomInteger(tMin, tMax));
+                Integer v = randomInteger(tMin, tMax);
 
                 while (i > 0 && distinct && list.contains(v)) {
-                    v = new Integer(randomInteger(tMin, tMax));
+                    v = randomInteger(tMin, tMax);
                 }
                 list.add(v);
             }
             Object[] arr = list.toArray();
             int[] result = new int[size];
             for (int i = 0; i < arr.length; i++) {
-                result[i] = ((Integer)arr[i]).intValue();
+                result[i] = (Integer) arr[i];
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Generate a random integer array based on the given random generator, for consistent random generation
+     *
+     * @param min minimum bound of the random value (inclusive)
+     * @param max maximum bound of the random value (inclusive)
+     * @param size size of the array
+     * @param distinct distinct flag
+     * @param randomGenerator given random generator
+     *
+     * @return random integer array
+     */
+    public static int[] generateRandomIntegerArray(int min, int max, int size, boolean distinct, Random randomGenerator) {
+        if (size <= 0) {
+            return new int[0];
+        } else {
+            int tMin = Math.min(min, max), tMax = Math.max(min, max);
+            int possibleIntegers = max - min + 1;
+            SortedListAvl<Integer> list = new SortedListAvl<>();
+            for (int i = 0; i < size; i++) {
+                if (distinct && i >= possibleIntegers) {
+                    break;
+                }
+                Integer v = randomInteger(tMin, tMax, randomGenerator);
+
+                while (i > 0 && distinct && list.contains(v)) {
+                    v = randomInteger(tMin, tMax, randomGenerator);
+                }
+                list.add(v);
+            }
+            Object[] arr = list.toArray();
+            int[] result = new int[size];
+            for (int i = 0; i < arr.length; i++) {
+                result[i] = (Integer) arr[i];
             }
             return result;
         }
@@ -1125,7 +1231,7 @@ public class MathUtil {
      * @return random number array
      */
     public static double[] generateRandomNumberArray(
-            double min, double max, int precision, int size, boolean distinct
+        double min, double max, int precision, int size, boolean distinct
     ) {
         if (size <= 0) {
             return new double[0];
@@ -1133,16 +1239,52 @@ public class MathUtil {
             double tMin = Math.min(min, max), tMax = Math.max(min, max);
             SortedListAvl<Double> list = new SortedListAvl<Double>();
             for (int i = 0; i < size; i++) {
-                Double v = new Double(randomNumber(tMin, tMax, precision));
+                Double v = randomNumber(tMin, tMax, precision);
                 while (i > 0 && distinct && list.contains(v)) {
-                    v = new Double(randomNumber(tMin, tMax));
+                    v = randomNumber(tMin, tMax, precision);
                 }
                 list.add(v);
             }
             Object[] arr = list.toArray();
             double[] result = new double[size];
             for (int i = 0; i < arr.length; i++) {
-                result[i] = ((Double)arr[i]).doubleValue();
+                result[i] = (Double) arr[i];
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Generat a random number array with given random generator for consistent result
+     *
+     * @param min minimun bound of random value
+     * @param max maximum bound of random value
+     * @param precision precision of random value
+     * @param size size of result array
+     * @param distinct distinct flag
+     * @param randomGenerator given random generator
+     *
+     * @return random number array
+     */
+    public static double[] generateRandomNumberArray(
+        double min, double max, int precision, int size, boolean distinct, Random randomGenerator
+    ) {
+        if (size <= 0) {
+            return new double[0];
+        } else {
+            double tMin = Math.min(min, max), tMax = Math.max(min, max);
+            SortedListAvl<Double> list = new SortedListAvl<Double>();
+            for (int i = 0; i < size; i++) {
+                Double v = randomNumber(tMin, tMax, precision, randomGenerator);
+                while (i > 0 && distinct && list.contains(v)) {
+                    v = randomNumber(tMin, tMax, precision, randomGenerator);
+                }
+                list.add(v);
+            }
+            Object[] arr = list.toArray();
+            double[] result = new double[size];
+            for (int i = 0; i < arr.length; i++) {
+                result[i] = (Double) arr[i];
             }
             return result;
         }
@@ -1160,7 +1302,23 @@ public class MathUtil {
         if (min == max) {
             return min;
         }
-        return (int)((random() * (max - min + 1)) + min);
+        return calculateResult(random(), min, max);
+    }
+
+    /**
+     * Generate a random integer with given random generator, for consistent result
+     *
+     * @param min minimum bound
+     * @param max maximum bound
+     * @param randomGenerator given random generator
+     *
+     * @return random integer
+     */
+    public static int randomInteger(int min, int max, Random randomGenerator) {
+        if (min == max) {
+            return min;
+        }
+        return calculateResult(randomGenerator.nextDouble(), min, max);
     }
 
     /**
@@ -1175,7 +1333,73 @@ public class MathUtil {
         if (min == max) {
             return min;
         }
-        return (long) ((random() * (max - min + 1)) + min);
+        return calculateResult(random(), min, max);
+    }
+
+    /**
+     * Generate a random long integer with given random generator
+     *
+     * @param min minimum bound
+     * @param max maximum bound
+     * @param randomGenerator given random generator
+     *
+     * @return random long integer
+     */
+    public static long randomLong(long min, long max, Random randomGenerator) {
+        if (min == max) {
+            return min;
+        }
+        return calculateResult(randomGenerator.nextDouble(), min, max);
+    }
+
+    /**
+     * Calculate final result from random number and provided min max range
+     * If range overflow use long for calculation
+     *
+     * @param rand double random number, ranging from 0.0 and 1.0, generated from random generator
+     * @param min lower bound value
+     * @param max upper bound value
+     * @return formalized result
+     */
+    private static int calculateResult(double rand, int min, int max) {
+        int range = max - min + 1;
+
+        if (range <= 0) {
+            // overflow, use long for calculation
+            long longMax = (long)max, longMin = (long)min;
+
+            return (int)(random() * (longMax - longMin + 1) + longMin);
+        } else {
+            return (int) ((random() * (max - min + 1)) + min);
+        }
+    }
+
+    /**
+     * Calculate final result from random number and provided min max range
+     * If range overflow use BigDecimal for calculation.
+     *
+     * @param rand random double random number, ranging from 0.0 and 1.0, generated from random generator
+     * @param min lower bound value
+     * @param max upper bound value
+     * @return formalized result
+     */
+    private static long calculateResult(double rand, long min, long max) {
+        long range = max - min + 1;
+
+        if (range <= 0) {
+            // overflow, use BigDecimal for calculation
+            BigDecimal bigMax = new BigDecimal(String.valueOf(max)), bigMin = new BigDecimal(String.valueOf(min)),
+                bigRand = new BigDecimal(String.valueOf(rand));
+
+            return bigMax
+                .subtract(bigMin)
+                .add(BigDecimal.ONE)
+                .multiply(bigRand)
+                .add(bigMin)
+                .longValue();
+        } else {
+            return (long)(rand * (max - min + 1) + min);
+        }
     }
 
     /**
@@ -1194,6 +1418,22 @@ public class MathUtil {
     }
 
     /**
+     * Generate a random number based on given random generator for consistent output
+     *
+     * @param min minimum bound
+     * @param max maximum bound
+     * @param randomGenerator given random generator
+     *
+     * @return random number
+     */
+    public static double randomNumber(double min, double max, Random randomGenerator) {
+        if (min == max) {
+            return min;
+        }
+        return randomNumber(min, max, 6, randomGenerator);
+    }
+
+    /**
      * Generate a random number
      *
      * @param min minimum bound
@@ -1204,6 +1444,20 @@ public class MathUtil {
      */
     public static double randomNumber(double min, double max, int precision) {
         return roundUp(random() * (max - min) + min, precision);
+    }
+
+    /**
+     * Generate a random number with given random generator
+     *
+     * @param min minmum bound
+     * @param max maxmum bound
+     * @param precision precision of result
+     * @param randomGenerator given random generator
+     *
+     * @return random number
+     */
+    public static double randomNumber(double min, double max, int precision, Random randomGenerator) {
+        return roundUp(randomGenerator.nextDouble() * (max - min) + min, precision);
     }
 
     /**
@@ -1318,7 +1572,7 @@ public class MathUtil {
      * 
      * @return hypothesis length square
      */
-    public static double getHypothesisSqure(double side1, double side2) {
+    public static double getHypothesisSquare(double side1, double side2) {
         return side1 * side1 + side2 * side2;
     }
     
@@ -1331,7 +1585,7 @@ public class MathUtil {
      * @return hypothesis length
      */
     public static double getHypothesis(double side1, double side2) {
-        return Math.sqrt(getHypothesisSqure(side1, side2));
+        return Math.sqrt(getHypothesisSquare(side1, side2));
     }
     
     /**
@@ -1342,7 +1596,7 @@ public class MathUtil {
      * 
      * @return side length squared
      */
-    public static double getTriangleSideLengthSqure(double hypo, double side) {
+    public static double getTriangleSideLengthSquare(double hypo, double side) {
         return hypo * hypo - side * side;
     }
     
@@ -1355,7 +1609,7 @@ public class MathUtil {
      * @return side length
      */
     public static double getTriangleSideLength(double hypo, double side) {
-        return Math.sqrt(getTriangleSideLengthSqure(hypo, side));
+        return Math.sqrt(getTriangleSideLengthSquare(hypo, side));
     }
     
     /**
@@ -2997,11 +3251,11 @@ public class MathUtil {
             int remain = len - setIndexes.size();
             int i = (setIndexes.size() == 0)? 0 : (setIndexes.get(setIndexes.size() - 1).intValue() + 1);
             while (i < list.size() - remain + 1) {
-                List<Integer> sIndexes = new ArrayList<Integer>(setIndexes);
+                List<Integer> sIndices = new ArrayList<>(setIndexes);
                 
-                sIndexes.add(new Integer(i));
+                sIndices.add(i);
                 
-                combinate(lists, list, sIndexes, len);
+                combinate(lists, list, sIndices, len);
                 i++;
             }
         }
@@ -3020,9 +3274,9 @@ public class MathUtil {
         if (list.size() < len || len <= 0) {
             return null;
         } else {
-            List<List<E>> r = new ArrayList<List<E>>(permutation(list.size(), len).intValue());
+            List<List<E>> r = new ArrayList<>(permutation(list.size(), len).intValue());
             
-            combinate(r, list, new ArrayList<Integer>(), len);
+            combinate(r, list, new ArrayList<>(), len);
             
             return r;
         }
@@ -3061,7 +3315,7 @@ public class MathUtil {
         BigInteger temp;
         for (
                 BigInteger i = BigInteger.ONE;
-                (i.compareTo(new BigInteger(new Integer((n.bitLength())).toString())) < 0);
+                (i.compareTo(new BigInteger(Integer.toString((n.bitLength())))) < 0);
                 i = i.add(BigInteger.ONE)
         ) {
             while ((upperBound.subtract(lowerBound)).compareTo(BigInteger.ONE) > 0) {
@@ -3162,7 +3416,7 @@ public class MathUtil {
     }
     
     /**
-     * Check if two integers' sign equals or not (positive / negative), 0 is considerred positive
+     * Check if two integers' sign equals or not (positive / negative), 0 is considered positive
      * 
      * @param n1 integer 1
      * @param n2 integer 2
@@ -3185,7 +3439,7 @@ public class MathUtil {
     }
     
     /**
-     * Check if two numbers' sign equals or not (positive / negative), 0 is considerred positive
+     * Check if two numbers' sign equals or not (positive / negative), 0 is considered positive
      * 
      * @param n1 integer 1
      * @param n2 integer 2
@@ -3218,7 +3472,7 @@ public class MathUtil {
         List<Integer> factors = new ArrayList<Integer>();
         
         if (n == 1) {
-            factors.add(new Integer(1));
+            factors.add(1);
             return factors;
         } else if (n == 0) {
             return factors;
@@ -3227,10 +3481,10 @@ public class MathUtil {
         List<Integer> primeList = PrimeUtil.getPrimeListWithin(Math.abs(n));
         
         int num = n;
-        for (int i = 0; i < primeList.size(); i++) {
-            int prime = primeList.get(i).intValue();
+        for (Integer aPrimeList : primeList) {
+            int prime = aPrimeList;
             while (num % prime == 0) {
-                factors.add(new Integer(prime));
+                factors.add(prime);
                 num /= prime;
             }
         }
@@ -3270,6 +3524,22 @@ public class MathUtil {
             return 1;
         } else {
             return (int)floor(log(value, base)) + 1;
+        }
+    }
+
+    // This method only find the smallest possible factor, if small prime number exhausted just stop.
+    public static int findSmallestFactor(long number) {
+        if (number == 1) {
+            return -1;
+        } else {
+            for (int FIRST_PRIME : FIRST_PRIMES) {
+                if (number % FIRST_PRIME == 0) {
+                    return FIRST_PRIME;
+                }
+            }
+
+            // small prime exhausted, return -1
+            return -1;
         }
     }
 }
