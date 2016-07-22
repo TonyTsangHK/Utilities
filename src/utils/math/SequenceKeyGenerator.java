@@ -176,7 +176,6 @@ public class SequenceKeyGenerator {
 
         // Overflow, reset sequence number
         if (seq.compareTo(total) >= 0) {
-            System.out.println("Resetting sequence number, oldSeq: " + oldSeq);
             seq = BigInteger.ZERO;
         }
 
