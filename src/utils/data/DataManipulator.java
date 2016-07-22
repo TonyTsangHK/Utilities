@@ -1300,6 +1300,14 @@ public class DataManipulator {
         return map;
     }
 
+    public static <K, V> void copyMapByKeys(Map<K, V> sourceMap, Map<K, V> targetMap, K ... keys) {
+        if (sourceMap != null && targetMap != null && keys != null) {
+            for (K key : keys) {
+                targetMap.put(key, sourceMap.get(key));
+            }
+        }
+    }
+
     public static <K, V> Map<K, V> createLinkedMap(KeyValuePair<K, V> ... pairs) {
         Map<K, V> map = new LinkedHashMap<K, V>(pairs.length);
 
