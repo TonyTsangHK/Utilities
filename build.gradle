@@ -1,4 +1,17 @@
 apply plugin: 'java'
+apply plugin: 'kotlin'
+
+buildscript {
+    ext.kotlin_version = "1.0.3"
+
+    repositories {
+        jcenter();
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 sourceCompatibility = 1.8
 version = '1.0.4'
@@ -15,6 +28,8 @@ repositories {
 }
 
 dependencies {
+    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
     testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
 }
 
@@ -23,15 +38,21 @@ sourceSets {
         java {
             srcDir 'src'
         }
+        kotlin {
+            srcDir 'src'
+        }
     }
-
     test {
         java {
+            srcDir 'test'
+        }
+        kotlin {
             srcDir 'test'
         }
         resources {
             srcDirs = ['test']
             exclude '**/*.java'
+            exclude '**/*.kt'
         }
     }
 }
