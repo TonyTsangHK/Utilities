@@ -155,8 +155,11 @@ class SequenceKeyGenerator
         return generateKey(seq)
     }
 
+    /**
+     * Use the current key as the string representation of this generator
+     */
     override fun toString(): String {
-        return "$seq, ${currKey()}"
+        return currKey()
     }
 
     /**
