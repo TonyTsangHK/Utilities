@@ -382,10 +382,3 @@ class SequenceKeyGenerator
         return this
     }
 }
-/**
- * Initialize generator with provided characters and key length
-
- * @param availableChars available characters
- * *
- * @param length key length
- */
