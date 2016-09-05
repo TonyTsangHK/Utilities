@@ -46,7 +46,11 @@ public class MappableStore<T extends Mappable<K, V>, K, V> {
     }
 
     public T remove(int index) {
-        return this.mappables.remove(index);
+        return removeAt(index);
+    }
+
+    public T removeAt(int index) {
+        return this.mappables.removeAt(index);
     }
 
     public List<T> getMappables() {

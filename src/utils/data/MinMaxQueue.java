@@ -110,7 +110,11 @@ public class MinMaxQueue<T> implements Iterable<T>, Serializable {
     }
     
     public T remove(int i) {
-        return elements.remove(i);
+        return removeAt(i);
+    }
+
+    public T removeAt(int i) {
+        return elements.removeAt(i);
     }
     
     public int indexOf(T o) {

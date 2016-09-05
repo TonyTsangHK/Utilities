@@ -23,10 +23,10 @@ public class TestSortedList {
 
     @BeforeMethod
     public void setup() {
-        listArray = new SortedListArray<Integer>();
-        listAvl = new SortedListAvl<Integer>();
+        listArray = new SortedListArray<>();
+        listAvl = new SortedListAvl<>();
 
-        List<Integer> aList = new ArrayList<Integer>(testSize);
+        List<Integer> aList = new ArrayList<>(testSize);
 
         for (int i = 1; i <= testSize; i++) {
             aList.add(i);
@@ -800,10 +800,10 @@ public class TestSortedList {
         assertEquals(new Integer(9), ascNgList.get(8));
         assertEquals(new Integer(10), ascNgList.get(9));
 
-        SortedListAvl<Integer> descNgList = new SortedListAvl<Integer>(false,
+        SortedListAvl<Integer> descNgList = new SortedListAvl<>(false,
                 false);
 
-        descNgList.add(null);
+        descNgList.add((Integer)null);
         descNgList.add(1);
         descNgList.add(2);
         descNgList.add(3);

@@ -245,15 +245,25 @@ public class SearchTreeNode<V> implements AbstractTreeNode<V> {
     }
     
     /**
-     * Remove a child node with specified child index
-     * 
+     * Alias of removeChildAt, it is better to use removeChildAt instead of this method
+     *
      * @param i child index
      * @return removed child node
      */
     @Override
     public SearchTreeNode<V> removeChild(int i) {
+        return removeChildAt(i);
+    }
+
+    /**
+     * Remove a child node with specified child index
+     *
+     * @param i child index
+     * @return removed child node
+     */
+    public SearchTreeNode<V> removeChildAt(int i) {
         if (i >= 0 && i < childNodes.size()) {
-            return childNodes.remove(i);
+            return childNodes.removeAt(i);
         } else {
             return null;
         }

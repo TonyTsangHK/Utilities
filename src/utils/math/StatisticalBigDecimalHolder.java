@@ -97,7 +97,7 @@ public class StatisticalBigDecimalHolder {
             
             refreshCaches();
             
-            return bigDecimals.remove(i);
+            return bigDecimals.removeAt(i);
         } else {
             return null;
         }
