@@ -155,7 +155,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    private fun privateAdd(e: E): Boolean {
+    private fun privateAdd(e: E?): Boolean {
         if (root == null) {
             val node: BinaryTreeNode<E> = BinaryTreeNode<E>(e, null, null, null)
             root = node
@@ -169,7 +169,7 @@ class SortedListAvl<E>: SortedList<E> {
                 val comp: Int = comparator.compare(currentNode.element, e)
                 if (comp >= 0) {
                     if (currentNode.hasLeft()) {
-                        currentNode = currentNode.left
+                        currentNode = currentNode.left!!
                     } else {
                         newNode = BinaryTreeNode<E>(e, currentNode, null, null)
                         currentNode.left = newNode
@@ -178,7 +178,7 @@ class SortedListAvl<E>: SortedList<E> {
                     }
                 } else {
                     if (currentNode.hasRight()) {
-                        currentNode = currentNode.right
+                        currentNode = currentNode.right!!
                     } else {
                         newNode = BinaryTreeNode<E>(e, currentNode, null, null)
                         currentNode.right = newNode
@@ -198,7 +198,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param e element to be added
      * @return true as successful, false as unsuccessful
      */
-    override fun add(e: E): Boolean {
+    override fun add(e: E?): Boolean {
         if (privateAdd(e)) {
             modCount++
             return true
@@ -214,7 +214,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true if modified, false otherwise
      */
-    fun add(vararg vals: E): Boolean {
+    fun add(vararg vals: E?): Boolean {
         var modified = false
 
         vals.forEach {
@@ -247,43 +247,43 @@ class SortedListAvl<E>: SortedList<E> {
                 } else if (nodeType == BinaryTreeNode.Type.RIGHT) {
                     parent.decrementRightDepth()
                 }
-                if (Math.abs(parent.balanceFactor) >= 2) {
+                if (Math.abs(parent.getBalanceFactor()) >= 2) {
                     val np: BinaryTreeNode<E>
 
-                    if (parent.balanceFactor >= 2) {
-                        if (parent.left.balanceFactor < 0) {
-                            rotateLeft(parent.left)
+                    if (parent.getBalanceFactor() >= 2) {
+                        if (parent.left!!.getBalanceFactor() < 0) {
+                            rotateLeft(parent.left!!)
                         }
                         np = rotateRight(parent)
                     } else {
-                        if (parent.right.balanceFactor > 0) {
-                            rotateRight(parent.right)
+                        if (parent.right!!.getBalanceFactor() > 0) {
+                            rotateRight(parent.right!!)
                         }
                         np = rotateLeft(parent)
                     }
                     if (np.parent != null) {
-                        val rb: Boolean = Math.abs(np.balanceFactor) != 1
-                        if (np == np.parent.left) {
+                        val rb: Boolean = Math.abs(np.getBalanceFactor()) != 1
+                        if (np == np.parent!!.left) {
                             notifyNodeRemoved(np, np.parent, BinaryTreeNode.Type.LEFT, rb)
-                        } else if (np == np.parent.right) {
+                        } else if (np == np.parent!!.right) {
                             notifyNodeRemoved(np, np.parent, BinaryTreeNode.Type.RIGHT, rb)
                         }
                     }
-                } else if (Math.abs(parent.balanceFactor) == 1) {
+                } else if (Math.abs(parent.getBalanceFactor()) == 1) {
                     if (parent.parent != null) {
-                        if (parent == parent.parent.left) {
+                        if (parent == parent.parent!!.left) {
                             notifyNodeRemoved(parent, parent.parent, BinaryTreeNode.Type.LEFT, false)
-                        } else if (parent == parent.parent.right) {
+                        } else if (parent == parent.parent!!.right) {
                             notifyNodeRemoved(parent, parent.parent, BinaryTreeNode.Type.RIGHT, false)
                         }
                     }
                 } else {
                     if (parent.parent != null) {
-                        if (parent == parent.parent.left) {
+                        if (parent == parent.parent!!.left) {
                             notifyNodeRemoved(
                                     parent, parent.parent, BinaryTreeNode.Type.LEFT, rebalance
                             )
-                        } else if (parent == parent.parent.right){
+                        } else if (parent == parent.parent!!.right){
                             notifyNodeRemoved(
                                     parent, parent.parent, BinaryTreeNode.Type.RIGHT, rebalance
                             )
@@ -292,9 +292,9 @@ class SortedListAvl<E>: SortedList<E> {
                 }
             } else {
                 if (parent.parent != null) {
-                    if (parent == parent.parent.left) {
+                    if (parent == parent.parent!!.left) {
                         notifyNodeRemoved(parent, parent.parent, BinaryTreeNode.Type.LEFT, rebalance)
-                    } else if (parent == parent.parent.right){
+                    } else if (parent == parent.parent!!.right){
                         notifyNodeRemoved(parent, parent.parent, BinaryTreeNode.Type.RIGHT, rebalance)
                     }
                 }
@@ -328,7 +328,7 @@ class SortedListAvl<E>: SortedList<E> {
      */
     private fun findMaxNode(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
         if (node.hasRight()) {
-            return findMaxNode(node.right)
+            return findMaxNode(node.right!!)
         } else {
             return node
         }
@@ -342,7 +342,7 @@ class SortedListAvl<E>: SortedList<E> {
      */
     private fun findMinNode(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
         if (node.hasLeft()) {
-            return findMinNode(node.left)
+            return findMinNode(node.left!!)
         } else {
             return node
         }
@@ -368,19 +368,19 @@ class SortedListAvl<E>: SortedList<E> {
                 } else {
                     parent.incrementRightDepth()
                 }
-                if (Math.abs(parent.balanceFactor) >= 2) {
-                    if (parent.balanceFactor >= 2) {
-                        if (parent.left.balanceFactor < 0) {
-                            rotateLeft(parent.left)
+                if (Math.abs(parent.getBalanceFactor()) >= 2) {
+                    if (parent.getBalanceFactor() >= 2) {
+                        if (parent.left!!.getBalanceFactor() < 0) {
+                            rotateLeft(parent.left!!)
                         }
                         notifyNodeAdded(rotateRight(parent), false)
                     } else {
-                        if (parent.right.balanceFactor > 0) {
-                            rotateRight(parent.right)
+                        if (parent.right!!.getBalanceFactor() > 0) {
+                            rotateRight(parent.right!!)
                         }
                         notifyNodeAdded(rotateLeft(parent), false)
                     }
-                } else if (parent.balanceFactor == 0) {
+                } else if (parent.getBalanceFactor() == 0) {
                     notifyNodeAdded(parent, false)
                 } else {
                     notifyNodeAdded(parent, rebalance)
@@ -398,27 +398,30 @@ class SortedListAvl<E>: SortedList<E> {
      * @return the new parent of the rotated node
      */
     private fun rotateLeft(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
-        val tmp = node.right
+        // Assume node.right is not null, it should not be
+
+        val tmp = node.right!!
         node.right = tmp.left
         if (tmp.left != null) {
-            tmp.left.parent = node
+            tmp.left!!.parent = node
         }
         tmp.parent = node.parent
         if (node.parent == null) {
             root = tmp
         } else {
-            if (node == node.parent.left) {
-                node.parent.left = tmp
+            if (node == node.parent!!.left) {
+                node.parent!!.left = tmp
             } else {
-                node.parent.right = tmp
+                node.parent!!.right = tmp
             }
         }
         tmp.left = node
         node.parent = tmp
         node.rightDepth = tmp.leftDepth
         node.rightNodeCount = tmp.leftNodeCount
-        tmp.leftDepth = node.depth + 1
-        tmp.leftNodeCount = node.nodeCount + 1
+        tmp.leftDepth = node.getDepth() + 1
+        tmp.leftNodeCount = node.getNodeCount() + 1
+
         return tmp
     }
 
@@ -429,25 +432,27 @@ class SortedListAvl<E>: SortedList<E> {
      * @return the new parent of the rotated node
      */
     private fun rotateRight(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
-        val tmp = node.left
+        // Assume node.left is not null, it should not be
+
+        val tmp = node.left!!
         node.left = tmp.right
         tmp.right?.parent = node
         tmp.parent = node.parent
         if (node.parent == null) {
             root = tmp
         } else {
-            if (node == node.parent.right) {
-                node.parent.right = tmp
+            if (node == node.parent!!.right) {
+                node.parent!!.right = tmp
             } else {
-                node.parent.left = tmp
+                node.parent!!.left = tmp
             }
         }
         tmp.right = node
         node.parent = tmp
         node.leftDepth = tmp.rightDepth
         node.leftNodeCount = tmp.rightNodeCount
-        tmp.rightDepth = node.depth + 1
-        tmp.rightNodeCount = node.nodeCount + 1
+        tmp.rightDepth = node.getDepth() + 1
+        tmp.rightNodeCount = node.getNodeCount() + 1
         return tmp
     }
 
@@ -724,7 +729,6 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return index of the target element, -1 if not found
      */
-    @SuppressWarnings("unchecked")
     override fun indexOf(o: E): Int {
         if (root == null) {
             return -1
@@ -780,13 +784,13 @@ class SortedListAvl<E>: SortedList<E> {
             return index
         } else if (compareResult < 0) {
             if (node.hasLeft()) {
-                return indexOf(o, node.left, index - node.left.rightNodeCount - 1, crossComparator)
+                return indexOf(o, node.left!!, index - node.left!!.rightNodeCount - 1, crossComparator)
             } else {
                 return -1
             }
         } else {
             if (node.hasRight()) {
-                return indexOf(o, node.right, index + node.right.leftNodeCount + 1, crossComparator)
+                return indexOf(o, node.right!!, index + node.right!!.leftNodeCount + 1, crossComparator)
             } else {
                 return -1
             }
@@ -811,7 +815,7 @@ class SortedListAvl<E>: SortedList<E> {
                 if (node.hasLeft()) {
                     val smallerIndex =
                         indexOf(
-                            o, node.left, index - node.left.rightNodeCount - 1, crossComparator, findSmaller
+                            o, node.left!!, index - node.left!!.rightNodeCount - 1, crossComparator, findSmaller
                         )
                     return if (smallerIndex != -1) smallerIndex else index
                 } else {
@@ -821,7 +825,7 @@ class SortedListAvl<E>: SortedList<E> {
                 if (node.hasRight()) {
                     val greaterIndex =
                         indexOf(
-                            o, node.right, index + node.right.leftNodeCount + 1, crossComparator, findSmaller
+                            o, node.right!!, index + node.right!!.leftNodeCount + 1, crossComparator, findSmaller
                         )
                     return if (greaterIndex != -1) greaterIndex else index
                 } else {
@@ -830,13 +834,13 @@ class SortedListAvl<E>: SortedList<E> {
             }
         } else if (compareResult < 0) {
             if (node.hasLeft()) {
-                return indexOf(o, node.left, index - node.left.rightNodeCount - 1, crossComparator, findSmaller)
+                return indexOf(o, node.left!!, index - node.left!!.rightNodeCount - 1, crossComparator, findSmaller)
             } else {
                 return -1
             }
         } else {
             if (node.hasRight()) {
-                return indexOf(o, node.right, index + node.right.leftNodeCount + 1, crossComparator, findSmaller)
+                return indexOf(o, node.right!!, index + node.right!!.leftNodeCount + 1, crossComparator, findSmaller)
             } else {
                 return -1
             }
@@ -857,13 +861,13 @@ class SortedListAvl<E>: SortedList<E> {
             return index
         } else if (compareResult < 0) {
             if (node.hasLeft()) {
-                return indexOf(e, node.left, index - node.left.rightNodeCount - 1)
+                return indexOf(e, node.left!!, index - node.left!!.rightNodeCount - 1)
             } else {
                 return -1
             }
         } else {
             if (node.hasRight()) {
-                return indexOf(e, node.right, index + node.right.leftNodeCount + 1)
+                return indexOf(e, node.right!!, index + node.right!!.leftNodeCount + 1)
             } else {
                 return -1
             }
@@ -886,7 +890,7 @@ class SortedListAvl<E>: SortedList<E> {
                 if (node.hasLeft()) {
                     val smallerIndex =
                         indexOf(
-                            e, node.left, index - node.left.rightNodeCount - 1, findSmaller
+                            e, node.left!!, index - node.left!!.rightNodeCount - 1, findSmaller
                         )
                     return if (smallerIndex != -1) smallerIndex else index
                 } else {
@@ -896,7 +900,7 @@ class SortedListAvl<E>: SortedList<E> {
                 if (node.hasRight()) {
                     val greaterIndex =
                         indexOf(
-                            e, node.right, index + node.right.leftNodeCount + 1, findSmaller
+                            e, node.right!!, index + node.right!!.leftNodeCount + 1, findSmaller
                         )
                     return if (greaterIndex != -1) greaterIndex else index
                 } else {
@@ -905,13 +909,13 @@ class SortedListAvl<E>: SortedList<E> {
             }
         } else if (compareResult < 0) {
             if (node.hasLeft()) {
-                return indexOf(e, node.left, index - node.left.rightNodeCount - 1, findSmaller)
+                return indexOf(e, node.left!!, index - node.left!!.rightNodeCount - 1, findSmaller)
             } else {
                 return -1
             }
         } else {
             if (node.hasRight()) {
-                return indexOf(e, node.right, index + node.right.leftNodeCount + 1, findSmaller)
+                return indexOf(e, node.right!!, index + node.right!!.leftNodeCount + 1, findSmaller)
             } else {
                 return -1
             }
@@ -932,7 +936,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return iterator of this list
      */
-    override fun iterator(): MutableIterator<E> {
+    override fun iterator(): MutableIterator<E?> {
         return SortedListIterator()
     }
 
@@ -956,7 +960,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return ListIterator of this list
      */
-    override fun listIterator(): MutableListIterator<E> {
+    override fun listIterator(): MutableListIterator<E?> {
         return SortedListIterator()
     }
 
@@ -965,7 +969,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return ListIterator of this list with starting index
      */
-    override fun listIterator(index: Int): MutableListIterator<E> {
+    override fun listIterator(index: Int): MutableListIterator<E?> {
         return SortedListIterator(index)
     }
 
@@ -1080,7 +1084,8 @@ class SortedListAvl<E>: SortedList<E> {
 
             if (left != null) {
                 s = findMaxNode(left)
-                sParent = s.parent
+                // s.parent will not be null, since s is child of node and node is not null
+                sParent = s.parent!!
                 if (sParent.left == s) {
                     nType = BinaryTreeNode.Type.LEFT
                     sParent.left = null
@@ -1095,14 +1100,16 @@ class SortedListAvl<E>: SortedList<E> {
                 if (left != s) {
                     if (s.left != null) {
                         sParent.right = s.left
-                        s.left.parent = sParent
+                        s.left!!.parent = sParent
                     }
                     s.left = left
                     left.parent = s
                 }
             } else {
-                s = findMinNode(right)
-                sParent = s.parent
+                // since node hasChild, if left is null then right should not be null
+                s = findMinNode(right!!)
+                // s.parent will not be null, since s is child of node and node is not null
+                sParent = s.parent!!
                 if (sParent.right == s) {
                     nType = BinaryTreeNode.Type.RIGHT
                     sParent.right = null
@@ -1116,7 +1123,7 @@ class SortedListAvl<E>: SortedList<E> {
                 if (right != s) {
                     if (s.right != null) {
                         sParent.left = s.right
-                        s.right.parent = sParent
+                        s.right!!.parent = sParent
                     }
                     s.right = right
                     right?.parent = s
@@ -1206,7 +1213,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the removed element
      */
-    override fun removeAt(index: Int): E {
+    override fun removeAt(index: Int): E? {
         checkIndex(index)
         val node = locateNodeByRelativeIndex(root, index)!!
 
@@ -1242,7 +1249,6 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    @SuppressWarnings("unchecked")
     override fun retainAll(c: Collection<E>): Boolean {
         val s = SortedListAvl<E>(comparator)
 
@@ -1280,7 +1286,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return removed data element
      */
-    override fun set(index: Int, element: E): E {
+    override fun set(index: Int, element: E): E? {
         checkIndex(index)
         // As this is a sorted list old element is removed and then re-add the element, index may change.
 
@@ -1308,8 +1314,8 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return new AVL Tree List consisting elements provided by from & to index
      */
-    override fun getSubList(fromIndex: Int, toIndex: Int): SortedListAvl<E> {
-        val list = SortedListAvl<E>()
+    override fun getSubList(fromIndex: Int, toIndex: Int): SortedListAvl<E?> {
+        val list = SortedListAvl<E?>()
         if (root != null) {
             getSubList(list, root!!, root!!.leftNodeCount, fromIndex, toIndex)
         }
@@ -1326,16 +1332,16 @@ class SortedListAvl<E>: SortedList<E> {
      * @param toIndex ending index of the sublist, exclusive
      */
     private fun getSubList(
-        list: SortedListAvl<E>, node: BinaryTreeNode<E>, index: Int, fromIndex: Int, toIndex: Int
+        list: SortedListAvl<E?>, node: BinaryTreeNode<E>, index: Int, fromIndex: Int, toIndex: Int
     ) {
         if (index >= fromIndex && index < toIndex) {
             list.add(node.element)
         }
         if (node.hasLeft() && index > fromIndex) {
-            getSubList(list, node.left, index - node.left.rightNodeCount - 1, fromIndex, toIndex)
+            getSubList(list, node.left!!, index - node.left!!.rightNodeCount - 1, fromIndex, toIndex)
         }
         if (node.hasRight() && index < toIndex - 1) {
-            getSubList(list, node.right, index + node.right.leftNodeCount + 1, fromIndex, toIndex)
+            getSubList(list, node.right!!, index + node.right!!.leftNodeCount + 1, fromIndex, toIndex)
         }
     }
 
@@ -1348,7 +1354,7 @@ class SortedListAvl<E>: SortedList<E> {
         if (root == null) {
             return 0
         } else {
-            return root!!.depth + 1
+            return root!!.getDepth() + 1
         }
     }
 
@@ -1360,15 +1366,15 @@ class SortedListAvl<E>: SortedList<E> {
      * @param node current node
      * @param index current node index
      */
-    private fun buildArray(array: Array<in E>, node: BinaryTreeNode<E>, index: Int) {
+    private fun buildArray(array: Array<in E?>, node: BinaryTreeNode<E>, index: Int) {
         if (index < array.size) {
             array[index] = node.element
         }
         if (node.hasLeft()) {
-            buildArray(array, node.left, index - node.left.rightNodeCount -1)
+            buildArray(array, node.left!!, index - node.left!!.rightNodeCount -1)
         }
         if (node.hasRight()) {
-            buildArray(array, node.right, index + node.right.leftNodeCount +1)
+            buildArray(array, node.right!!, index + node.right!!.leftNodeCount +1)
         }
     }
 
@@ -1391,13 +1397,13 @@ class SortedListAvl<E>: SortedList<E> {
      */
     private fun inorder(node: BinaryTreeNode<E>) {
         if (node.hasLeft()) {
-            inorder(node.left)
+            inorder(node.left!!)
         }
         print(
-            "${node.element.toString()} -[${node.leftDepth}, ${node.rightDepth}, ${node.leftNodeCount}, ${node.rightNodeCount}](p: ${(if (node.parent!=null) node.parent.element else "null")}), (l: ${(if (node.left !=null) node.left.element else "null")}), (r: ${(if (node.right !=null) node.right.element else "null")})-"
+            "${node.element.toString()} -[${node.leftDepth}, ${node.rightDepth}, ${node.leftNodeCount}, ${node.rightNodeCount}](p: ${(if (node.parent!=null) node.parent!!.element else "null")}), (l: ${(if (node.left !=null) node.left!!.element else "null")}), (r: ${(if (node.right !=null) node.right!!.element else "null")})-"
         )
         if (node.hasRight()) {
-            inorder(node.right)
+            inorder(node.right!!)
         }
     }
 
@@ -1418,11 +1424,11 @@ class SortedListAvl<E>: SortedList<E> {
         newNode.rightNodeCount = node.rightNodeCount
 
         if (node.left != null) {
-            newNode.left = cloneNodes(newNode, node.left)
+            newNode.left = cloneNodes(newNode, node.left!!)
         }
 
         if (node.right != null) {
-            newNode.right = cloneNodes(newNode, node.right)
+            newNode.right = cloneNodes(newNode, node.right!!)
         }
 
         return newNode
@@ -1452,10 +1458,10 @@ class SortedListAvl<E>: SortedList<E> {
     private fun setNodeElement(sortedList : List<E?>, node: BinaryTreeNode<E>, index: Int) {
         node.element = sortedList[index]
         if (node.hasLeft()) {
-            setNodeElement(sortedList, node.left, index - node.left.rightNodeCount - 1)
+            setNodeElement(sortedList, node.left!!, index - node.left!!.rightNodeCount - 1)
         }
         if (node.hasRight()) {
-            setNodeElement(sortedList, node.right, index + node.right.leftNodeCount + 1)
+            setNodeElement(sortedList, node.right!!, index + node.right!!.leftNodeCount + 1)
         }
     }
 
@@ -1497,7 +1503,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @author Tony Tsang
      *
      */
-    private inner class SortedListIterator: MutableListIterator<E> {
+    private inner class SortedListIterator: MutableListIterator<E?> {
         /**
          * Previous node cache
          */
@@ -1559,7 +1565,7 @@ class SortedListAvl<E>: SortedList<E> {
             currentIndex  = -1
 
             nextNode = getNode(i)
-            previousNode = nextNode!!.previousNode
+            previousNode = nextNode!!.getPreviousNode()
         }
 
         /**
@@ -1576,7 +1582,7 @@ class SortedListAvl<E>: SortedList<E> {
          * P.S. Element will not added to the current location of the iterator but in its sort order
          *
          */
-        override fun add(e: E) {
+        override fun add(e: E?) {
             this@SortedListAvl.add(e)
             val index: Int = indexOf(e)
             if (index <= currentIndex) {
@@ -1585,7 +1591,8 @@ class SortedListAvl<E>: SortedList<E> {
                 previousIndex = currentIndex - 1
 
                 nextNode     = getNode(nextIndex)
-                previousNode = nextNode!!.previousNode.previousNode
+
+                previousNode = nextNode!!.getPreviousNode()!!.getPreviousNode()
             }
             canRemove = true
             expectedModCount++
@@ -1614,7 +1621,7 @@ class SortedListAvl<E>: SortedList<E> {
          *
          * @return next element
          */
-        override fun next(): E {
+        override fun next(): E? {
             checkForComodification()
             if (nextIndex < size) {
                 canRemove = true
@@ -1625,7 +1632,7 @@ class SortedListAvl<E>: SortedList<E> {
                 val element = nextNode!!.element
 
                 previousNode = nextNode
-                nextNode     = nextNode!!.nextNode
+                nextNode     = nextNode!!.getNextNode()
 
                 return element
             } else {
@@ -1651,7 +1658,7 @@ class SortedListAvl<E>: SortedList<E> {
          *
          * @return previous element
          */
-        override fun previous(): E {
+        override fun previous(): E? {
             checkForComodification()
             if (previousIndex >= 0) {
                 currentIndex = previousIndex
@@ -1661,7 +1668,7 @@ class SortedListAvl<E>: SortedList<E> {
                 val element = previousNode!!.element
 
                 nextNode     = previousNode
-                previousNode = previousNode!!.previousNode
+                previousNode = previousNode!!.getPreviousNode()
 
                 canRemove = true
                 return element
@@ -1715,7 +1722,7 @@ class SortedListAvl<E>: SortedList<E> {
         /**
          * Set is not supported, as it contradict with normal expectation of this method.
          */
-        override fun set(e: E) {
+        override fun set(e: E?) {
             throw UnsupportedOperationException("Set operation is not supported (this is a sorted list)!")
         }
     }

@@ -286,13 +286,13 @@ class TestSortedListAvl {
         var next = root
 
         for (i in 6 downTo 0) {
-            prev = prev.previousNode
+            prev = prev.getPreviousNode()
 
             assertEquals(prev.element, i)
         }
 
         for (i in 8 .. 13) {
-            next = next.nextNode
+            next = next.getNextNode()
 
             assertEquals(next.element, i)
         }
@@ -301,7 +301,7 @@ class TestSortedListAvl {
         for (i in 0 .. 13) {
             assertEquals(prev.element, i)
 
-            prev = prev.nextNode
+            prev = prev.getNextNode()
         }
 
         assertNull(prev)
@@ -309,7 +309,7 @@ class TestSortedListAvl {
         for (i in 13 downTo 0) {
             assertEquals(next.element, i)
 
-            next = next.previousNode
+            next = next.getPreviousNode()
         }
 
         assertNull(next)
@@ -317,11 +317,11 @@ class TestSortedListAvl {
         root.refreshMetaData()
         assertEquals(root.leftDepth, 4)
         assertEquals(root.rightDepth, 3)
-        assertEquals(root.depth, 4)
+        assertEquals(root.getDepth(), 4)
 
         assertEquals(root.leftNodeCount, 7)
         assertEquals(root.rightNodeCount, 6)
-        assertEquals(root.nodeCount, 13)
+        assertEquals(root.getNodeCount(), 13)
     }
 
     @Test
