@@ -77,7 +77,7 @@ class RecordTimer {
      * Record elapsed time as interval
      */
     fun recordTime() {
-        // Only record time is the timer is running/started
+        // Only record time if the timer is running/started
         if (running) {
             val millis = System.currentTimeMillis()
 
@@ -91,7 +91,7 @@ class RecordTimer {
     }
 
     /**
-     * Stop the time and record the time
+     * Stop the timer and record the time
      */
     fun stop() {
         // Only stop if the timer is still running
