@@ -187,7 +187,7 @@ class TestSortedListAvl {
 
         var integerArray = Array<Int?>(list.size, { idx -> list[idx] })
         
-        assertTrue(verifyFullArrayValues(integerArray, 1, 2, 3, 5, 6, 7, 8, 9, 10))
+        verifyFullArrayValues(integerArray, 1, 2, 3, 5, 6, 7, 8, 9, 10)
 
         list.remove(8)
         list.remove(2)
@@ -196,7 +196,7 @@ class TestSortedListAvl {
 
         integerArray = Array<Int?>(list.size, { idx -> list[idx] })
 
-        assertTrue(verifyFullArrayValues(integerArray, 3, 5, 6, 7, 9))
+        verifyFullArrayValues(integerArray, 3, 5, 6, 7, 9)
 
         assertEquals(list.size, 5)
     }
@@ -207,7 +207,7 @@ class TestSortedListAvl {
 
         list.add(1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
 
-        assertTrue(verifyFullListValues(list, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
+        verifyFullListValues(list, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5)
 
         list.remove(1)
         list.remove(5)
@@ -218,7 +218,7 @@ class TestSortedListAvl {
 
         assertEquals(list.size, 4)
 
-        assertTrue(verifyFullListValues(list, 1, 2, 4, 5))
+        verifyFullListValues(list, 1, 2, 4, 5)
 
         list.clear()
 
@@ -372,12 +372,12 @@ class TestSortedListAvl {
         list.set(5, 19)
         assertEquals(list.size, 10)
 
-        assertTrue(verifyFullListValues(list, 1, 2, 3, 4, 5, 7, 8, 9, 10, 19))
+        verifyFullListValues(list, 1, 2, 3, 4, 5, 7, 8, 9, 10, 19)
 
         list.set(0, -8)
         assertEquals(list.size, 10)
 
-        assertTrue(verifyFullListValues(list, -8, 2, 3, 4, 5, 7, 8, 9, 10, 19))
+        verifyFullListValues(list, -8, 2, 3, 4, 5, 7, 8, 9, 10, 19)
     }
 
     @Test
@@ -679,7 +679,7 @@ class TestSortedListAvl {
 
         assertNull(ascList[0])
 
-        assertTrue(verifyListValues(ascList, 1, ascList.size-1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))
+        verifyListValues(ascList, 1, ascList.size-1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
 
         val descList = SortedListAvl<Int?>(false)
 
@@ -687,7 +687,7 @@ class TestSortedListAvl {
 
         assertNull(descList[10])
 
-        assertTrue(verifyListValues(descList, 0, 9, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10))
+        verifyListValues(descList, 0, 9, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10)
 
         val ascNgList = SortedListAvl<Int?>(true, false)
 
@@ -695,7 +695,7 @@ class TestSortedListAvl {
 
         assertNull(ascNgList[10])
 
-        assertTrue(verifyListValues(ascNgList, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+        verifyListValues(ascNgList, 0, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
         val descNgList = SortedListAvl<Int?>(false, false)
 
@@ -703,44 +703,67 @@ class TestSortedListAvl {
 
         assertNull(descNgList[0])
 
-        assertTrue(verifyListValues(descNgList, 1, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1))
+        verifyListValues(descNgList, 1, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
     }
 
-    fun verifyListValues(list: List<Int?>, startIndex: Int, endIndex: Int, vararg vals: Int): Boolean {
-        if (endIndex - startIndex + 1 == vals.size) {
-            for (i in startIndex .. endIndex) {
-                if (list[i] != vals[i-startIndex]) {
-                    return false
-                }
+    @Test
+    // Test for random data and verify list order, this is to expose error that is not covered (by chance)
+    fun testRandom() {
+        val repeat = 10
+        val listSize = 1000
+        val minBound = 1
+        val maxBound = 500
+        val nullPercentage = 10
+
+        val nullThreshold = (maxBound - minBound + 1) * nullPercentage / 100 + minBound // integer division is enough
+
+        for (i in 1 .. repeat) {
+            val list = SortedListAvl<Int?>()
+
+            for (j in 0 .. listSize - 1) {
+                val v = MathUtil.randomInteger(minBound, maxBound)
+
+                // Since zero null percentage's threshold will be minBound, therefore only set null for value lower than threshold
+                list.add(if (v < nullThreshold) null else v)
             }
 
-            return true
+            verifyListOrder(list)
+        }
+    }
+
+    fun verifyListOrder(list: List<Int?>) {
+        val comparator = DataComparator.buildComparator<Int>(true, true)
+
+        for (i in 1 .. list.size - 1) {
+            assertFalse(comparator.compare(list[i-1], list[i]) > 0, "Order mismatch, i: $i, value @ i-1: ${list[i-1]}, value @ i: ${list[i]}, full list: \n${PrinterUtil.getListString(list)}")
+        }
+    }
+
+    fun verifyListValues(list: List<Int?>, startIndex: Int, endIndex: Int, vararg vals: Int) {
+        if (endIndex - startIndex + 1 == vals.size) {
+            for (i in startIndex .. endIndex) {
+                assertFalse(list[i] != vals[i-startIndex], "Expected: ${vals[i-startIndex]} but found: ${list[i]}, i: $i")
+            }
         } else {
-            return false
+            fail("Values number mismatch, startIndex: $startIndex, endIndex: $endIndex, vals.size: ${vals.size}")
         }
     }
     
-    fun verifyFullListValues(list: List<Int?>, vararg vals: Int): Boolean {
-        return verifyListValues(list, 0, vals.size - 1, *vals)
+    fun verifyFullListValues(list: List<Int?>, vararg vals: Int) {
+        verifyListValues(list, 0, vals.size - 1, *vals)
     }
 
-    fun verifyArrayValues(arr: Array<Int?>, startIndex: Int, endIndex: Int, vararg vals: Int): Boolean {
+    fun verifyArrayValues(arr: Array<Int?>, startIndex: Int, endIndex: Int, vararg vals: Int) {
         if (endIndex - startIndex + 1 == vals.size) {
-
-
             for (i in startIndex .. endIndex) {
-                if (arr[i] != arr[i-startIndex]) {
-                    return false
-                }
+                assertFalse(arr[i] != vals[i-startIndex], "Expected: ${vals[i-startIndex]} but found: ${arr[i]}, i: $i")
             }
-            
-            return true
         } else {
-            return false
+            fail("Values number mismatch, startIndex: $startIndex, endIndex: $endIndex, vals.size: ${vals.size}")
         }
     }
 
-    fun verifyFullArrayValues(arr: Array<Int?>, vararg vals: Int): Boolean {
-        return verifyArrayValues(arr, 0, vals.size - 1, *vals)
+    fun verifyFullArrayValues(arr: Array<Int?>, vararg vals: Int) {
+        verifyArrayValues(arr, 0, vals.size - 1, *vals)
     }
 }

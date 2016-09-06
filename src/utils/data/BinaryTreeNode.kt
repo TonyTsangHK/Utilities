@@ -43,14 +43,6 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * Left child node
      */
     var left: BinaryTreeNode<E>? = null
-        /**
-         * Set left child node
-
-         * @param l new left child node
-         */
-        set(l: BinaryTreeNode<E>?) {
-            field = l
-        }
 
     /**
      * Set left child node with option to keeping consistency, i.e. set child node's parent to this node
@@ -70,14 +62,6 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * Right child node
      */
     var right: BinaryTreeNode<E>? = null
-        /**
-         * Set right child node
-
-         * @param r new right child node
-         */
-        set(r: BinaryTreeNode<E>?) {
-            field = r
-        }
 
     /**
      * Set right child node with option to keeping consistency, i.e. set child node's parent to this node
@@ -265,13 +249,16 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * @return check result
      */
     fun hasSibling(): Boolean {
-        if (parent == null) {
+        // Just to avoid unnecessary use of sure (!!) operators
+        val localParent = parent
+
+        if (localParent == null) {
             return false
         } else {
-            if (this === parent!!.left) {
-                return parent!!.right != null
+            if (this === localParent.left) {
+                return localParent.right != null
             } else {
-                return parent!!.left != null
+                return localParent.left != null
             }
         }
     }
@@ -282,8 +269,11 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * @return sibling node
      */
     fun getSibling(): BinaryTreeNode<E>? {
-        if (parent != null) {
-            return if (this === parent!!.left) parent!!.right else parent!!.left
+        // Just to avoid unnecessary use of sure (!!) operators
+        val localParent = parent
+
+        if (localParent != null) {
+            return if (this === localParent.left) localParent.right else localParent.left
         } else {
             return null
         }
@@ -462,7 +452,7 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * Get the representation string of data element
      */
     override fun toString(): String {
-        return if (element != null) element!!.toString() else "null"
+        return element?.toString() ?: "null"
     }
 
     /**
@@ -472,10 +462,10 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      */
     fun getPreviousNode(): BinaryTreeNode<E>? {
         if (left != null) {
-            // Nodes on the left branch always smaller
+            // Nodes on the left branch always smaller than the parent
             var prev = left
 
-            // finding the largest node of this smaller branch
+            // finding the largest node of this branch
             while (prev!!.right != null) {
                 prev = prev.right
             }

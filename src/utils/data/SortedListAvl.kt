@@ -143,7 +143,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param nullAsSmaller null as smaller to any non null value, true for smaller, false for greater
      */
     constructor(
-            c: Collection<E>, comparator: Comparator<E?>, nullAsSmaller: Boolean
+        c: Collection<E>, comparator: Comparator<E?>, nullAsSmaller: Boolean
     ): this(comparator, nullAsSmaller) {
         addAll(c)
     }
@@ -198,8 +198,8 @@ class SortedListAvl<E>: SortedList<E> {
      * @param e element to be added
      * @return true as successful, false as unsuccessful
      */
-    override fun add(e: E?): Boolean {
-        if (privateAdd(e)) {
+    override fun add(element: E?): Boolean {
+        if (privateAdd(element)) {
             modCount++
             return true
         } else {
@@ -356,6 +356,7 @@ class SortedListAvl<E>: SortedList<E> {
      */
     private fun notifyNodeAdded(n: BinaryTreeNode<E>, rebalance: Boolean) {
         val parent: BinaryTreeNode<E>? = n.parent
+
         if (parent != null) {
             if (n == parent.left) {
                 parent.incrementLeftNodeCount()
@@ -370,14 +371,20 @@ class SortedListAvl<E>: SortedList<E> {
                 }
                 if (Math.abs(parent.getBalanceFactor()) >= 2) {
                     if (parent.getBalanceFactor() >= 2) {
+                        // if balance factor is greater than zero, left should not be null
                         if (parent.left!!.getBalanceFactor() < 0) {
                             rotateLeft(parent.left!!)
                         }
+
                         notifyNodeAdded(rotateRight(parent), false)
                     } else {
+                        // if balance factor is less than zero, right should not be null
+                        // Since absolute value of balance factor is 2, if not greater or equals to 2
+                        // therefore the factor can only be negative, so right is not null
                         if (parent.right!!.getBalanceFactor() > 0) {
                             rotateRight(parent.right!!)
                         }
+
                         notifyNodeAdded(rotateLeft(parent), false)
                     }
                 } else if (parent.getBalanceFactor() == 0) {
@@ -398,9 +405,9 @@ class SortedListAvl<E>: SortedList<E> {
      * @return the new parent of the rotated node
      */
     private fun rotateLeft(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
-        // Assume node.right is not null, it should not be
-
+        // Assume node.right is not null and it should not be
         val tmp = node.right!!
+
         node.right = tmp.left
         if (tmp.left != null) {
             tmp.left!!.parent = node
@@ -415,12 +422,18 @@ class SortedListAvl<E>: SortedList<E> {
                 node.parent!!.right = tmp
             }
         }
-        tmp.left = node
-        node.parent = tmp
-        node.rightDepth = tmp.leftDepth
-        node.rightNodeCount = tmp.leftNodeCount
-        tmp.leftDepth = node.getDepth() + 1
-        tmp.leftNodeCount = node.getNodeCount() + 1
+
+        node.apply {
+            parent = tmp
+            rightDepth = tmp.leftDepth
+            rightNodeCount = tmp.leftNodeCount
+        }
+
+        tmp.apply {
+            left = node
+            leftDepth = node.getDepth() + 1
+            leftNodeCount = node.getNodeCount() + 1
+        }
 
         return tmp
     }
@@ -432,9 +445,9 @@ class SortedListAvl<E>: SortedList<E> {
      * @return the new parent of the rotated node
      */
     private fun rotateRight(node: BinaryTreeNode<E>): BinaryTreeNode<E> {
-        // Assume node.left is not null, it should not be
-
+        // Assume node.left is not null and it should not be
         val tmp = node.left!!
+
         node.left = tmp.right
         tmp.right?.parent = node
         tmp.parent = node.parent
@@ -447,12 +460,19 @@ class SortedListAvl<E>: SortedList<E> {
                 node.parent!!.left = tmp
             }
         }
-        tmp.right = node
-        node.parent = tmp
-        node.leftDepth = tmp.rightDepth
-        node.leftNodeCount = tmp.rightNodeCount
-        tmp.rightDepth = node.getDepth() + 1
-        tmp.rightNodeCount = node.getNodeCount() + 1
+
+        node.apply {
+            parent = tmp
+            leftDepth = tmp.rightDepth
+            leftNodeCount = tmp.rightNodeCount
+        }
+
+        tmp.apply {
+            right = node
+            rightDepth = node.getDepth() + 1
+            rightNodeCount = node.getNodeCount() + 1
+        }
+
         return tmp
     }
 
@@ -474,9 +494,9 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    override fun addAll(c: Collection<E>): Boolean {
+    override fun addAll(elements: Collection<E>): Boolean {
         var modified = false
-        c.forEach {
+        elements.forEach {
             if (privateAdd(it)) {
                 modified = true
             }
@@ -520,9 +540,9 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    override fun addAll(index: Int, c: Collection<E>): Boolean {
+    override fun addAll(index: Int, elements: Collection<E>): Boolean {
         // Index is ignored as this is sortedList
-        return addAll(c) // modCount incrementation is handled
+        return addAll(elements) // modCount incrementation is handled
     }
 
     /**
@@ -541,11 +561,11 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return check result
      */
-    override fun contains(o: E): Boolean {
+    override fun contains(element: E): Boolean {
         var currentNode = root
 
         while (currentNode != null) {
-            val c = comparator.compare(currentNode.element, o)
+            val c = comparator.compare(currentNode.element, element)
             if (c == 0) {
                 return true
             } else if (c < 0) {
@@ -564,8 +584,8 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return check result
      */
-    override fun containsAll(c: Collection<E>): Boolean {
-        c.forEach {
+    override fun containsAll(elements: Collection<E>): Boolean {
+        elements.forEach {
             if (!contains(it)) {
                 return false
             }
@@ -575,13 +595,24 @@ class SortedListAvl<E>: SortedList<E> {
     }
 
     /**
-     * Check the provided index is within range, otherwise IndexOutOfBoundsException is thrown
+     * Check the provided index is within range, otherwise throws IndexOutOfBoundsException
      *
      * @param index target index
      */
     private fun checkIndex(index: Int) {
         if (index < 0 || index >= size) {
             throw IndexOutOfBoundsException("Index: $index, Size: $size")
+        }
+    }
+
+    /**
+     * Check the provided indices are within range, otherwise throws IndexOutOfBoundsException
+     *
+     * @param index target indices (varargs)
+     */
+    private fun checkIndices(vararg indices: Int) {
+        indices.forEach {
+            checkIndex(it)
         }
     }
 
@@ -729,12 +760,12 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return index of the target element, -1 if not found
      */
-    override fun indexOf(o: E): Int {
+    override fun indexOf(element: E): Int {
         if (root == null) {
             return -1
         }
 
-        return indexOf(o, root!!, root!!.leftNodeCount, true)
+        return indexOf(element, root!!, root!!.leftNodeCount, true)
     }
 
     /**
@@ -992,9 +1023,9 @@ class SortedListAvl<E>: SortedList<E> {
      * @param i2 index 2
      */
     private fun swapElement(i1: Int, i2: Int) {
-        checkIndex(i1)
-        checkIndex(i2)
+        checkIndices(i1, i2)
 
+        // Null safe after index check
         swapNodeElement(getNode(i1)!!, getNode(i2)!!)
     }
 
@@ -1229,10 +1260,10 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    override fun removeAll(c: Collection<E>): Boolean {
+    override fun removeAll(elements: Collection<E>): Boolean {
         var modified = false
 
-        c.forEach(
+        elements.forEach(
             {
                 if (remove(it)) {
                     modified = true
@@ -1249,10 +1280,10 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    override fun retainAll(c: Collection<E>): Boolean {
+    override fun retainAll(elements: Collection<E>): Boolean {
         val s = SortedListAvl<E>(comparator)
 
-        c.forEach(
+        elements.forEach(
             {
                 val firstIndex = indexOf(it)
 
