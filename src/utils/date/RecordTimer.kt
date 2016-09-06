@@ -30,7 +30,7 @@ class RecordTimer {
             val min = millis % hourMillis / minuteMillis
             val hr = millis % dayMillis / hourMillis
 
-            var result: String;
+            val result: String
 
             if (hr > 0) {
                 result = "$hr hrs, $min mins, $sec seconds"
