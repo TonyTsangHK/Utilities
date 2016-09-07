@@ -650,7 +650,7 @@ public class Fraction extends Number implements Cloneable, Comparable<Number> {
                    (numerator.signum() > 0 && mixedNumber.compareTo(new BigDecimal("-1")) != 0) ||
                    numerator.signum() == 0
            ) &&
-           MathUtil.gcd(numerator.toBigInteger(), denominator.toBigInteger()).abs().compareTo(BigInteger.ONE) == 0 && 
+           MathUtil.gcd(numerator.toBigInteger(), denominator.toBigInteger()).abs().compareTo(BigInteger.ONE) == 0 &&
            numerator.abs().compareTo(denominator.abs()) < 0;
     }
     

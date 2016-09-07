@@ -397,7 +397,7 @@ public class TestFraction {
     public void testFractionIntIntInt() {
         for (int i = 0; i <= 20000; i++) {
             int n = MathUtil.randomInteger(-999, 999),
-                d = MathUtil.randomInteger(-999, 999), 
+                d = MathUtil.randomInteger(-999, 999),
                 m = MathUtil.randomInteger(-990, 999);
             
             while (d == 0) {
@@ -449,7 +449,7 @@ public class TestFraction {
     @Test
     public void testFractionBigDecimalBigDecimalBigDecimal() {
         for (int i = 0; i <= 20000; i++) {
-            double m = MathUtil.randomNumber(-999, 999), 
+            double m = MathUtil.randomNumber(-999, 999),
                    n = MathUtil.randomNumber(-999, 999),
                    d = MathUtil.randomNumber(-999, 999);
             

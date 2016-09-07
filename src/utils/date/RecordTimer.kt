@@ -24,7 +24,9 @@ class RecordTimer {
          *
          * @param millis
          */
-        @JvmStatic fun getHumanReadableTimeString(millis: Long, includeMs: Boolean): String {
+        @JvmStatic
+        @JvmOverloads
+        fun getHumanReadableTimeString(millis: Long, includeMs: Boolean = true): String {
             val ms = millis % secondMillis
             val sec = millis % minuteMillis / secondMillis
             val min = millis % hourMillis / minuteMillis
@@ -47,10 +49,6 @@ class RecordTimer {
             } else {
                 return result
             }
-        }
-
-        @JvmStatic fun getHumanReadableTimeString(millis: Long): String {
-            return getHumanReadableTimeString(millis, true)
         }
     }
 
