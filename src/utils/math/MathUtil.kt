@@ -1044,7 +1044,7 @@ object MathUtil {
      * @return the highest common factor
      */
     @JvmStatic
-     fun hcf(n1:BigInteger, n2:BigInteger):BigInteger {
+    fun hcf(n1:BigInteger, n2:BigInteger):BigInteger {
         return gcd(n1, n2)
     }
 
@@ -1521,7 +1521,8 @@ object MathUtil {
      *
      * @return length of two points
      */
-     fun getLength(p1:Point2D, p2:Point2D):Double {
+    @JvmStatic
+    fun getLength(p1:Point2D, p2:Point2D):Double {
         return getLength(p1.x, p1.y, p2.x, p2.y)
     }
 
@@ -1697,6 +1698,7 @@ object MathUtil {
      *
      * @return result of checking
      */
+    @JvmStatic
     fun isFloatingPointNumberEquals(n1:Double, n2:Double, tolerance:Double):Boolean {
         return Math.abs(n1 - n2) <= tolerance
     }
@@ -1741,6 +1743,7 @@ object MathUtil {
      *
      * @return solution of provided equation
      */
+    @JvmStatic
     fun solveQuadraticEquation(a:Double, b:Double, c:Double):QuadraticSolution {
         val sol:QuadraticSolution
         if (a == 0.0) {
@@ -2363,7 +2366,8 @@ object MathUtil {
      *
      * @return result of limit
      */
-     fun maxValueLimit(value:Float, max:Float):Float {
+    @JvmStatic
+    fun maxValueLimit(value:Float, max:Float):Float {
         return if (value > max) max else value
     }
 
@@ -3364,6 +3368,7 @@ object MathUtil {
     }
 
     // This method only find the smallest possible factor, if small prime numbers exhausted it just stop.
+    @JvmStatic
     fun findSmallestFactor(number:Long):Int {
         if (number == 1L) {
             return -1
@@ -3392,7 +3397,7 @@ object MathUtil {
              */
             val negativeValue:Double
     ) {
-        constructor(value:Double) : this(value, value) {}
+        constructor(value:Double) : this(value, value)
 
         /**
          * Get a representation string of this Quadratic solution
