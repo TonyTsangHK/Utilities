@@ -28,7 +28,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testCompile group: 'org.testng', name: 'testng', version: '6.9.10'
 }
