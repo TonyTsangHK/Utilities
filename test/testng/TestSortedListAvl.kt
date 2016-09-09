@@ -5,7 +5,7 @@ import org.testng.annotations.Test
 import utils.data.*
 import utils.math.MathUtil
 import java.util.*
-import kotlin.test.*
+import org.testng.Assert.*
 
 /**
  * Created with IntelliJ IDEA.

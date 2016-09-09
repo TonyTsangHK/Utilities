@@ -1157,7 +1157,7 @@ class SortedListAvl<E>: SortedList<E> {
                         s.right!!.parent = sParent
                     }
                     s.right = right
-                    right?.parent = s
+                    right.parent = s
                 }
             }
 
@@ -1211,8 +1211,8 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful remove, false as unsuccessful
      */
-    override fun remove(o: E): Boolean {
-        val node = locateNode(o)
+    override fun remove(element: E): Boolean {
+        val node = locateNode(element)
         if (node != null) {
             removeNode(node) // modCount incrementation is handled
             return true
@@ -1613,9 +1613,9 @@ class SortedListAvl<E>: SortedList<E> {
          * P.S. Element will not added to the current location of the iterator but in its sort order
          *
          */
-        override fun add(e: E?) {
-            this@SortedListAvl.add(e)
-            val index: Int = indexOf(e)
+        override fun add(element: E?) {
+            this@SortedListAvl.add(element)
+            val index: Int = indexOf(element)
             if (index <= currentIndex) {
                 currentIndex += 1
                 nextIndex     = currentIndex + 1
@@ -1753,7 +1753,7 @@ class SortedListAvl<E>: SortedList<E> {
         /**
          * Set is not supported, as it contradict with normal expectation of this method.
          */
-        override fun set(e: E?) {
+        override fun set(element: E?) {
             throw UnsupportedOperationException("Set operation is not supported (this is a sorted list)!")
         }
     }

@@ -950,7 +950,7 @@ object MathUtil {
 
         var iterations = 0
         var more = true
-        var error:BigDecimal? = null
+        var error:BigDecimal
         while (more) {
             lastGuess = guess
             guess = n.divide(guess, scale, RoundingMode.HALF_UP)
@@ -960,7 +960,7 @@ object MathUtil {
             if (++iterations >= maxIteration) {
                 more = false
             } else if (lastGuess == guess) {
-                more = error!!.abs() >= tolerance
+                more = error.abs() >= tolerance
             }
         }
         return guess
@@ -977,9 +977,9 @@ object MathUtil {
      * @return operation result, result trimmed(rounded) by precision
      */
     private fun operate(a:Double, b:Double, operation:Operation, precision:Int):Double {
-        var precision = precision
-        if (precision < 0) {
-            precision = 0
+        var localPrecision = precision
+        if (localPrecision < 0) {
+            localPrecision = 0
         }
         val n1 = BigDecimal(a)
         val n2 = BigDecimal(b)
@@ -989,13 +989,13 @@ object MathUtil {
             Operation.SUBTRACT -> result = n1 - n2
             Operation.MULTIPLY -> result = n1 * n2
             Operation.DIVIDE -> if (n2.toDouble() != 0.0) {
-                result = n1.divide(n2, precision, BigDecimal.ROUND_HALF_UP)
+                result = n1.divide(n2, localPrecision, BigDecimal.ROUND_HALF_UP)
             }
         }
         if (result == null) {
             return -1.0
         } else {
-            return result.setScale(precision, BigDecimal.ROUND_HALF_UP).toDouble()
+            return result.setScale(localPrecision, BigDecimal.ROUND_HALF_UP).toDouble()
         }
     }
 
@@ -1388,9 +1388,9 @@ object MathUtil {
             val longMax = max.toLong()
             val longMin = min.toLong()
 
-            return (random() * (longMax - longMin + 1) + longMin).toInt()
+            return (rand * (longMax - longMin + 1) + longMin).toInt()
         } else {
-            return (random() * (max - min + 1) + min).toInt()
+            return (rand * (max - min + 1) + min).toInt()
         }
     }
 
