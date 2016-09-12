@@ -2132,16 +2132,16 @@ object MathUtil {
      */
     @JvmStatic
     @JvmOverloads
-    fun parseBigDecimal(str:String, defaultValue:BigDecimal = BigDecimal.ZERO):BigDecimal {
+    fun parseBigDecimal(str:String, defaultValue:BigDecimal? = null):BigDecimal {
         if (!StringUtil.isEmptyString(str)) {
             try {
                 val dec = BigDecimal(str)
                 return dec
             } catch (nfe:NumberFormatException) {
-                return defaultValue
+                return defaultValue ?: BigDecimal.ZERO
             }
         } else {
-            return defaultValue
+            return defaultValue ?: BigDecimal.ZERO
         }
     }
 
