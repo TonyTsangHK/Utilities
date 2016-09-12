@@ -2967,14 +2967,14 @@ object MathUtil {
     }
 
     /**
-     * Calculate the permutation of (v!)
+     * Calculate the factorial of (v!)
      *
      * @param v value
      *
-     * @return result of permutation
+     * @return result of factorial
      */
     @JvmStatic
-    fun permutation(v:BigDecimal):BigDecimal {
+    fun factorial(v:BigDecimal):BigDecimal {
         // Ignore decimal part
         val vFlr = floor(v)
         if (vFlr.compareTo(BigDecimal.ZERO) == 0 || vFlr.compareTo(BigDecimal.ONE) == 0) {
@@ -2991,14 +2991,14 @@ object MathUtil {
     }
 
     /**
-     * Calculate the permutation of (v!)
+     * Calculate the factorial of (v!)
      *
      * @param v value
      *
-     * @return result of permutation
+     * @return result of factorial
      */
     @JvmStatic
-    fun permutation(v:Int):BigDecimal {
+    fun factorial(v:Int):BigDecimal {
         if (v == 0 || v == 1) {
             return BigDecimal.ONE
         } else {
@@ -3013,20 +3013,20 @@ object MathUtil {
     }
 
     /**
-     * Calculate the permutation of (v!/r!)
+     * Calculate the factorial of (v!/r!)
      *
      * @param v value
      * @param r end value
      *
-     * @return result of permutation
+     * @return result of factorial
      */
     @JvmStatic
-    fun permutation(v:BigDecimal, r:BigDecimal):BigDecimal {
+    fun factorial(v:BigDecimal, r:BigDecimal):BigDecimal {
         // Ignore decimal part
         val vFlr = floor(v)
 
         if (r.compareTo(BigDecimal.ONE) == 0) {
-            return permutation(vFlr)
+            return factorial(vFlr)
         } else {
             var result = vFlr
             var count = vFlr - BigDecimal.ONE
@@ -3041,17 +3041,17 @@ object MathUtil {
     }
 
     /**
-     * Calculate the permutation of (v!/(v-r)!)
+     * Calculate the factorial of (v!/(v-r)!)
      *
      * @param v value
      * @param r length
      *
-     * @return result of permutation
+     * @return result of factorial
      */
     @JvmStatic
-    fun permutation(v:Int, r:Int):BigDecimal {
+    fun factorial(v:Int, r:Int):BigDecimal {
         if (r == v) {
-            return permutation(v)
+            return factorial(v)
         } else {
             var result = BigDecimal(v)
             var count = v - 1
@@ -3065,32 +3065,32 @@ object MathUtil {
     }
 
     /**
-     * Calculate the combination of (v!/r!(v-r)!)
+     * Calculate the number of combination of (v!/r!(v-r)!)
      *
      * @param v value
      * @param r length
      *
-     * @return result of combination
+     * @return number of combination
      */
     @JvmStatic
     fun combination(v:BigDecimal, r:BigDecimal):BigDecimal {
-        return permutation(v, r).divide(permutation(r))
+        return factorial(v, r).divide(factorial(r))
     }
 
     /**
-     * Calculate the combination of (v!/r!(v-r)!)
+     * Calculate the number of combination of (v!/r!(v-r)!)
      *
      * @param v value
      * @param r length
-     * @return result of combination
+     * @return number of combination
      */
     @JvmStatic
     fun combination(v:Int, r:Int):BigDecimal {
-        return permutation(v, r).divide(permutation(r))
+        return factorial(v, r).divide(factorial(r))
     }
 
     /**
-     * Permutate a list of values with provided length
+     * Permutation of a list of values with provided length
      *
      * @param  Generic type
      * @param list list of values
@@ -3103,7 +3103,7 @@ object MathUtil {
         if (list.size < len || len <= 0) {
             return null
         } else {
-            val r = ArrayList<List<E>>(permutation(list.size, len).toInt())
+            val r = ArrayList<List<E>>(factorial(list.size, len).toInt())
 
             permutate(r, list, ArrayList<Int>(), DataManipulator.createSequence(0, list.size - 1), len)
 
@@ -3122,7 +3122,8 @@ object MathUtil {
      */
     private fun <E> permutate(
         lists:MutableList<List<E>>, list:List<E>, setIndexes:List<Int>,
-        availableIndexes:List<Int>, len:Int) {
+        availableIndexes:List<Int>, len:Int
+    ) {
         if (setIndexes.size == len) {
             lists.add(DataManipulator.createList(list, setIndexes))
         } else {
@@ -3176,7 +3177,7 @@ object MathUtil {
         if (list.size < len || len <= 0) {
             return null
         } else {
-            val r = ArrayList<List<E>>(permutation(list.size, len).toInt())
+            val r = ArrayList<List<E>>(factorial(list.size, len).toInt())
             combinate(r, list, ArrayList<Int>(), len)
 
             return r
