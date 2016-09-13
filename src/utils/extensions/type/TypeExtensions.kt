@@ -21,7 +21,7 @@ fun String.toBigDecimal(default: BigDecimal = BigDecimal.ZERO): BigDecimal {
 }
 
 fun <K, V> Map<K, V>.getInt(key: K, default: Int = -1): Int {
-    return DataManipulator.getIntValue(this, key, default)
+    return DataManipulator.getIntValue(this, key, 10, default)
 }
 
 fun <K, V> Map<K, V>.getString(key: K, default: String = ""): String {
