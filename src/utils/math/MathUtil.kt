@@ -1344,6 +1344,45 @@ object MathUtil {
     }
 
     /**
+     * Generate a random integer with standard distribution
+     *
+     * @param min minimum bound
+     * @param max maximum bound
+     * @param mean mean value
+     * @param deviation deviation
+     *
+     * @return random integer
+     */
+    @JvmStatic
+    fun randomIntegerWithNormalDistribution(min: Int, max: Int, mean: Int, deviation: Int): Int {
+        initRandom()
+        return randomIntegerWithNormalDistribution(min, max, mean, deviation, randomGenerator!!)
+    }
+
+    /**
+     * Generate a random integer with standard distribution
+     * 
+     * @param min minimum bound
+     * @param max minimum bound
+     * @param mean mean value
+     * @param deviation deviation
+     * @param randomGenerator random generator
+     * 
+     * @return random integer
+     */
+    @JvmStatic
+    fun randomIntegerWithNormalDistribution(min: Int, max: Int, mean: Int, deviation: Int, randomGenerator: Random): Int {
+        var v: Int;
+
+        // Since there is no theoretical minimum or maximum value for gaussian, regeneration is required if the value fall outside of range
+        do {
+            v = Math.round(randomGenerator.nextGaussian() * deviation + mean).toInt()
+        } while (v < min || v > max);
+
+        return v
+    }
+
+    /**
      * Generate a random long integer
      *
      * @param min minimum bound
