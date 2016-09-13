@@ -2126,22 +2126,36 @@ object MathUtil {
      * Parse a string into BigDecimal value
      *
      * @param str source string
-     * @param defaultValue default value when parse failed, deafult zero
+     * @param defaultValue default value when parse failed, default zero
+     *
+     * @return parsed BigDecimal value, if anything goes wrong always return zero
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun parseBigDecimalNotNull(str: String, defaultValue:BigDecimal = BigDecimal.ZERO): BigDecimal {
+        return parseBigDecimal(str, defaultValue) ?: BigDecimal.ZERO
+    }
+
+    /**
+     * Parse a string into BigDecimal value allow default as null
+     *
+     * @param str source string
+     * @param defaultValue default value when parse failed, default zero
      *
      * @return parsed BigDecimal value
      */
     @JvmStatic
     @JvmOverloads
-    fun parseBigDecimal(str:String, defaultValue:BigDecimal? = null):BigDecimal {
+    fun parseBigDecimal(str:String, defaultValue:BigDecimal? = BigDecimal.ZERO):BigDecimal? {
         if (!StringUtil.isEmptyString(str)) {
             try {
                 val dec = BigDecimal(str)
                 return dec
             } catch (nfe:NumberFormatException) {
-                return defaultValue ?: BigDecimal.ZERO
+                return defaultValue
             }
         } else {
-            return defaultValue ?: BigDecimal.ZERO
+            return defaultValue
         }
     }
 
