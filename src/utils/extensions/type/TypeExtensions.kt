@@ -32,7 +32,7 @@ fun <K, V> Map<K, V>.getBigDecimal(key: K, default: BigDecimal = BigDecimal.ZERO
     return DataManipulator.getBigDecimal(this, key, default)
 }
 
-fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date {
+fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date? {
     return DataManipulator.getDate(this, key, default)
 }
 
