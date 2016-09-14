@@ -1659,4 +1659,20 @@ object DataManipulator {
             }
         }
     }
+    
+    @JvmStatic
+    @JvmOverloads
+    fun <E> shuffle(list: MutableList<E>, start: Int = 0, end: Int = list.size-1) {
+        for (i in end downTo start + 1) {
+            swapData(list, i, MathUtil.randomInteger(start, i))
+        }
+    }
+    
+    @JvmStatic
+    @JvmOverloads
+    fun <E> shuffle(array: Array<E>, start: Int = 0, end: Int = array.size-1) {
+        for (i in end downTo start + 1) {
+            swapData(array, i, MathUtil.randomInteger(start, i))
+        }
+    }
 }
