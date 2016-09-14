@@ -1021,12 +1021,12 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <K, E> getBigDecimal(map: Map<K, E>, key: K): BigDecimal {
+    fun <K, E> getBigDecimal(map: Map<K, E>, key: K): BigDecimal? {
         return getBigDecimal(map, key, BigDecimal.ZERO)
     }
 
     @JvmStatic
-    fun <K, E> getBigDecimal(map: Map<K, E>?, key: K, defaultValue: BigDecimal): BigDecimal {
+    fun <K, E> getBigDecimal(map: Map<K, E>?, key: K, defaultValue: BigDecimal?): BigDecimal? {
         if (map == null || !map.containsKey(key) || map[key] == null) {
             return defaultValue
         } else {
@@ -1259,7 +1259,7 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <K, V> getOrDefault(map: Map<K, V>, key: K, defaultValue: V): V {
+    fun <K, V> getOrDefault(map: Map<K, V>, key: K, defaultValue: V?): V? {
         if (map.containsKey(key)) {
             val v = map[key]
             return v ?: defaultValue
@@ -1269,7 +1269,7 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <K, V> getStringValue(map: Map<K, V>, key: K, defaultValue: String): String {
+    fun <K, V> getStringValue(map: Map<K, V>, key: K, defaultValue: String?): String? {
         if (map.containsKey(key)) {
             val value = map[key]
 
@@ -1280,7 +1280,7 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> getValue(map: Map<String, E>, key: String, defaultValue: E): E {
+    fun <E> getValue(map: Map<String, E>, key: String, defaultValue: E?): E? {
         if (map.containsKey(key)) {
             val v = map[key]
             if (v == null) {
@@ -1507,10 +1507,10 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <K> adjustMapIntegerValue(map: MutableMap<K, Any>, key: K, adjustValue: Int?): Int {
+    fun <K> adjustMapIntegerValue(map: MutableMap<K, Any>, key: K, adjustValue: Int): Int {
         var result = getIntValue(map, key, 10, 0)
 
-        result += adjustValue!!
+        result += adjustValue
 
         map.put(key, result)
 
@@ -1519,7 +1519,7 @@ object DataManipulator {
 
     @JvmStatic
     fun <K> adjustMapBigDecimalValue(map: MutableMap<K, Any>, key: K, adjustValue: BigDecimal): BigDecimal {
-        var result = getBigDecimal(map, key, BigDecimal.ZERO)
+        var result = getBigDecimal(map, key, BigDecimal.ZERO)!!
 
         result = result.add(adjustValue)
 

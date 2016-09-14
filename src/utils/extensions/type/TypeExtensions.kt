@@ -24,11 +24,11 @@ fun <K, V> Map<K, V>.getInt(key: K, default: Int = -1): Int {
     return DataManipulator.getIntValue(this, key, 10, default)
 }
 
-fun <K, V> Map<K, V>.getString(key: K, default: String = ""): String {
+fun <K, V> Map<K, V>.getString(key: K, default: String = ""): String? {
     return DataManipulator.getStringValue(this, key, default)
 }
 
-fun <K, V> Map<K, V>.getBigDecimal(key: K, default: BigDecimal = BigDecimal.ZERO): BigDecimal {
+fun <K, V> Map<K, V>.getBigDecimal(key: K, default: BigDecimal = BigDecimal.ZERO): BigDecimal? {
     return DataManipulator.getBigDecimal(this, key, default)
 }
 
