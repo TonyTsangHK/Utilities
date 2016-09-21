@@ -39,3 +39,8 @@ fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date? {
 fun <K, V> Map<K, V>.getBoolean(key: K, default: Boolean = false): Boolean {
     return DataManipulator.getBooleanValue(this, key, default)
 }
+
+// Null safe empty string check, null means empty
+fun String?.isEmptyString(): Boolean {
+    return this == null || "".equals(this)
+}
