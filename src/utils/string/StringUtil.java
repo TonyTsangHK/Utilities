@@ -257,101 +257,6 @@ public class StringUtil {
     }
     
     /**
-     * Check a string matches all the specified strings
-     * 
-     * @param str target string
-     * @param strs strings to match
-     *  
-     * @return match result
-     */
-    public static boolean stringMatchAll(String str, String ... strs) {
-        return stringMatchAll(str, false, strs);
-    }
-    
-    /**
-     * Check a string matches all the specified strings, case insensitive
-     * 
-     * @param str target string
-     * @param strs strings to match
-     * 
-     * @return match result
-     */
-    public static boolean stringMatchAllIgnoreCase(String str, String ... strs) {
-        return stringMatchAll(str, true, strs);
-    }
-    
-    /**
-     * Check a string matches all the specified strings
-     * 
-     * @param str target string
-     * @param ignoreCase ignore case flag
-     * @param strs strings to match
-     * 
-     * @return match result
-     */
-    public static boolean stringMatchAll(String str, boolean ignoreCase, String ... strs) {
-        if (str != null) {
-            for (int i = 0; i < strs.length; i++) {
-                String s = strs[i];
-                boolean equal = (ignoreCase)? str.equalsIgnoreCase(s) : str.equals(s);
-                if (!equal) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Check a string matches all the specified strings
-     * 
-     * @param str target string
-     * @param strs strings to match
-     * 
-     * @return match result
-     */
-    public static boolean stringMatchAll(String str, Collection<String> strs) {
-        return stringMatchAll(str, false, strs);
-    }
-    
-    /**
-     * Check a string matches all the specified strings, case sensitive
-     * 
-     * @param str target string
-     * @param strs strings to match
-     * 
-     * @return match result
-     */
-    public static boolean stringMatchAllIgnoreCase(String str, Collection<String> strs) {
-        return stringMatchAll(str, true, strs);
-    }
-    
-    /**
-     * Check a string matches all the specified strings
-     * 
-     * @param str target string
-     * @param ignoreCase ignore case flag
-     * @param strs strings to match
-     * 
-     * @return match result
-     */
-    public static boolean stringMatchAll(String str, boolean ignoreCase, Collection<String> strs) {
-        if (str != null) {
-            for (String s : strs) {
-                boolean equal = (ignoreCase)? str.equalsIgnoreCase(s) : str.equals(s);
-                if (!equal) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
      * Check a string matches any of the specified strings
      * 
      * @param str target string
@@ -789,13 +694,13 @@ public class StringUtil {
     }
 
     /**
-     * Split a string with regex delimiter
-     * (optimization apply but substring will hold reference of original string's char[])
+     * Split a string with regex delimiter, into an integer array
+     * If splitted string can't convert to integer result will be set to null instead of partial array.
      * 
      * @param inStr input string
      * @param regex regex delimiter
      * 
-     * @return splitted strings in list form
+     * @return splitted strings in integer array
      */
     public static int[] splitInteger(String inStr, String regex) {
         if (inStr == null) {
