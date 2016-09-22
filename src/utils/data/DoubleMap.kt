@@ -1,6 +1,5 @@
 package utils.data
 
-import utils.exception.DuplicateReferenceException
 import java.util.HashMap
 
 /**
@@ -20,16 +19,16 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         get() = keyReferencedMap.values
 
     private lateinit var keyReferencedMap: MutableMap<K, V>
-    private lateinit var valueReferencedMap: MutableMap<V, K>
+    private lateinit var valueReferencedMap: MutableMap<V, MutableList<K>>
 
     constructor(initialCapacity: Int) {
-        keyReferencedMap = HashMap<K, V>(initialCapacity)
-        valueReferencedMap = HashMap<V, K>(initialCapacity)
+        keyReferencedMap = HashMap(initialCapacity)
+        valueReferencedMap = HashMap(initialCapacity)
     }
 
     constructor() {
-        keyReferencedMap = HashMap<K, V>()
-        valueReferencedMap = HashMap<V, K>()
+        keyReferencedMap = HashMap()
+        valueReferencedMap = HashMap()
     }
 
     constructor(m: Map<out K, V>) : this() {
@@ -52,41 +51,66 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         return keyReferencedMap[key]
     }
 
-    fun getByValue(value: V): K? {
+    fun getByValue(value: V): List<K>? {
         return valueReferencedMap[value]
     }
     
     override fun put(key: K, value: V): V? {
         if (keyReferencedMap.containsKey(key)) {
-            valueReferencedMap.remove(keyReferencedMap[key])
-            valueReferencedMap.put(value, key)
+            val oldValue = keyReferencedMap[key]
+            val keyList = valueReferencedMap[oldValue]!!
+            
+            if (keyList.size > 1) {
+                keyList.remove(key)
+            } else {
+                valueReferencedMap.remove(oldValue)
+            }
+            
+            if (valueReferencedMap.containsKey(value)) {
+                valueReferencedMap[value]!!.add(key)
+            } else {
+                valueReferencedMap[value] = mutableListOf(key)
+            }
             return keyReferencedMap.put(key, value)
         } else {
+            keyReferencedMap[key] = value
+            
             if (valueReferencedMap.containsKey(value)) {
-                throw DuplicateReferenceException(
-                        value.toString() + " is referencing " + valueReferencedMap[value] + ", key: " + key + " reference duplicated!")
+                valueReferencedMap[value]!!.add(key)
             } else {
-                keyReferencedMap.put(key, value)
-                valueReferencedMap.put(value, key)
-                return value
+                valueReferencedMap[value] = mutableListOf(key)
             }
+            
+            return value
         }
     }
 
     override fun remove(key: K): V? {
         if (keyReferencedMap.containsKey(key)) {
             val v = keyReferencedMap.remove(key)
-            valueReferencedMap.remove(v)
+            
+            val keyList = valueReferencedMap[v]!!
+            
+            if (keyList.size > 1) {
+                keyList.remove(key)
+            } else {
+                valueReferencedMap.remove(v)
+            }
+            
             return v
         } else {
             return null
         }
     }
 
-    fun removeValue(value: V): K? {
+    fun removeValue(value: V): List<K>? {
         if (valueReferencedMap.containsKey(value)) {
             val k = valueReferencedMap.remove(value)
-            keyReferencedMap.remove(k)
+            
+            k!!.forEach {
+                keyReferencedMap.remove(it)
+            }
+            
             return k
         } else {
             return null
@@ -94,8 +118,8 @@ class DoubleMap<K, V> : MutableMap<K, V> {
     }
 
     override fun putAll(from: Map<out K, V>) {
-        for ((key, value) in from) {
-            put(key, value)
+        from.forEach {
+            put(it.key, it.value)
         }
     }
 
@@ -109,11 +133,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
     }
 
     fun keys(): Collection<K> {
-        return valueReferencedMap.values
-    }
-
-    fun valueEntrySet(): MutableSet<MutableMap.MutableEntry<V, K>> {
-        return valueReferencedMap.entries
+        return keyReferencedMap.keys
     }
 
     override fun equals(other: Any?): Boolean {
