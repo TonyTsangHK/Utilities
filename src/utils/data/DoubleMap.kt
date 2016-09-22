@@ -55,6 +55,14 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         return valueReferencedMap[value]
     }
     
+    fun getFirstKeyByValue(value: V): K? {
+        if (valueReferencedMap.containsKey(value)) {
+            return valueReferencedMap[value]!!.first()
+        } else {
+            return null
+        }
+    }
+    
     override fun put(key: K, value: V): V? {
         if (keyReferencedMap.containsKey(key)) {
             val oldValue = keyReferencedMap[key]
