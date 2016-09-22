@@ -19,7 +19,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         get() = keyReferencedMap.values
 
     private lateinit var keyReferencedMap: MutableMap<K, V>
-    private lateinit var valueReferencedMap: MutableMap<V, MutableList<K>>
+    private lateinit var valueReferencedMap: MutableMap<V, MutableSet<K>>
 
     constructor(initialCapacity: Int) {
         keyReferencedMap = HashMap(initialCapacity)
@@ -51,7 +51,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         return keyReferencedMap[key]
     }
 
-    fun getByValue(value: V): List<K>? {
+    fun getByValue(value: V): Set<K>? {
         return valueReferencedMap[value]
     }
     
@@ -69,7 +69,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
             if (valueReferencedMap.containsKey(value)) {
                 valueReferencedMap[value]!!.add(key)
             } else {
-                valueReferencedMap[value] = mutableListOf(key)
+                valueReferencedMap[value] = mutableSetOf(key)
             }
             return keyReferencedMap.put(key, value)
         } else {
@@ -78,7 +78,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
             if (valueReferencedMap.containsKey(value)) {
                 valueReferencedMap[value]!!.add(key)
             } else {
-                valueReferencedMap[value] = mutableListOf(key)
+                valueReferencedMap[value] = mutableSetOf(key)
             }
             
             return value
@@ -103,7 +103,7 @@ class DoubleMap<K, V> : MutableMap<K, V> {
         }
     }
 
-    fun removeValue(value: V): List<K>? {
+    fun removeValue(value: V): Set<K>? {
         if (valueReferencedMap.containsKey(value)) {
             val k = valueReferencedMap.remove(value)
             
