@@ -98,6 +98,59 @@ class TestDoublySequence {
         assertEquals(n2.previous, n1)
         assertNull(n1.previous)
     }
+    
+    private fun createIntegerList(range: IntRange): DoublyLinkedList<Int> {
+        val list = DoublyLinkedList<Int>()
+        
+        for (i in range) {
+            list.add(i)
+        }
+        
+        return list
+    }
+    
+    @Test
+    fun TestRemoveRange() {
+        var list = createIntegerList(0 .. 10)
+        
+        list.removeRange(2, 4)
+        
+        for (i in list.indices) {
+            if (i < 2) {
+                assertEquals(list.get(i), i)
+            } else if (i >= 2) {
+                assertEquals(list.get(i), i + 3)
+            }
+        }
+
+        assertEquals(list.size, 8)
+        
+        list = createIntegerList(0 .. 10)
+        
+        list.removeRange(0, 10)
+        
+        assertEquals(list.size, 0)
+
+        list = createIntegerList(0 .. 10)
+        
+        list.removeRange(0, 5)
+        
+        for (i in list.indices) {
+            assertEquals(list.get(i), i+6)
+        }
+
+        assertEquals(list.size, 5)
+        
+        list = createIntegerList(0 .. 10)
+        
+        list.removeRange(5, 10)
+        
+        for (i in list.indices) {
+            assertEquals(list.get(i), i)
+        }
+        
+        assertEquals(list.size, 5)
+    }
 
     @Test
     fun TestInsertNode() {

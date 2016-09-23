@@ -107,6 +107,43 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
         replace(getNode(i), list)
     }
 
+    override fun add(index: Int, element: V) {
+        insertData(index, element)
+    }
+
+    override public fun removeRange(fromIndex: Int, toIndex: Int) {
+        checkIndex(fromIndex)
+        checkIndex(toIndex)
+        if (fromIndex <= toIndex) {
+            if (fromIndex == toIndex) {
+                removeAt(fromIndex)
+            } else {
+                val fromNode = getNode(fromIndex)!!
+                val toNode = getNode(toIndex)!!
+                
+                if (fromNode === head && toNode === tail) {
+                    clear()
+                } else {
+                    if (fromNode === head) {
+                        head = toNode.next
+                        head!!.previous = null
+                    } else if (toNode === tail) {
+                        tail = fromNode.previous
+                        tail!!.next = null
+                    } else {
+                        fromNode.previous!!.next = toNode.next
+                        toNode.next!!.previous = fromNode.previous
+                    }
+                    size -= toIndex - fromIndex + 1
+                }
+            }
+        }
+    }
+
+    override fun toArray(): Array<out Any?> {
+        return Array(size, {get(it) as Any?})
+    }
+
     fun add(vararg datas: V) {
         for (data in datas) {
             add(data)
@@ -336,8 +373,18 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
 
     override fun get(index: Int): V {
         if (index >= 0 && index < size) {
-            return getNodeData(index)!!
+            val data = getNodeData(index)
+            
+            // Fix for nullable generic type, null check should not be handled here
+            // e.g. null should be a valid return type for String? type
+            return if (data==null) null as V else data
         } else {
+            throw IndexOutOfBoundsException("Index: $index, Size: $size")
+        }
+    }
+    
+    private fun checkIndex(index: Int) {
+        if (index < 0 && index >= size) {
             throw IndexOutOfBoundsException("Index: $index, Size: $size")
         }
     }
