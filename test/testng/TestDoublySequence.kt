@@ -7,9 +7,10 @@ import java.util.*
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import utils.data.*
+import utils.exception.NonMemberNodeException
 
 class TestDoublySequence {
-    private lateinit var DefaultSequence: DoublyLinkedList<String?>
+    private lateinit var defaultSequence: DoublyLinkedList<String?>
     private lateinit var n1: DoublyNode<String?>
     private lateinit var n2: DoublyNode<String?>
     private lateinit var n3: DoublyNode<String?>
@@ -43,14 +44,14 @@ class TestDoublySequence {
         n6 = DoublyNode<String?>(s6)
         n7 = DoublyNode<String?>(s7)
 
-        DefaultSequence = DoublyLinkedList<String?>()
-        DefaultSequence.add(n1)
-        DefaultSequence.add(n2)
-        DefaultSequence.add(n3)
-        DefaultSequence.add(n4)
-        DefaultSequence.add(n5)
-        DefaultSequence.add(n6)
-        DefaultSequence.add(n7)
+        defaultSequence = DoublyLinkedList<String?>()
+        defaultSequence.add(n1)
+        defaultSequence.add(n2)
+        defaultSequence.add(n3)
+        defaultSequence.add(n4)
+        defaultSequence.add(n5)
+        defaultSequence.add(n6)
+        defaultSequence.add(n7)
     }
 
     @Test
@@ -82,7 +83,7 @@ class TestDoublySequence {
 
     @Test
     fun TestNode() {
-        assertEquals(DefaultSequence.head, n1)
+        assertEquals(defaultSequence.head, n1)
         assertEquals(n1.next, n2)
         assertEquals(n2.next, n3)
         assertEquals(n3.next, n4)
@@ -151,40 +152,95 @@ class TestDoublySequence {
         
         assertEquals(list.size, 5)
     }
+    
+    @Test
+    fun testIndexOutOfBoundException() {
+        assertException(
+            {
+                defaultSequence.get(-1)
+            },
+            IndexOutOfBoundsException::class.java
+        )
+        
+        assertException(
+            {
+                defaultSequence.get(defaultSequence.size)
+            },
+            IndexOutOfBoundsException::class.java
+        )
+        
+        assertException(
+            {
+                defaultSequence.subList(-1, defaultSequence.size)
+            },
+            IndexOutOfBoundsException::class.java
+        )
+        
+        assertException(
+            {
+                defaultSequence.subSequence(defaultSequence.getNode(2), defaultSequence.getNode(0))
+            },
+            NonMemberNodeException::class.java
+        )
+        
+        assertException(
+            {
+                defaultSequence.subSequence(defaultSequence.getNode(0), DoublyNode<String?>(""))
+            },
+            NonMemberNodeException::class.java
+        )
+    }
+    
+    fun assertException(runner: () -> Unit, exceptionClass: Class<out Exception>, message: String? = null) {
+        var caughtException: Exception? = null
+        try {
+            runner()
+        } catch (e: Exception) {
+            caughtException = e
+        }
+        
+        if (caughtException == null || !exceptionClass.isInstance(caughtException)) {
+            if (message != null) {
+                fail(message)
+            } else {
+                fail("Excepting exception: ${exceptionClass.name}, but found ${caughtException?.javaClass?.name}")
+            }
+        }
+    }
 
     @Test
     fun TestInsertNode() {
         val newNode = DoublyNode<String?>("newNode")
-        DefaultSequence.insertNode(0, newNode)
+        defaultSequence.insertNode(0, newNode)
 
-        assertEquals(DefaultSequence.size, 8)
-        assertEquals(DefaultSequence.head, newNode)
+        assertEquals(defaultSequence.size, 8)
+        assertEquals(defaultSequence.head, newNode)
         assertEquals(newNode.next, n1)
         assertEquals(n1.previous, newNode)
         assertNull(newNode.previous)
 
         val newNode2 = DoublyNode<String?>("newNode2")
-        DefaultSequence.addToHead(newNode2)
+        defaultSequence.addToHead(newNode2)
 
-        assertEquals(DefaultSequence.size, 9)
-        assertEquals(DefaultSequence.head, newNode2)
+        assertEquals(defaultSequence.size, 9)
+        assertEquals(defaultSequence.head, newNode2)
         assertEquals(newNode2.next, newNode)
         assertEquals(newNode.next, n1)
         assertNull(newNode2.previous)
 
         val newNode3 = DoublyNode<String?>("newNode3")
-        DefaultSequence.addToTail(newNode3)
+        defaultSequence.addToTail(newNode3)
 
-        assertEquals(DefaultSequence.size, 10)
+        assertEquals(defaultSequence.size, 10)
         assertEquals(newNode3.previous, n7)
         assertEquals(n7.next, newNode3)
         assertNull(newNode3.next)
 
         val midNode = DoublyNode<String?>("midNode")
-        DefaultSequence.insertNode(5, midNode)
+        defaultSequence.insertNode(5, midNode)
 
-        assertEquals(DefaultSequence.size, 11)
-        assertEquals(DefaultSequence.getNode(5), midNode)
+        assertEquals(defaultSequence.size, 11)
+        assertEquals(defaultSequence.getNode(5), midNode)
         assertEquals(midNode.previous, n3)
         assertEquals(midNode.next, n4)
         assertEquals(n3.next, midNode)
@@ -193,48 +249,48 @@ class TestDoublySequence {
 
     @Test
     fun TestGetNode() {
-        assertEquals(DefaultSequence.getNode(0), n1)
-        assertEquals(DefaultSequence.getNode(1), n2)
-        assertEquals(DefaultSequence.getNode(2), n3)
-        assertEquals(DefaultSequence.getNode(3), n4)
-        assertEquals(DefaultSequence.getNode(4), n5)
-        assertEquals(DefaultSequence.getNode(5), n6)
-        assertEquals(DefaultSequence.getNode(6), n7)
+        assertEquals(defaultSequence.getNode(0), n1)
+        assertEquals(defaultSequence.getNode(1), n2)
+        assertEquals(defaultSequence.getNode(2), n3)
+        assertEquals(defaultSequence.getNode(3), n4)
+        assertEquals(defaultSequence.getNode(4), n5)
+        assertEquals(defaultSequence.getNode(5), n6)
+        assertEquals(defaultSequence.getNode(6), n7)
     }
 
     @Test
     fun TestRemoveNode() {
-        DefaultSequence.removeHead()
-        assertEquals(DefaultSequence.size, 6)
-        assertEquals(DefaultSequence.getNode(0), n2)
-        assertEquals(DefaultSequence.getNode(1), n3)
-        assertEquals(DefaultSequence.getNode(2), n4)
-        assertEquals(DefaultSequence.getNode(3), n5)
-        assertEquals(DefaultSequence.getNode(4), n6)
-        assertEquals(DefaultSequence.getNode(5), n7)
+        defaultSequence.removeHead()
+        assertEquals(defaultSequence.size, 6)
+        assertEquals(defaultSequence.getNode(0), n2)
+        assertEquals(defaultSequence.getNode(1), n3)
+        assertEquals(defaultSequence.getNode(2), n4)
+        assertEquals(defaultSequence.getNode(3), n5)
+        assertEquals(defaultSequence.getNode(4), n6)
+        assertEquals(defaultSequence.getNode(5), n7)
 
         assertNull(n2.previous)
         assertNull(n1.previous)
         assertNull(n1.next)
 
-        DefaultSequence.removeTail()
-        assertEquals(DefaultSequence.size, 5)
-        assertEquals(DefaultSequence.getNode(0), n2)
-        assertEquals(DefaultSequence.getNode(1), n3)
-        assertEquals(DefaultSequence.getNode(2), n4)
-        assertEquals(DefaultSequence.getNode(3), n5)
-        assertEquals(DefaultSequence.getNode(4), n6)
+        defaultSequence.removeTail()
+        assertEquals(defaultSequence.size, 5)
+        assertEquals(defaultSequence.getNode(0), n2)
+        assertEquals(defaultSequence.getNode(1), n3)
+        assertEquals(defaultSequence.getNode(2), n4)
+        assertEquals(defaultSequence.getNode(3), n5)
+        assertEquals(defaultSequence.getNode(4), n6)
 
         assertNull(n6.next)
         assertNull(n7.previous)
         assertNull(n7.next)
 
-        DefaultSequence.removeNode(n4)
-        assertEquals(DefaultSequence.size, 4)
-        assertEquals(DefaultSequence.getNode(0), n2)
-        assertEquals(DefaultSequence.getNode(1), n3)
-        assertEquals(DefaultSequence.getNode(2), n5)
-        assertEquals(DefaultSequence.getNode(3), n6)
+        defaultSequence.removeNode(n4)
+        assertEquals(defaultSequence.size, 4)
+        assertEquals(defaultSequence.getNode(0), n2)
+        assertEquals(defaultSequence.getNode(1), n3)
+        assertEquals(defaultSequence.getNode(2), n5)
+        assertEquals(defaultSequence.getNode(3), n6)
 
         assertEquals(n3.previous, n2)
         assertEquals(n3.next, n5)
@@ -246,7 +302,7 @@ class TestDoublySequence {
 
     @Test
     fun TestIterator() {
-        val iter = DefaultSequence.listIterator()
+        val iter = defaultSequence.listIterator()
         /*LinkedList<String> linkedList = new LinkedList<String>();
         linkedList.add(s1);
         linkedList.add(s2);
@@ -330,7 +386,7 @@ class TestDoublySequence {
 
     @Test
     fun TestListIteratorWithStartIndex() {
-        val iter = DefaultSequence.listIterator(3)
+        val iter = defaultSequence.listIterator(3)
         /*LinkedList<String> linkedList = new LinkedList<String>();
         linkedList.add(s1);
         linkedList.add(s2);
@@ -425,30 +481,30 @@ class TestDoublySequence {
 
     @Test
     fun TestContainsNode() {
-        assertTrue(DefaultSequence.containsNode(n1))
-        assertTrue(DefaultSequence.containsNode(n2))
-        assertTrue(DefaultSequence.containsNode(n3))
-        assertTrue(DefaultSequence.containsNode(n4))
-        assertTrue(DefaultSequence.containsNode(n5))
-        assertTrue(DefaultSequence.containsNode(n6))
-        assertTrue(DefaultSequence.containsNode(n7))
+        assertTrue(defaultSequence.containsNode(n1))
+        assertTrue(defaultSequence.containsNode(n2))
+        assertTrue(defaultSequence.containsNode(n3))
+        assertTrue(defaultSequence.containsNode(n4))
+        assertTrue(defaultSequence.containsNode(n5))
+        assertTrue(defaultSequence.containsNode(n6))
+        assertTrue(defaultSequence.containsNode(n7))
 
-        assertFalse(DefaultSequence.containsNode(DoublyNode("n7")))
+        assertFalse(defaultSequence.containsNode(DoublyNode("n7")))
     }
 
     @SuppressWarnings("unchecked")
     @Test
     fun TestContainsNodes() {
-        assertTrue(DefaultSequence.containsNodes(n1, n2, n3, n4, n5, n6, n7))
-        assertTrue(DefaultSequence.containsNodes(n1, n2, n3, n4, n6, n7))
-        assertTrue(DefaultSequence.containsNodes(n1, n2, n7))
-        assertTrue(DefaultSequence.containsNodes(n7, n1, n2, n3, n4, n5, n6, n7))
-        assertFalse(DefaultSequence.containsNodes(n7, n1, n2, n3, n4, n5, n6, n7, DoublyNode("n5")))
+        assertTrue(defaultSequence.containsNodes(n1, n2, n3, n4, n5, n6, n7))
+        assertTrue(defaultSequence.containsNodes(n1, n2, n3, n4, n6, n7))
+        assertTrue(defaultSequence.containsNodes(n1, n2, n7))
+        assertTrue(defaultSequence.containsNodes(n7, n1, n2, n3, n4, n5, n6, n7))
+        assertFalse(defaultSequence.containsNodes(n7, n1, n2, n3, n4, n5, n6, n7, DoublyNode("n5")))
     }
 
     @Test
     fun TestSubSequenceByIndex() {
-        val newSeq = DefaultSequence.getSubList(0, 7)!!
+        val newSeq = defaultSequence.getSubList(0, 7)!!
         assertEquals(newSeq.size, 7)
         assertEquals(newSeq[0], n1.data)
         assertEquals(newSeq[1], n2.data)
@@ -461,33 +517,33 @@ class TestDoublySequence {
 
     @Test
     fun TestIndexOfNode() {
-        assertEquals(DefaultSequence.indexOfNode(n1), 0)
-        assertEquals(DefaultSequence.indexOfNode(n2), 1)
-        assertEquals(DefaultSequence.indexOfNode(n3), 2)
-        assertEquals(DefaultSequence.indexOfNode(n4), 3)
-        assertEquals(DefaultSequence.indexOfNode(n5), 4)
-        assertEquals(DefaultSequence.indexOfNode(n6), 5)
-        assertEquals(DefaultSequence.indexOfNode(n7), 6)
-        assertEquals(DefaultSequence.indexOfNode(null), -1)
-        assertEquals(DefaultSequence.indexOfNode(DoublyNode("n1")), -1)
+        assertEquals(defaultSequence.indexOfNode(n1), 0)
+        assertEquals(defaultSequence.indexOfNode(n2), 1)
+        assertEquals(defaultSequence.indexOfNode(n3), 2)
+        assertEquals(defaultSequence.indexOfNode(n4), 3)
+        assertEquals(defaultSequence.indexOfNode(n5), 4)
+        assertEquals(defaultSequence.indexOfNode(n6), 5)
+        assertEquals(defaultSequence.indexOfNode(n7), 6)
+        assertEquals(defaultSequence.indexOfNode(null), -1)
+        assertEquals(defaultSequence.indexOfNode(DoublyNode("n1")), -1)
     }
 
     @Test
     fun TestIndexOfNodeWithStartIndex() {
-        assertEquals(DefaultSequence.indexOfNode(n7, 4), 6)
-        assertEquals(DefaultSequence.indexOfNode(n7, 5), 6)
-        assertEquals(DefaultSequence.indexOfNode(n6, 6), -1)
+        assertEquals(defaultSequence.indexOfNode(n7, 4), 6)
+        assertEquals(defaultSequence.indexOfNode(n7, 5), 6)
+        assertEquals(defaultSequence.indexOfNode(n6, 6), -1)
     }
 
     @Test
     fun TestRemoveInteval() {
-        DefaultSequence.removeInterval(n3, n6)
+        defaultSequence.removeInterval(n3, n6)
 
-        assertEquals(DefaultSequence.size, 3)
+        assertEquals(defaultSequence.size, 3)
 
-        assertEquals(DefaultSequence.getNode(0), n1)
-        assertEquals(DefaultSequence.getNode(1), n2)
-        assertEquals(DefaultSequence.getNode(2), n7)
+        assertEquals(defaultSequence.getNode(0), n1)
+        assertEquals(defaultSequence.getNode(1), n2)
+        assertEquals(defaultSequence.getNode(2), n7)
 
         assertEquals(n2.next, n7)
         assertEquals(n7.previous, n2)
@@ -495,13 +551,13 @@ class TestDoublySequence {
 
     @Test
     fun TestRemoveIntevalWithIndex() {
-        DefaultSequence.removeInterval(2, 5)
+        defaultSequence.removeInterval(2, 5)
 
-        assertEquals(DefaultSequence.size, 3)
+        assertEquals(defaultSequence.size, 3)
 
-        assertEquals(DefaultSequence.getNode(0), n1)
-        assertEquals(DefaultSequence.getNode(1), n2)
-        assertEquals(DefaultSequence.getNode(2), n7)
+        assertEquals(defaultSequence.getNode(0), n1)
+        assertEquals(defaultSequence.getNode(1), n2)
+        assertEquals(defaultSequence.getNode(2), n7)
 
         assertEquals(n2.next, n7)
         assertEquals(n7.previous, n2)
@@ -509,11 +565,21 @@ class TestDoublySequence {
 
     @Test
     fun TestSubSequenceByNode() {
-        var newSeq: DoublyLinkedList<String?>? = DefaultSequence.subSequence(n7, n1)
-        assertNull(newSeq)
-        newSeq = DefaultSequence.subSequence(DoublyNode("n1"), n7)
-        assertNull(newSeq)
-        newSeq = DefaultSequence.subSequence(n1, n7)!!
+        assertException(
+            {
+                defaultSequence.subSequence(n7, n1)
+            },
+            NonMemberNodeException::class.java
+        )
+        
+        assertException(
+            {
+                defaultSequence.subSequence(DoublyNode("n1"), n7)
+            },
+            NonMemberNodeException::class.java
+        )
+
+        val newSeq: DoublyLinkedList<String?> = defaultSequence.subSequence(n1, n7)
 
         assertEquals(newSeq.size, 7)
         assertNotSame(newSeq.getNode(0), n1)
@@ -524,13 +590,13 @@ class TestDoublySequence {
         assertNotSame(newSeq.getNode(5), n6)
         assertNotSame(newSeq.getNode(6), n7)
 
-        assertEquals(newSeq.getNode(0)!!.data, n1.data)
-        assertEquals(newSeq.getNode(1)!!.data, n2.data)
-        assertEquals(newSeq.getNode(2)!!.data, n3.data)
-        assertEquals(newSeq.getNode(3)!!.data, n4.data)
-        assertEquals(newSeq.getNode(4)!!.data, n5.data)
-        assertEquals(newSeq.getNode(5)!!.data, n6.data)
-        assertEquals(newSeq.getNode(6)!!.data, n7.data)
+        assertEquals(newSeq.getNode(0).data, n1.data)
+        assertEquals(newSeq.getNode(1).data, n2.data)
+        assertEquals(newSeq.getNode(2).data, n3.data)
+        assertEquals(newSeq.getNode(3).data, n4.data)
+        assertEquals(newSeq.getNode(4).data, n5.data)
+        assertEquals(newSeq.getNode(5).data, n6.data)
+        assertEquals(newSeq.getNode(6).data, n7.data)
     }
 
     @Test
@@ -540,19 +606,19 @@ class TestDoublySequence {
         list.add(n4.data)
         list.add(n6.data)
 
-        DefaultSequence.addAll(list)
+        defaultSequence.addAll(list)
 
-        assertEquals(DefaultSequence.getNode(0)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(1)!!.data, n2.data)
-        assertEquals(DefaultSequence.getNode(2)!!.data, n3.data)
-        assertEquals(DefaultSequence.getNode(3)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(4)!!.data, n5.data)
-        assertEquals(DefaultSequence.getNode(5)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(6)!!.data, n7.data)
-        assertEquals(DefaultSequence.getNode(7)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(8)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(9)!!.data, n6.data)
-        assertEquals(DefaultSequence.size, 10)
+        assertEquals(defaultSequence.getNode(0).data, n1.data)
+        assertEquals(defaultSequence.getNode(1).data, n2.data)
+        assertEquals(defaultSequence.getNode(2).data, n3.data)
+        assertEquals(defaultSequence.getNode(3).data, n4.data)
+        assertEquals(defaultSequence.getNode(4).data, n5.data)
+        assertEquals(defaultSequence.getNode(5).data, n6.data)
+        assertEquals(defaultSequence.getNode(6).data, n7.data)
+        assertEquals(defaultSequence.getNode(7).data, n1.data)
+        assertEquals(defaultSequence.getNode(8).data, n4.data)
+        assertEquals(defaultSequence.getNode(9).data, n6.data)
+        assertEquals(defaultSequence.size, 10)
     }
 
     @Test
@@ -562,19 +628,19 @@ class TestDoublySequence {
         list.add(n4.data)
         list.add(n6.data)
 
-        DefaultSequence.addAllToHead(list)
+        defaultSequence.addAllToHead(list)
 
-        assertEquals(DefaultSequence.getNode(0)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(1)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(2)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(3)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(4)!!.data, n2.data)
-        assertEquals(DefaultSequence.getNode(5)!!.data, n3.data)
-        assertEquals(DefaultSequence.getNode(6)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(7)!!.data, n5.data)
-        assertEquals(DefaultSequence.getNode(8)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(9)!!.data, n7.data)
-        assertEquals(DefaultSequence.size, 10)
+        assertEquals(defaultSequence.getNode(0).data, n1.data)
+        assertEquals(defaultSequence.getNode(1).data, n4.data)
+        assertEquals(defaultSequence.getNode(2).data, n6.data)
+        assertEquals(defaultSequence.getNode(3).data, n1.data)
+        assertEquals(defaultSequence.getNode(4).data, n2.data)
+        assertEquals(defaultSequence.getNode(5).data, n3.data)
+        assertEquals(defaultSequence.getNode(6).data, n4.data)
+        assertEquals(defaultSequence.getNode(7).data, n5.data)
+        assertEquals(defaultSequence.getNode(8).data, n6.data)
+        assertEquals(defaultSequence.getNode(9).data, n7.data)
+        assertEquals(defaultSequence.size, 10)
     }
 
     @Test
@@ -584,19 +650,19 @@ class TestDoublySequence {
         list.add(n4.data)
         list.add(n6.data)
 
-        DefaultSequence.addAll(3, list)
+        defaultSequence.addAll(3, list)
 
-        assertEquals(DefaultSequence.getNode(0)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(1)!!.data, n2.data)
-        assertEquals(DefaultSequence.getNode(2)!!.data, n3.data)
-        assertEquals(DefaultSequence.getNode(3)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(4)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(5)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(6)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(7)!!.data, n5.data)
-        assertEquals(DefaultSequence.getNode(8)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(9)!!.data, n7.data)
-        assertEquals(DefaultSequence.size, 10)
+        assertEquals(defaultSequence.getNode(0).data, n1.data)
+        assertEquals(defaultSequence.getNode(1).data, n2.data)
+        assertEquals(defaultSequence.getNode(2).data, n3.data)
+        assertEquals(defaultSequence.getNode(3).data, n1.data)
+        assertEquals(defaultSequence.getNode(4).data, n4.data)
+        assertEquals(defaultSequence.getNode(5).data, n6.data)
+        assertEquals(defaultSequence.getNode(6).data, n4.data)
+        assertEquals(defaultSequence.getNode(7).data, n5.data)
+        assertEquals(defaultSequence.getNode(8).data, n6.data)
+        assertEquals(defaultSequence.getNode(9).data, n7.data)
+        assertEquals(defaultSequence.size, 10)
     }
 
     @Test
@@ -606,15 +672,15 @@ class TestDoublySequence {
         list.add(n4.data)
         list.add(n6.data)
 
-        DefaultSequence.addAll(list)
-        DefaultSequence.retainAll(list)
+        defaultSequence.addAll(list)
+        defaultSequence.retainAll(list)
 
-        assertEquals(DefaultSequence.getNode(0)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(1)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(2)!!.data, n6.data)
-        assertEquals(DefaultSequence.getNode(3)!!.data, n1.data)
-        assertEquals(DefaultSequence.getNode(4)!!.data, n4.data)
-        assertEquals(DefaultSequence.getNode(5)!!.data, n6.data)
-        assertEquals(DefaultSequence.size, 6)
+        assertEquals(defaultSequence.getNode(0).data, n1.data)
+        assertEquals(defaultSequence.getNode(1).data, n4.data)
+        assertEquals(defaultSequence.getNode(2).data, n6.data)
+        assertEquals(defaultSequence.getNode(3).data, n1.data)
+        assertEquals(defaultSequence.getNode(4).data, n4.data)
+        assertEquals(defaultSequence.getNode(5).data, n6.data)
+        assertEquals(defaultSequence.size, 6)
     }
 }

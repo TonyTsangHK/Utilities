@@ -1,5 +1,6 @@
 package utils.data
 
+import utils.exception.NonMemberNodeException
 import java.io.Serializable
 import java.util.*
 
@@ -32,10 +33,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
     }
 
     fun replace(i: Int, data: V) {
-        val node = getNode(i)
-        if (node != null) {
-            node.data = data
-        }
+        getNode(i).data = data
     }
 
     private fun replace(node: DoublyNode<V>, size: Int, container: HeadTailContainer<V>) {
@@ -118,8 +116,8 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
             if (fromIndex == toIndex) {
                 removeAt(fromIndex)
             } else {
-                val fromNode = getNode(fromIndex)!!
-                val toNode = getNode(toIndex)!!
+                val fromNode = getNode(fromIndex)
+                val toNode = getNode(toIndex)
                 
                 if (fromNode === head && toNode === tail) {
                     clear()
@@ -197,7 +195,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
             return addToTail(n)
         } else {
             val node = getNode(i)
-            node!!.previous!!.next = n
+            node.previous!!.next = n
             n.next = node
             size++
             return n
@@ -275,27 +273,25 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
         }
     }
 
-    fun setList(list: DoublyLinkedList<V>?) {
-        if (list != null) {
-            val listHead = list.head
-            val listTail = list.tail
-            this.head = listHead
-            this.tail = listTail
-            size = list.size
-            var node = listHead
-            while (node != null) {
-                node = node.next
-            }
+    fun setList(list: DoublyLinkedList<V>) {
+        val listHead = list.head
+        val listTail = list.tail
+        this.head = listHead
+        this.tail = listTail
+        size = list.size
+        var node = listHead
+        while (node != null) {
+            node = node.next
         }
     }
 
-    fun insertSubList(i: Int, list: DoublyLinkedList<V>?) {
-        if (i >= 0 && i < size && list != null && list !== this) {
+    fun insertSubList(i: Int, list: DoublyLinkedList<V>) {
+        if (i >= 0 && i < size && list !== this) {
             size += list.size
             val h = list.head
             val t = list.tail
             val n = getNode(i)
-            val p = n!!.previous
+            val p = n.previous
             if (p != null) {
                 h!!.previous = p
             }
@@ -352,15 +348,15 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
                 head = null
                 tail = null
             } else if (startNode == head) {
-                head = endNode!!.next
+                head = endNode.next
                 head!!.previous = null
                 endNode.next = null
             } else if (endNode == tail) {
-                tail = startNode!!.previous
+                tail = startNode.previous
                 tail!!.next = null
                 startNode.previous = null
             } else {
-                startNode!!.previous!!.next = endNode!!.next
+                startNode.previous!!.next = endNode.next
                 startNode.previous = null
                 endNode.next = null
             }
@@ -372,25 +368,17 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
     }
 
     override fun get(index: Int): V {
-        if (index >= 0 && index < size) {
-            val data = getNodeData(index)
-            
-            // Fix for nullable generic type, null check should not be handled here
-            // e.g. null should be a valid return type for String? type
-            return if (data==null) null as V else data
-        } else {
-            throw IndexOutOfBoundsException("Index: $index, Size: $size")
-        }
+        return getNode(index).data
     }
     
     private fun checkIndex(index: Int) {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw IndexOutOfBoundsException("Index: $index, Size: $size")
         }
     }
 
-    override fun containsAll(datas: Collection<V>): Boolean {
-        for (obj in datas) {
+    override fun containsAll(elements: Collection<V>): Boolean {
+        for (obj in elements) {
             if (!contains(obj)) {
                 return false
             }
@@ -456,23 +444,19 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
         return DoublyIterator(index)
     }
 
-    fun getNodeData(i: Int): V? {
-        if (i < 0 || i >= size) {
-            throw IndexOutOfBoundsException("Index: $i, Size: $size")
-        } else {
-            val n = getNode(i)
-            return n?.data
-        }
+    fun getNodeData(i: Int): V {
+        checkIndex(i)
+        return getNode(i).data
     }
     
-    fun getNode(i: Int): DoublyNode<V>? {
-        if (i < 0 || i >= size) {
-            throw IndexOutOfBoundsException("Index: " + i +
-                ", Size: " + size)
-        } else if (i == 0) {
-            return head
+    // Throw index out of bounds exception instead of returning null
+    fun getNode(i: Int): DoublyNode<V> {
+        checkIndex(i)
+        
+        if (i == 0) {
+            return head!!
         } else if (i == size - 1) {
-            return tail
+            return tail!!
         } else {
             if (i < size shr 2) {
                 var c = 1
@@ -481,7 +465,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
                     n = n.next
                     c++
                 }
-                return n
+                return n!!
             } else {
                 var c = size - 2
                 var n: DoublyNode<V>? = tail
@@ -489,7 +473,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
                     n = n.previous
                     c--
                 }
-                return n
+                return n!!
             }
         }
     }
@@ -621,24 +605,23 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
         }
     }
 
-    fun getSubList(startIndex: Int, length: Int): DoublyLinkedList<V>? {
-        if (startIndex >= 0 && startIndex + length <= size) {
-            val seq = DoublyLinkedList<V>()
-            var n = getNode(startIndex)
+    fun getSubList(startIndex: Int, length: Int): DoublyLinkedList<V> {
+        checkIndex(startIndex)
+        checkIndex(startIndex+length-1)
+        
+        val seq = DoublyLinkedList<V>()
+        var n: DoublyNode<V>? = getNode(startIndex)
+        seq.add(n!!.data)
+        var c = 1
+        while (c < length) {
+            n = n!!.next
             seq.add(n!!.data)
-            var c = 1
-            while (c < length) {
-                n = n!!.next
-                seq.add(n!!.data)
-                c++
-            }
-            return seq
-        } else {
-            return null
+            c++
         }
+        return seq
     }
     
-    fun subSequence(startNode: DoublyNode<V>, endNode: DoublyNode<V>): DoublyLinkedList<V>? {
+    fun subSequence(startNode: DoublyNode<V>, endNode: DoublyNode<V>): DoublyLinkedList<V> {
         if (containsNodes(startNode, endNode)) {
             val seq = DoublyLinkedList<V>()
             if (startNode === endNode) {
@@ -650,14 +633,14 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
                         seq.add(n.data)
                         n = n.next
                     } else {
-                        return null
+                        throw NonMemberNodeException("Node cannot be connected!")
                     }
                 }
                 seq.add(endNode.data)
             }
             return seq
         } else {
-            return null
+            throw NonMemberNodeException("Non member node detected, sub sequence cannot be generated!")
         }
     }
 
@@ -720,7 +703,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
             } else {
                 val container = createNodeList(elements)
                 val node = getNode(index)
-                node!!.previous!!.next = container.head
+                node.previous!!.next = container.head
                 node.previous = container.tail
                 size += elements.size
             }
@@ -942,11 +925,8 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
 
     override fun set(index: Int, element: V): V? {
         val node = getNode(index)
-        var pData: V? = null
-        if (node != null) {
-            pData = node.data
-            node.data = element
-        }
+        val pData = node.data
+        node.data = element
         return pData
     }
 
