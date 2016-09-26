@@ -8,7 +8,7 @@ import java.util.*
  * Date: 2016-09-13
  * Time: 15:22
  */
-class SearchTreeNode<V>: AbstractTreeNode<V?> {
+class SearchTreeNode<V>: AbstractTreeNode<V> {
     companion object {
         // Absolute minimum cost
         @JvmField
@@ -31,15 +31,15 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
         }
     }
 
-    private var parentNode: SearchTreeNode<V?>?
-    private val childNodes: SortedListAvl<SearchTreeNode<V?>>
+    private var parentNode: SearchTreeNode<V>?
+    private val childNodes: SortedListAvl<SearchTreeNode<V>>
     
     private var localData: V?
     
     var cost: Cost
 
-    private val nodeComparator = object: Comparator<SearchTreeNode<V?>?> {
-        override fun compare(n1: SearchTreeNode<V?>?, n2: SearchTreeNode<V?>?): Int {
+    private val nodeComparator = object: Comparator<SearchTreeNode<V>> {
+        override fun compare(n1: SearchTreeNode<V>?, n2: SearchTreeNode<V>?): Int {
             if (n1 != null && n2 != null) {
                 return n1.cost.compareTo(n2.cost)
             } else {
@@ -72,11 +72,11 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
     constructor(data: V?, cost: Cost) {
         this.parentNode = null
         this.localData = data
-        this.childNodes = SortedListAvl<SearchTreeNode<V?>>(nodeComparator)
+        this.childNodes = SortedListAvl<SearchTreeNode<V>>(nodeComparator)
         this.cost = cost
     }
 
-    fun getNodeComparator(): Comparator<SearchTreeNode<V?>?> {
+    fun getNodeComparator(): Comparator<SearchTreeNode<V>> {
         return nodeComparator
     }
 
@@ -86,9 +86,9 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param i child index
      * @param node Child node
      */
-    override fun addChildNode(i: Int, node: AbstractTreeNode<V?>) {
+    override fun addChildNode(i: Int, node: AbstractTreeNode<V>) {
         node.setParent(this)
-        val n = node as SearchTreeNode<V?>
+        val n = node as SearchTreeNode<V>
         n.cost = this.cost + n.cost
         childNodes.add(i, n)
     }
@@ -101,8 +101,8 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param cost Cost of this node
      * @return the newly created child node
      */
-    fun addChild(i: Int, data: V?, cost: Cost): SearchTreeNode<V?> {
-        val node = SearchTreeNode<V?>(data, this.cost + cost)
+    fun addChild(i: Int, data: V, cost: Cost): SearchTreeNode<V> {
+        val node = SearchTreeNode<V>(data, this.cost + cost)
         node.setParent(this)
         childNodes.add(i, node)
         return node
@@ -113,9 +113,9 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      *
      * @param node Child node
      */
-    override fun addChildNode(node: AbstractTreeNode<V?>) {
+    override fun addChildNode(node: AbstractTreeNode<V>) {
         node.setParent(this)
-        val n = node as SearchTreeNode<V?>
+        val n = node as SearchTreeNode<V>
         n.cost = this.cost + n.cost
         childNodes.add(n)
     }
@@ -127,8 +127,8 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param cost Cost of this node
      * @return the newly created child node
      */
-    fun addChildData(data: V?, cost: Cost): SearchTreeNode<V?> {
-        val node = SearchTreeNode<V?>(data, this.cost + cost)
+    fun addChildData(data: V, cost: Cost): SearchTreeNode<V> {
+        val node = SearchTreeNode<V>(data, this.cost + cost)
         node.setParent(this)
         childNodes.add(node)
         return node
@@ -140,7 +140,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param i child index
      * @return child node of the specified index (null if out of bound)
      */
-    override fun getChildNode(i: Int): SearchTreeNode<V?>? {
+    override fun getChildNode(i: Int): SearchTreeNode<V>? {
         if (i >= 0 && i < childNodes.size) {
             return childNodes[i]
         } else {
@@ -163,7 +163,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      *
      * @return list of child nodes
      */
-    override fun getChildNodes(): SortedListAvl<SearchTreeNode<V?>> {
+    override fun getChildNodes(): SortedListAvl<SearchTreeNode<V>> {
         return childNodes
     }
 
@@ -190,7 +190,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      *
      * @return parent node of this node
      */
-    override fun getParentNode(): SearchTreeNode<V?>? {
+    override fun getParentNode(): SearchTreeNode<V>? {
         return parentNode
     }
 
@@ -218,7 +218,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param i child index
      * @return removed child node
      */
-    override fun removeChild(i: Int): SearchTreeNode<V?>? {
+    override fun removeChild(i: Int): SearchTreeNode<V>? {
         return removeChildAt(i)
     }
 
@@ -228,7 +228,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param i child index
      * @return removed child node
      */
-    fun removeChildAt(i: Int): SearchTreeNode<V?>? {
+    fun removeChildAt(i: Int): SearchTreeNode<V>? {
         return if (i >= 0 && i < childNodes.size) childNodes.removeAt(i) else null
     }
 
@@ -238,12 +238,12 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      * @param data child data
      * @return removed child node
      */
-    override fun removeChild(data: V?): SearchTreeNode<V?>? {
+    override fun removeChild(data: V?): SearchTreeNode<V>? {
         val iter = childNodes.listIterator()
-        var nodeToReturn: SearchTreeNode<V?>? = null
+        var nodeToReturn: SearchTreeNode<V>? = null
         while (iter.hasNext()) {
             val node = iter.next()
-            if (node?.data == data) {
+            if (node.data == data) {
                 iter.remove()
                 nodeToReturn = node
                 break
@@ -273,7 +273,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V?> {
      *
      * @param parentNode parent node
      */
-    override fun setParent(parentNode: AbstractTreeNode<V?>) {
-        this.parentNode = parentNode as SearchTreeNode<V?>
+    override fun setParent(parentNode: AbstractTreeNode<V>) {
+        this.parentNode = parentNode as SearchTreeNode<V>
     }
 }

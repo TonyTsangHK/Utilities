@@ -28,7 +28,7 @@ class SortedListAvl<E>: SortedList<E> {
     /**
      * Comparator used for sorting
      */
-    private lateinit var comparator: Comparator<E?>
+    private lateinit var comparator: Comparator<E>
 
     /**
      * Modification count for concurrent modification check
@@ -42,7 +42,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param comparator data comparator
      * @param size list size
      */
-    private constructor(root: BinaryTreeNode<E>, comparator: Comparator<E?>, size: Int) {
+    private constructor(root: BinaryTreeNode<E>, comparator: Comparator<E>, size: Int) {
         this.root = root
         this.comparator = comparator
         this.size = size
@@ -77,7 +77,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @param comparator comparator used for sorting
      */
-    constructor(comparator: Comparator<E?>): this(comparator, true)
+    constructor(comparator: Comparator<E>): this(comparator, true)
 
     /**
      * Construct an AVL Tree List, providing comparator used for sorting and null order
@@ -85,7 +85,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param comparator comparator used for sorting
      * @param nullAsSmaller null as smaller to any non null value, true for smaller, false for greater
      */
-    constructor(comparator: Comparator<E?>, nullAsSmaller: Boolean) {
+    constructor(comparator: Comparator<E>, nullAsSmaller: Boolean) {
         this.comparator = DataComparator.buildComparator(comparator, nullAsSmaller)
         root = null
         size = 0
@@ -132,7 +132,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param c existing data collection
      * @param comparator comparator used for sorting
      */
-    constructor(c: Collection<E>, comparator: Comparator<E?>): this(c, comparator, true)
+    constructor(c: Collection<E>, comparator: Comparator<E>): this(c, comparator, true)
 
     /**
      * Construct an AVL Tree List with existing data collection, proving comparator used for sorted & null order<br>
@@ -143,7 +143,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param nullAsSmaller null as smaller to any non null value, true for smaller, false for greater
      */
     constructor(
-        c: Collection<E>, comparator: Comparator<E?>, nullAsSmaller: Boolean
+        c: Collection<E>, comparator: Comparator<E>, nullAsSmaller: Boolean
     ): this(comparator, nullAsSmaller) {
         addAll(c)
     }
@@ -198,7 +198,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param e element to be added
      * @return true as successful, false as unsuccessful
      */
-    override fun add(element: E?): Boolean {
+    override fun add(element: E): Boolean {
         if (privateAdd(element)) {
             modCount++
             return true
@@ -214,7 +214,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true if modified, false otherwise
      */
-    fun add(vararg vals: E?): Boolean {
+    fun add(vararg vals: E): Boolean {
         var modified = false
 
         vals.forEach {
@@ -991,7 +991,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return ListIterator of this list
      */
-    override fun listIterator(): MutableListIterator<E?> {
+    override fun listIterator(): MutableListIterator<E> {
         return SortedListIterator()
     }
 
@@ -1000,7 +1000,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return ListIterator of this list with starting index
      */
-    override fun listIterator(index: Int): MutableListIterator<E?> {
+    override fun listIterator(index: Int): MutableListIterator<E> {
         return SortedListIterator(index)
     }
 
@@ -1496,8 +1496,8 @@ class SortedListAvl<E>: SortedList<E> {
         }
     }
 
-    fun toGeneralList(): MutableList<E?> {
-        val result = arrayListOf<E?>()
+    fun toGeneralList(): MutableList<E> {
+        val result = arrayListOf<E>()
 
         val iter = listIterator()
 
@@ -1534,7 +1534,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @author Tony Tsang
      *
      */
-    private inner class SortedListIterator: MutableListIterator<E?> {
+    private inner class SortedListIterator: MutableListIterator<E> {
         /**
          * Previous node cache
          */
@@ -1613,7 +1613,7 @@ class SortedListAvl<E>: SortedList<E> {
          * P.S. Element will not added to the current location of the iterator but in its sort order
          *
          */
-        override fun add(element: E?) {
+        override fun add(element: E) {
             this@SortedListAvl.add(element)
             val index: Int = indexOf(element)
             if (index <= currentIndex) {
@@ -1652,7 +1652,7 @@ class SortedListAvl<E>: SortedList<E> {
          *
          * @return next element
          */
-        override fun next(): E? {
+        override fun next(): E {
             checkForComodification()
             if (nextIndex < size) {
                 canRemove = true
@@ -1660,7 +1660,7 @@ class SortedListAvl<E>: SortedList<E> {
                 nextIndex++
                 previousIndex = nextIndex - 1
 
-                val element = nextNode!!.element
+                val element = nextNode!!.element!!
 
                 previousNode = nextNode
                 nextNode     = nextNode!!.getNextNode()
@@ -1689,14 +1689,14 @@ class SortedListAvl<E>: SortedList<E> {
          *
          * @return previous element
          */
-        override fun previous(): E? {
+        override fun previous(): E {
             checkForComodification()
             if (previousIndex >= 0) {
                 currentIndex = previousIndex
                 previousIndex--
                 nextIndex = previousIndex + 1
 
-                val element = previousNode!!.element
+                val element = previousNode!!.element!!
 
                 nextNode     = previousNode
                 previousNode = previousNode!!.getPreviousNode()
@@ -1753,7 +1753,7 @@ class SortedListAvl<E>: SortedList<E> {
         /**
          * Set is not supported, as it contradict with normal expectation of this method.
          */
-        override fun set(element: E?) {
+        override fun set(element: E) {
             throw UnsupportedOperationException("Set operation is not supported (this is a sorted list)!")
         }
     }

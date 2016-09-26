@@ -1186,7 +1186,7 @@ object MathUtil {
                 if (distinct && i >= possibleIntegers) {
                     break
                 }
-                var v:Int? = randomInteger(tMin, tMax)
+                var v = randomInteger(tMin, tMax)
                 while (i > 0 && distinct && list.contains(v)) {
                     v = randomInteger(tMin, tMax)
                 }
@@ -1225,7 +1225,7 @@ object MathUtil {
                 if (distinct && i >= possibleIntegers) {
                     break
                 }
-                var v:Int? = randomInteger(tMin, tMax, randomGenerator)
+                var v = randomInteger(tMin, tMax, randomGenerator)
 
                 while (i > 0 && distinct && list.contains(v)) {
                     v = randomInteger(tMin, tMax, randomGenerator)
@@ -1263,7 +1263,7 @@ object MathUtil {
             val tMax = Math.max(min, max)
             val list = SortedListAvl<Double>()
             for (i in 0..size - 1) {
-                var v:Double? = randomNumber(tMin, tMax, precision)
+                var v = randomNumber(tMin, tMax, precision)
                 while (i > 0 && distinct && list.contains(v)) {
                     v = randomNumber(tMin, tMax, precision)
                 }
@@ -1301,7 +1301,7 @@ object MathUtil {
             val tMax = Math.max(min, max)
             val list = SortedListAvl<Double>()
             for (i in 0..size - 1) {
-                var v:Double? = randomNumber(tMin, tMax, precision, randomGenerator)
+                var v = randomNumber(tMin, tMax, precision, randomGenerator)
                 while (i > 0 && distinct && list.contains(v)) {
                     v = randomNumber(tMin, tMax, precision, randomGenerator)
                 }
