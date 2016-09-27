@@ -144,6 +144,17 @@ class RecordTimer {
     }
 
     /**
+     * Get last recorded interval time
+     */
+    fun getLastRecordedTime(): Long {
+        if (intervalTimes.size > 0) {
+            return intervalTimes.last()
+        } else {
+            return 0
+        }
+    }
+
+    /**
      * Get total recorded time
      */
     fun getTotalRecordedTime(): Long {
