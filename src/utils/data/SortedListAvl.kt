@@ -307,8 +307,12 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return maximum element
      */
-    fun findMax(): E? {
-        return if(root == null) null else findMaxNode(root!!).element
+    fun findMax(): E {
+        if(root == null) {
+            throw NoSuchFieldException("List is empty, maximum element not available!")
+        } else {
+            return findMaxNode(root!!).element
+        }
     }
 
     /**
@@ -316,8 +320,12 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return minimum element
      */
-    fun findMin(): E? {
-        return if (root == null) null else findMinNode(root!!).element
+    fun findMin(): E {
+        if (root == null) {
+            throw NoSuchFieldException("List is empty, minimum element not available!")
+        } else {
+            return findMinNode(root!!).element
+        }
     }
 
     /**
@@ -621,7 +629,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return first(minimum) node
      */
-    fun getFirst(): E? {
+    fun getFirst(): E {
         return getMin()
     }
 
@@ -630,9 +638,9 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return minimum node
      */
-    override fun getMin(): E? {
+    override fun getMin(): E {
         if (root == null) {
-            return null
+            throw NoSuchFieldException("List is empty, minimum element not available!")
         } else {
             return findMinNode(root!!).element
         }
@@ -643,7 +651,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return last(maximum) node
      */
-    fun getLast(): E? {
+    fun getLast(): E {
         return getMax()
     }
 
@@ -652,9 +660,9 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return maximum node
      */
-    override fun getMax(): E? {
+    override fun getMax(): E {
         if (root == null) {
-            return null
+            throw NoSuchFieldException("List is empty, maximum element not available!")
         } else {
             return findMaxNode(root!!).element
         }
@@ -665,7 +673,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the first node
      */
-    fun poll(): E? {
+    fun poll(): E {
         return pollMin()
     }
 
@@ -674,7 +682,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the first node
      */
-    fun pollFirst(): E? {
+    fun pollFirst(): E {
         return pollMin()
     }
 
@@ -683,9 +691,9 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the minimum node
      */
-    fun pollMin(): E? {
+    fun pollMin(): E {
         if (root == null) {
-            return null
+            throw NoSuchFieldException("List is empty, minimum element not available!")
         } else {
             return removeAt(0)
         }
@@ -696,13 +704,13 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the maximum node
      */
-    fun pollLast(): E? {
+    fun pollLast(): E {
         return pollMax()
     }
 
-    fun pollMax(): E? {
+    fun pollMax(): E {
         if (root == null) {
-            return null
+            throw NoSuchFieldException("List is empty, maximum element not available!")
         } else {
             return removeAt(size - 1)
         }
@@ -715,13 +723,11 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the data element
      */
-    override fun get(index: Int): E? {
+    override fun get(index: Int): E {
+        checkIndex(index)
         val n = getNode(index)
-        if (n == null) {
-            return null
-        } else {
-            return n.element
-        }
+        
+        return n.element
     }
 
     /**
@@ -1035,33 +1041,29 @@ class SortedListAvl<E>: SortedList<E> {
      * @param index target index
      * @return node of the target index
      */
-    private fun getNode(index: Int): BinaryTreeNode<E>? {
+    private fun getNode(index: Int): BinaryTreeNode<E> {
         checkIndex(index)
-        return locateNodeByRelativeIndex(root, index)
+        return locateNodeByRelativeIndex(root!!, index)
     }
 
     /**
-     * Location node by the relative index from the reference node<br>
+     * Locate node by the relative index from the reference node<br>
      * Relative index of a node is the left node count of that node
      *
      * @param node reference node
      * @param relativeIndex relative index to the node from reference node
      * @return target node
      */
-    private fun locateNodeByRelativeIndex(node: BinaryTreeNode<E>?, relativeIndex: Int): BinaryTreeNode<E>? {
-        if (node == null) {
-            return null
+    private fun locateNodeByRelativeIndex(node: BinaryTreeNode<E>, relativeIndex: Int): BinaryTreeNode<E> {
+        val leftNodeCount = node.leftNodeCount
+        if (relativeIndex == leftNodeCount) {
+            return node
+        } else if (relativeIndex < leftNodeCount) {
+            return locateNodeByRelativeIndex(node.left!!, relativeIndex)
+        } else if (relativeIndex > leftNodeCount) {
+            return locateNodeByRelativeIndex(node.right!!, relativeIndex-leftNodeCount-1)
         } else {
-            val leftNodeCount = node.leftNodeCount
-            if (relativeIndex == leftNodeCount) {
-                return node
-            } else if (relativeIndex < leftNodeCount) {
-                return locateNodeByRelativeIndex(node.left, relativeIndex)
-            } else if (relativeIndex > leftNodeCount) {
-                return locateNodeByRelativeIndex(node.right, relativeIndex-leftNodeCount-1)
-            } else {
-                return null
-            }
+            throw IndexOutOfBoundsException("Relative index: $relativeIndex, exceed available node index [0 - $leftNodeCount+${node.rightNodeCount}]")
         }
     }
 
@@ -1246,7 +1248,7 @@ class SortedListAvl<E>: SortedList<E> {
      */
     override fun removeAt(index: Int): E {
         checkIndex(index)
-        val node = locateNodeByRelativeIndex(root, index)!!
+        val node = locateNodeByRelativeIndex(root!!, index)
 
         val element = node.element
         removeNode(node) // modCount incrementation is handled
