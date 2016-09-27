@@ -155,7 +155,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return true as successful, false as unsuccessful
      */
-    private fun privateAdd(e: E?): Boolean {
+    private fun privateAdd(e: E): Boolean {
         if (root == null) {
             val node: BinaryTreeNode<E> = BinaryTreeNode<E>(e, null, null, null)
             root = node
@@ -967,7 +967,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return iterator of this list
      */
-    override fun iterator(): MutableIterator<E?> {
+    override fun iterator(): MutableIterator<E> {
         return SortedListIterator()
     }
 
@@ -1244,7 +1244,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return the removed element
      */
-    override fun removeAt(index: Int): E? {
+    override fun removeAt(index: Int): E {
         checkIndex(index)
         val node = locateNodeByRelativeIndex(root, index)!!
 
@@ -1317,7 +1317,7 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return removed data element
      */
-    override fun set(index: Int, element: E): E? {
+    override fun set(index: Int, element: E): E {
         checkIndex(index)
         // As this is a sorted list old element is removed and then re-add the element, index may change.
 
@@ -1345,8 +1345,8 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return new AVL Tree List consisting elements provided by from & to index
      */
-    override fun getSubList(fromIndex: Int, toIndex: Int): SortedListAvl<E?> {
-        val list = SortedListAvl<E?>()
+    override fun getSubList(fromIndex: Int, toIndex: Int): SortedListAvl<E> {
+        val list = SortedListAvl<E>()
         if (root != null) {
             getSubList(list, root!!, root!!.leftNodeCount, fromIndex, toIndex)
         }
@@ -1363,7 +1363,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param toIndex ending index of the sublist, exclusive
      */
     private fun getSubList(
-        list: SortedListAvl<E?>, node: BinaryTreeNode<E>, index: Int, fromIndex: Int, toIndex: Int
+        list: SortedListAvl<E>, node: BinaryTreeNode<E>, index: Int, fromIndex: Int, toIndex: Int
     ) {
         if (index >= fromIndex && index < toIndex) {
             list.add(node.element)
@@ -1397,7 +1397,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param node current node
      * @param index current node index
      */
-    private fun buildArray(array: Array<in E?>, node: BinaryTreeNode<E>, index: Int) {
+    private fun buildArray(array: Array<in E>, node: BinaryTreeNode<E>, index: Int) {
         if (index < array.size) {
             array[index] = node.element
         }
@@ -1486,7 +1486,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param node current node
      * @param index current node index
      */
-    private fun setNodeElement(sortedList : List<E?>, node: BinaryTreeNode<E>, index: Int) {
+    private fun setNodeElement(sortedList : List<E>, node: BinaryTreeNode<E>, index: Int) {
         node.element = sortedList[index]
         if (node.hasLeft()) {
             setNodeElement(sortedList, node.left!!, index - node.left!!.rightNodeCount - 1)
@@ -1660,7 +1660,7 @@ class SortedListAvl<E>: SortedList<E> {
                 nextIndex++
                 previousIndex = nextIndex - 1
 
-                val element = nextNode!!.element!!
+                val element = nextNode!!.element
 
                 previousNode = nextNode
                 nextNode     = nextNode!!.getNextNode()

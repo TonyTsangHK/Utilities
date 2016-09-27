@@ -145,7 +145,7 @@ class BinaryTreeNode<E>: ValueHolder<E> {
     /**
      * Contained data element
      */
-    var element: E? = null
+    var element: E
 
     /**
      * Construct a Binary tree node with contained data element
@@ -185,7 +185,7 @@ class BinaryTreeNode<E>: ValueHolder<E> {
      * *
      * @param right right child node
      */
-    constructor(e: E?, parent: BinaryTreeNode<E>?, left: BinaryTreeNode<E>?, right: BinaryTreeNode<E>?) {
+    constructor(e: E, parent: BinaryTreeNode<E>?, left: BinaryTreeNode<E>?, right: BinaryTreeNode<E>?) {
         this.parent = parent
         this.left = left
         this.right = right
@@ -284,7 +284,7 @@ class BinaryTreeNode<E>: ValueHolder<E> {
 
      * @return data element
      */
-    override fun getValue(): E? {
+    override fun getValue(): E {
         return element
     }
 
@@ -310,7 +310,7 @@ class BinaryTreeNode<E>: ValueHolder<E> {
 
      * @param e new data element
      */
-    override fun setValue(e: E?) {
+    override fun setValue(e: E) {
         this.element = e
     }
 
