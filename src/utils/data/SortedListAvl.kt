@@ -1032,7 +1032,7 @@ class SortedListAvl<E>: SortedList<E> {
         checkIndices(i1, i2)
 
         // Null safe after index check
-        swapNodeElement(getNode(i1)!!, getNode(i2)!!)
+        swapNodeElement(getNode(i1), getNode(i2))
     }
 
     /**
@@ -1058,12 +1058,17 @@ class SortedListAvl<E>: SortedList<E> {
         val leftNodeCount = node.leftNodeCount
         if (relativeIndex == leftNodeCount) {
             return node
-        } else if (relativeIndex < leftNodeCount) {
+        } else if (
+            // Should check for index, if it is negative, it will cause infinite recursive call
+            relativeIndex >= 0 && 
+            relativeIndex < leftNodeCount
+        ) {
             return locateNodeByRelativeIndex(node.left!!, relativeIndex)
         } else if (relativeIndex > leftNodeCount) {
             return locateNodeByRelativeIndex(node.right!!, relativeIndex-leftNodeCount-1)
         } else {
-            throw IndexOutOfBoundsException("Relative index: $relativeIndex, exceed available node index [0 - $leftNodeCount+${node.rightNodeCount}]")
+            // This exception may not be thrown at all, since this is a private function and index is checked before calling this function. 
+            throw IndexOutOfBoundsException("Relative index: $relativeIndex, exceed available node index [0 - ${leftNodeCount+node.rightNodeCount-1}}]")
         }
     }
 
