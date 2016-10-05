@@ -1011,6 +1011,41 @@ object DataManipulator {
     fun extractDateTime(o: Any): Date? {
         return extractDate(o)
     }
+    
+    @JvmStatic
+    fun <K, V> addUniqueMapToList(list: MutableList<Map<K, V>>, dataMap: Map<K, V>): Boolean {
+        if (!containsMap(list, dataMap)) {
+            return list.add(dataMap)
+        } else {
+            return false
+        }
+    }
+    
+    @JvmStatic
+    fun <K, V> containsMap(list: List<Map<K, V>>, dataMap: Map<K, V>): Boolean {
+        list.forEach list@{
+            map ->
+            var allMatch = true
+            dataMap.forEach map@{
+                entry ->
+                if (map.contains(entry.key)) {
+                    if (map[entry.key]!! != entry.value) {
+                        allMatch = false
+                        return@map
+                    }
+                } else {
+                    allMatch = false
+                    return@map
+                }
+            }
+
+            if (allMatch) {
+                return true
+            }
+        }
+        
+        return false
+    }
 
     @JvmStatic
     fun <K, V> joinHashMap(a: Map<K, V>, b: Map<K, V>): Map<K, V> {
