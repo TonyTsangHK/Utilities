@@ -500,6 +500,17 @@ object DataManipulator {
         }
         return false
     }
+    
+    @JvmStatic
+    fun <V> matchOnce(value: V, vararg possibles: V): Boolean {
+        possibles.forEach { 
+            if (value == it) {
+                return true
+            }
+        }
+        
+        return false
+    }
 
     @JvmStatic
     fun <E, V> cloneMap(map: Map<E, V?>?): Map<E, V?>? {
