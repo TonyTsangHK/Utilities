@@ -81,11 +81,11 @@ fun Long.toFormattedInteger(): String {
     return FormatUtils.formatInteger(this)
 }
 
-fun Date.toFormattedDate(): String {
+fun Date?.toFormattedDate(): String {
     return FormatUtils.formatDate(this)
 }
 
-fun Date.toFormattedDate(datePattern: String): String {
+fun Date?.toFormattedDate(datePattern: String): String {
     return FormatUtils.formatDate(this, datePattern)
 }
 
@@ -97,11 +97,11 @@ fun Long.toFormattedDateTime(dateTimeFormat: String): String {
     return FormatUtils.formatDateTime(this, dateTimeFormat)
 }
 
-fun Date.toFormattedDateTime(): String {
+fun Date?.toFormattedDateTime(): String {
     return FormatUtils.formatDateTime(this)
 }
 
-fun Date.toFormattedDateTime(dateTimePattern: String): String {
+fun Date?.toFormattedDateTime(dateTimePattern: String): String {
     return FormatUtils.formatDateTime(this, dateTimePattern)
 }
 
