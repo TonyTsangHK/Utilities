@@ -3539,8 +3539,8 @@ object MathUtil {
          * @param value weighted value
          */
         fun addWeightedRandomValue(value: WeightedRandomValue<E>) {
-            val currentIntervalWeight = weightIntervals.sum()
-            val newInterval = currentIntervalWeight + value.weight
+            val lastInterval = if (weightIntervals.isEmpty()) 0 else weightIntervals.last()
+            val newInterval = lastInterval + value.weight
             
             weightedRandomValueList.add(value)
             weightIntervals.add(newInterval)
