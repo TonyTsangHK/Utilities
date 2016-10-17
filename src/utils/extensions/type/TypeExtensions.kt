@@ -83,10 +83,6 @@ operator fun Date.dec(): Date {
     return this - 1
 }
 
-infix operator fun Date.rangeTo(other: Date): DateRange {
-    return DateRange(this, other)
-}
-
 operator fun Date.minus(other: Date): Int {
     val thisCal = Calendar.getInstance()
     val otherCal = Calendar.getInstance()
@@ -105,13 +101,30 @@ operator fun Date.minus(other: Date): Int {
     return ((thisMillisWithoutTimePart - otherMillisWithoutTimePart) / DAY_MILLIS).toInt()
 }
 
+infix operator fun Date.rangeTo(other: Date): DateRange {
+    return DateRange(this, other)
+}
+
+fun Date.trimTimePart(): Date {
+    val thisCal = Calendar.getInstance()
+    
+    thisCal.time = this
+
+    thisCal.set(Calendar.HOUR_OF_DAY, 0)
+    thisCal.set(Calendar.MINUTE, 0)
+    thisCal.set(Calendar.SECOND, 0)
+    thisCal.set(Calendar.MILLISECOND, 0)
+    
+    return thisCal.time
+}
+
+infix fun Date.downTo(to: Date): DateProgression {
+    return DateProgression.fromClosedRange(this, to, -1)
+}
+
 infix fun DateProgression.step(step: Int): DateProgression {
     if (step == 0) {
         throw IllegalArgumentException("Step is zero.")
     }
     return DateProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
-}
-
-infix fun Date.downTo(to: Date): DateProgression {
-    return DateProgression.fromClosedRange(this, to, -1)
 }

@@ -11,8 +11,8 @@ import java.util.*
  * Time: 15:35
  */
 open class DateProgression internal constructor (start: Date, endInclusive: Date, val step: Int): Iterable<Date> {
-    val first: Date = start
-
+    val first: Date = start.trimTimePart()
+    
     val last: Date
 
     init {
@@ -20,7 +20,7 @@ open class DateProgression internal constructor (start: Date, endInclusive: Date
             throw IllegalArgumentException("Step must be non-zero")
         }
 
-        last = calLastDate(start, endInclusive, step)
+        last = calLastDate(start.trimTimePart(), endInclusive.trimTimePart(), step)
     }
 
     private fun calLastDate(start: Date, end: Date, step: Int): Date {
@@ -63,8 +63,8 @@ open class DateProgression internal constructor (start: Date, endInclusive: Date
     }
 
     internal class DateProgressionIterator(first: Date, last: Date, val step: Int): DateIterator() {
-        private var next = first
-        private val finalElement = last
+        private var next = first.trimTimePart()
+        private val finalElement = last.trimTimePart()
         private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
         override fun hasNext(): Boolean = hasNext
