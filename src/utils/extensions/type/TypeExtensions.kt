@@ -17,6 +17,8 @@ import java.util.*
  * Date: 2016-09-13
  * Time: 11:40
  */
+val DAY_MILLIS = 86400000L
+
 fun String.toDate(pattern: String = DateTimeParser.NORMAL_DATETIME_FORMAT, default: Date = Date()): Date {
     return DateTimeParser.parse(this, pattern) ?: default
 }
@@ -65,18 +67,12 @@ fun <K, V> Map<K, V>.getDateOrNull(key: K, default: Date? = Date()): Date? {
     return DataManipulator.getDate(this, key, default)
 }
 
-infix operator fun Date.plus(inc: Int): Date {
-    val cal = Calendar.getInstance()
-    
-    cal.timeInMillis = this.time
-    
-    cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR) + inc)
-    
-    return cal.time
+infix operator fun Date.plus(days: Int): Date {
+    return Date(this.time + DAY_MILLIS * days)
 }
 
-infix operator fun Date.minus(dcr: Int): Date {
-    return this + -dcr
+infix operator fun Date.minus(days: Int): Date {
+    return Date(this.time - DAY_MILLIS * days)
 }
 
 operator fun Date.inc(): Date {
@@ -91,42 +87,22 @@ infix operator fun Date.rangeTo(other: Date): DateRange {
     return DateRange(this, other)
 }
 
-operator fun Date.minus(other:Date): Int {
+operator fun Date.minus(other: Date): Int {
     val thisCal = Calendar.getInstance()
     val otherCal = Calendar.getInstance()
+
+    thisCal.time = this
+    otherCal.time = other
     
-    thisCal.timeInMillis = this.time
-    otherCal.timeInMillis = other.time
+    // Eliminate time zone offset, only concern about the local time (calculating day difference between time zones is meaningless)
+    val thisMillisWithOffset = thisCal.timeInMillis + thisCal.get(Calendar.ZONE_OFFSET)
+    val otherMillisWithOffset = otherCal.timeInMillis + otherCal.get(Calendar.ZONE_OFFSET)
     
-    val thisYear = thisCal.get(Calendar.YEAR)
-    val otherYear = otherCal.get(Calendar.YEAR)
+    // Eliminate time part
+    val thisMillisWithoutTimePart = thisMillisWithOffset - thisMillisWithOffset % DAY_MILLIS
+    val otherMillisWithoutTimePart = otherMillisWithOffset - otherMillisWithOffset % DAY_MILLIS
     
-    val thisDayOfYear = thisCal.get(Calendar.DAY_OF_YEAR)
-    val otherDayOfYear = otherCal.get(Calendar.DAY_OF_YEAR)
-    
-    if (thisYear == otherYear) {
-        return thisDayOfYear - otherDayOfYear
-    } else if (thisYear > otherYear) {
-        var days = if (SimpleDateUtils.isLeapYear(otherYear)) (366-otherDayOfYear) else (365-otherDayOfYear)
-        
-        for (y in otherYear + 1 .. thisYear - 1) {
-            days += if (SimpleDateUtils.isLeapYear(y)) 366 else 365
-        }
-        
-        days += thisDayOfYear
-        
-        return days
-    } else {
-        var days = thisDayOfYear - if (SimpleDateUtils.isLeapYear(thisYear)) 366 else 365
-        
-        for (y in thisYear + 1 .. otherYear - 1) {
-            days -= if (SimpleDateUtils.isLeapYear(y)) 366 else 365
-        }
-        
-        days -= otherDayOfYear
-        
-        return days
-    }
+    return ((thisMillisWithoutTimePart - otherMillisWithoutTimePart) / DAY_MILLIS).toInt()
 }
 
 infix fun DateProgression.step(step: Int): DateProgression {
