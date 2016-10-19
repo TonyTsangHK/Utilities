@@ -128,3 +128,28 @@ infix fun DateProgression.step(step: Int): DateProgression {
     }
     return DateProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
+
+operator fun BigDecimal.plus(value: Number): BigDecimal = this.add(BigDecimal(value.toString()))
+
+operator fun Number.plus(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).add(value)
+
+// Since BigDecimal.minus(BigDecimal) has the same name as minus operator function and BigDecimal is also Number type
+// Implementing Number.minus & BigDecimal.minus will result in infinite loop or unresolvable ambiguity issue.
+// To work around the above issues, minus operator extension function can only be implemented on specific type instead of Number
+operator fun BigDecimal.minus(value: Int): BigDecimal = this.minus(BigDecimal(value.toString()))
+operator fun BigDecimal.minus(value: Long): BigDecimal = this.minus(BigDecimal(value.toString()))
+operator fun BigDecimal.minus(value: Double): BigDecimal = this.minus(BigDecimal(value.toString()))
+operator fun BigDecimal.minus(value: Float): BigDecimal = this.minus(BigDecimal(value.toString()))
+
+operator fun Int.minus(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).minus(value)
+operator fun Long.minus(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).minus(value)
+operator fun Double.minus(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).minus(value)
+operator fun Float.minus(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).minus(value)
+
+operator fun BigDecimal.times(value: Number): BigDecimal = this.multiply(BigDecimal(value.toString()))
+
+operator fun Number.times(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).multiply(value)
+
+operator fun BigDecimal.div(value: Number): BigDecimal = MathUtil.divide(this, BigDecimal(value.toString()))
+
+operator fun Number.div(value: BigDecimal): BigDecimal = MathUtil.divide(BigDecimal(this.toString()), value)
