@@ -3,6 +3,7 @@ package utils.data
 import utils.constants.MathValueType
 import utils.date.DateCalendar
 import utils.date.DateTimeParser
+import utils.extensions.*
 import utils.math.MathUtil
 import utils.string.StringUtil
 import java.math.BigDecimal
@@ -16,11 +17,11 @@ import java.util.*
  */
 object DataManipulator {
     @JvmStatic
-    fun <E> swapData(array: Array<E>, f: Int, t: Int): Boolean {
-        if (array.indices.contains(t) && array.indices.contains(t)) {
-            val o = array[f]
-            array[f] = array[t]
-            array[t] = o
+    fun <E> swapData(array: Array<E>, from: Int, to: Int): Boolean {
+        if (array.checkIndices(from, to)) {
+            val o = array[from]
+            array[from] = array[to]
+            array[to] = o
             return true
         } else {
             return false
@@ -85,11 +86,11 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> swapData(l: MutableList<E>, f: Int, t: Int): Boolean {
-        if (l.indices.contains(f) && l.indices.contains(t) && f != t) {
-            val o = l[f]
-            l[f] = l[t]
-            l[t] = o
+    fun <E> swapData(list: MutableList<E>, from: Int, to: Int): Boolean {
+        if (list.checkIndices(from, to) && from != to) {
+            val o = list[from]
+            list[from] = list[to]
+            list[to] = o
             return true
         } else {
             return false
@@ -97,10 +98,10 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> swapData(l: List<MutableList<E>>, f: Int, t: Int, coi: IntArray): Boolean {
-        if (l.indices.contains(f) && l.indices.contains(t) && f != t) {
-            val fl = l[f]
-            val tl = l[t]
+    fun <E> swapData(list: List<MutableList<E>>, from: Int, to: Int, coi: IntArray): Boolean {
+        if (list.checkIndices(from, to) && from != to) {
+            val fl = list[from]
+            val tl = list[to]
             for (k in coi) {
                 val fVal = fl[k]
                 fl[k] = tl[k]
@@ -113,19 +114,39 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> moveData(l: MutableList<E>, f: Int, t: Int): Boolean {
-        if (l.indices.contains(f) && l.indices.contains(t) && f != t) {
-            val o = l[f]
-            if (f < t) {
-                for (i in f..t - 1) {
-                    l[i] = l[i + 1]
+    fun <E> moveData(list: MutableList<E>, from: Int, to: Int): Boolean {
+        if (list.checkIndices(from, to) && from != to) {
+            val o = list[from]
+            if (from < to) {
+                for (i in from .. to - 1) {
+                    list[i] = list[i + 1]
                 }
             } else {
-                for (i in f downTo t + 1) {
-                    l[i] = l[i - 1]
+                for (i in from downTo to + 1) {
+                    list[i] = list[i - 1]
                 }
             }
-            l[t] = o
+            list[to] = o
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    @JvmStatic 
+    fun <E> moveData(arr: Array<E>, from: Int, to: Int): Boolean {
+        if (arr.checkIndices(from, to) && from != to) {
+            val o = arr[from]
+            if (from < to) {
+                for (i in from .. to -1) {
+                    arr[i] = arr[i + 1]
+                }
+            } else {
+                for (i in from downTo to + 1) {
+                    arr[i] = arr[i-1]
+                }
+            }
+            arr[to] = o
             return true
         } else {
             return false
@@ -133,38 +154,37 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> swapDatas(l: MutableList<E>, fs: Int, fe: Int, es: Int, ee: Int): Boolean {
-        var localFs = fs
-        var localFe = fe
-        var localEs = es
-        var localEe = ee
-        if (localFs > localEs) {
-            var t = localFs
-            localFs = localEs
-            localEs = t
-            t = localFe
-            localFe = localEe
-            localEe = t
+    fun <E> swapDatas(list: MutableList<E>, fromStart: Int, fromEnd: Int, toStart: Int, toEnd: Int): Boolean {
+        var localFromStart = fromStart
+        var localFromEnd = fromEnd
+        var localToStart = toStart
+        var localToEnd = toEnd
+        if (localFromStart > localToEnd) {
+            var t = localFromStart
+            localFromStart = localToStart
+            localToStart = t
+            t = localFromEnd
+            localFromEnd = localToEnd
+            localToEnd = t
         }
         if (
-            l.indices.contains(localFs) && l.indices.contains(localFe) &&
-            l.indices.contains(localEs) && l.indices.contains(localEe) &&
-            localFe < localEs && localFs <= localFe && localEs <= localEe
+            list.checkIndices(localFromStart, localFromEnd, localToStart, localToEnd) &&
+            localFromEnd < localToStart && localFromStart <= localFromEnd && localToStart <= localToEnd
         ) {
             val ll = LinkedList<E>()
-            for (i in localEs..localEe) {
-                ll.add(l[i])
+            for (i in localToStart .. localToEnd) {
+                ll.add(list[i])
             }
-            for (i in localFe + 1..localEs - 1) {
-                ll.add(l[i])
+            for (i in localFromEnd + 1 .. localToStart - 1) {
+                ll.add(list[i])
             }
-            for (i in localFs..localFe) {
-                ll.add(l[i])
+            for (i in localFromStart .. localFromEnd) {
+                ll.add(list[i])
             }
-            var i = localFs
+            var i = localFromStart
             var k = 0
-            while (i <= localEe) {
-                l[i] = ll.removeFirst()
+            while (i <= localToEnd) {
+                list[i] = ll.removeFirst()
                 i++
                 k++
             }
@@ -175,11 +195,52 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> swapDatas(l: List<MutableList<E>>, fs: Int, fe: Int, es: Int, ee: Int, coi: IntArray): Boolean {
-        var localFs = fs
-        var localFe = fe
-        var localEs = es
-        var localEe = ee
+    fun <E> swapDatas(arr: Array<E>, fromStart: Int, fromEnd: Int, toStart: Int, toEnd: Int): Boolean {
+        var localFromStart = fromStart
+        var localFromEnd = fromEnd
+        var localToStart = toStart
+        var localToEnd = toEnd
+        if (localFromStart > localToEnd) {
+            var t = localFromStart
+            localFromStart = localToStart
+            localToStart = t
+            t = localFromEnd
+            localFromEnd = localToEnd
+            localToEnd = t
+        }
+        if (
+            arr.checkIndices(localFromStart, localFromEnd, localToStart, localToEnd) &&
+            localFromEnd < localToStart && localFromStart <= localFromEnd && localToStart <= localToEnd
+        ) {
+            val ll = LinkedList<E>()
+            for (i in localToStart .. localToEnd) {
+                ll.add(arr[i])
+            }
+            for (i in localFromEnd + 1 .. localToStart - 1) {
+                ll.add(arr[i])
+            }
+            for (i in localFromStart .. localFromEnd) {
+                ll.add(arr[i])
+            }
+            var i = localFromStart
+            var k = 0
+            while (i <= localToEnd) {
+                arr[i] = ll.removeFirst()
+                i++
+                k++
+            }
+            return true
+        } else {
+            return false
+        }
+    }
+
+    @JvmStatic
+    fun <E> swapDatas(list: List<MutableList<E>>, fromStart: Int, fromEnd: Int, toStart: Int, toEnd: Int, coi: IntArray): Boolean {
+        var localFs = fromStart
+        var localFe = fromEnd
+        var localEs = toStart
+        var localEe = toEnd
         if (localFs > localEs) {
             var t = localFs
             localFs = localEs
@@ -189,23 +250,22 @@ object DataManipulator {
             localEe = t
         }
         if (
-            l.indices.contains(localFs) && l.indices.contains(localFe) && 
-            l.indices.contains(localEs) && l.indices.contains(localEe) &&
+            list.checkIndices(localFs, localFe, localEs, localEe) &&
             localFe < localEs && localFs <= localFe && localEs <= localEe
         ) {
             val ll = LinkedList<List<E>>()
             for (i in localEs..localEe) {
-                ll.add(cloneList(l[i])!!)
+                ll.add(cloneList(list[i])!!)
             }
             for (i in localFe + 1..localEs - 1) {
-                ll.add(cloneList(l[i])!!)
+                ll.add(cloneList(list[i])!!)
             }
             for (i in localFs..localFe) {
-                ll.add(cloneList(l[i])!!)
+                ll.add(cloneList(list[i])!!)
             }
             for (i in localFs..localEe) {
                 val vals = ll.removeFirst()
-                val oVals = l[i]
+                val oVals = list[i]
                 for (index in coi) {
                     val tVal = vals[index]
                     oVals[index] = tVal
@@ -257,6 +317,52 @@ object DataManipulator {
             var c = 0
             while (i <= last) {
                 list[i] = partition[c]
+                i++
+                c++
+            }
+        }
+    }
+
+    @JvmStatic
+    fun <E> moveDatas(arr: Array<E>, start: Int, end: Int, to: Int) {
+        if (start != to) {
+            val first: Int
+            var last: Int
+
+            val partition = ArrayList<E>()
+
+            if (start < to) {
+                first = start
+                last = to + end - start
+
+                if (last >= arr.size) {
+                    last = arr.size - 1
+                }
+
+                for (i in end + 1..last) {
+                    partition.add(arr[i])
+                }
+
+                for (i in start..end) {
+                    partition.add(arr[i])
+                }
+            } else {
+                first = to
+                last = end
+
+                for (i in start..end) {
+                    partition.add(arr[i])
+                }
+
+                for (i in first..start - 1) {
+                    partition.add(arr[i])
+                }
+            }
+
+            var i = first
+            var c = 0
+            while (i <= last) {
+                arr[i] = partition[c]
                 i++
                 c++
             }
