@@ -1526,6 +1526,61 @@ object MathUtil {
     }
 
     /**
+     * Pick a random value from possibles
+     * 
+     * @param possibles possible value array
+     * @return random value picked
+     */
+    fun <E> randomValue(possibles: Array<E>): E {
+        initRandom()
+        return randomValue(possibles, randomGenerator!!)
+    }
+
+    /**
+     * Pick a random value from possibles
+     * 
+     * @param possibles possible value list
+     * 
+     * @return random value picked
+     */
+    fun <E> randomValue(possibles: List<E>): E {
+        initRandom()
+        return randomValue(possibles, randomGenerator!!)
+    }
+
+    /**
+     * Pick a random value from possibles
+     * 
+     * @param possibles possible value array
+     * @param randomGenerator random generator
+     * 
+     * @return random value picked
+     */
+    fun <E> randomValue(possibles: Array<E>, randomGenerator: Random): E {
+        if (possibles.isEmpty()) {
+            throw IllegalArgumentException("Empty possible value array!")
+        } else {
+            return possibles[randomInteger(0, possibles.size-1)]
+        }
+    }
+
+    /**
+     * Pick a random value from possibles 
+     * 
+     * @param possibles possible value list
+     * @param randomGenerator random generator
+     * 
+     * @return random value picked
+     */
+    fun <E> randomValue(possibles: List<E>, randomGenerator: Random): E {
+        if (possibles.isEmpty()) {
+            throw IllegalArgumentException("Empty possible value list!")
+        } else {
+            return possibles[randomInteger(0, possibles.size-1)]
+        }
+    }
+
+    /**
      * Get digit count of an integer
      *
      * @param val target integer
