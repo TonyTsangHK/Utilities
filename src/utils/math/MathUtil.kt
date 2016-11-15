@@ -5,13 +5,12 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.MathContext
 import java.math.RoundingMode
-import java.security.NoSuchAlgorithmException
-import java.security.SecureRandom
 import java.util.ArrayList
 import java.util.Random
 
 import utils.data.DataManipulator
-import utils.data.SortedListAvl
+import utils.random.RandomUtil
+import utils.random.WeightedRandomValueHolder
 import utils.string.StringUtil
 
 object MathUtil {
@@ -24,9 +23,6 @@ object MathUtil {
     @JvmField val SIXTEEN = BigDecimal("16")
     @JvmField val HUNDRED = BigDecimal("100")
     @JvmField val THOUSAND = BigDecimal("1000")
-
-    // Use of secure random, default false
-    private var USE_SECURE_RANDOM = false
 
     @JvmField val FIRST_PRIMES = intArrayOf(
            2,    3,    5,    7,   11,   13,   17,   19,   23,   29,   31,   37,   41,   43,   47,   53,
@@ -87,28 +83,8 @@ object MathUtil {
     @JvmField val DEFAULT_MATH_CONTEXT = MathContext(DEFAULT_BIG_DECIMAL_PRECISION, RoundingMode.HALF_UP)
 
     /**
-     * Random number generator, lazy initialization
-     */
-    private var randomGenerator:Random? = null
-
-    /**
-     * Initialize random generator
-     */
-    private fun initRandom() {
-        if (randomGenerator == null) {
-            if (USE_SECURE_RANDOM) {
-                try {
-                    randomGenerator = SecureRandom.getInstanceStrong()
-                } catch (e:NoSuchAlgorithmException) {
-                    randomGenerator = SecureRandom()
-                }
-            } else {
-                randomGenerator = Random()
-            }
-        }
-    }
-
-    /**
+     * @deprecated use utils.random.RandomUtil.setUseSecureRandom(Boolean) instead
+     * 
      * Set usage of secure random
      * - It is fine to use Random, for its non-blocking nature
      * - Use secure random, if you really want TRULY RANDOM generation and it is provided at OS level, and it is also a computational random after all.
@@ -117,16 +93,12 @@ object MathUtil {
      */
     @JvmStatic
     fun setUseSecureRandom(useSecureRandom:Boolean) {
-        if (USE_SECURE_RANDOM != useSecureRandom) {
-            USE_SECURE_RANDOM = useSecureRandom
-
-            // re-initialize randomGenerator
-            randomGenerator = null
-            initRandom()
-        }
+        RandomUtil.setUseSecureRandom(useSecureRandom)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.createRandomGenerator(seed) instead
+     * 
      * Create a random generator with given seed
      
      * @param seed given seed
@@ -135,19 +107,7 @@ object MathUtil {
      */
     @JvmStatic
     fun createRandomGenerator(seed:Long):Random {
-        return Random(seed)
-    }
-
-    /**
-     * Generate a random number
-     *
-     * @return random number (double) ranging from 0.0 (inclusive) to 0.1 (exclusive)
-     */
-    private fun random():Double {
-        if (randomGenerator == null) {
-            initRandom()
-        }
-        return randomGenerator!!.nextDouble()
+        return RandomUtil.createRandomGenerator(seed)
     }
 
     /**
@@ -1164,6 +1124,8 @@ object MathUtil {
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.generateRandomIntegerArray(min, max, size, distinct) instead
+     * 
      * Generate a random integer array
      *
      * @param min minimum value of random value
@@ -1175,33 +1137,12 @@ object MathUtil {
      */
     @JvmStatic
     fun generateRandomIntegerArray(min:Int, max:Int, size:Int, distinct:Boolean):IntArray {
-        if (size <= 0) {
-            return IntArray(0)
-        } else {
-            val tMin = Math.min(min, max)
-            val tMax = Math.max(min, max)
-            val possibleIntegers = max - min + 1
-            val list = SortedListAvl<Int>()
-            for (i in 0..size - 1) {
-                if (distinct && i >= possibleIntegers) {
-                    break
-                }
-                var v = randomInteger(tMin, tMax)
-                while (i > 0 && distinct && list.contains(v)) {
-                    v = randomInteger(tMin, tMax)
-                }
-                list.add(v)
-            }
-            val arr = list.toTypedArray()
-            val result = IntArray(size)
-            for (i in arr.indices) {
-                result[i] = arr[i] as Int
-            }
-            return result
-        }
+        return RandomUtil.generateRandomIntegerArray(min, max, size, distinct)
     }
 
     /**
+     * @deprecated utils.random.RandomUtil.generateRandomIntegerArray(min, max, size, distinct, randomGenerator) instead
+     * 
      * Generate a random integer array based on the given random generator, for consistent random generation
      *
      * @param min minimum bound of the random value (inclusive)
@@ -1214,34 +1155,12 @@ object MathUtil {
      */
     @JvmStatic
     fun generateRandomIntegerArray(min:Int, max:Int, size:Int, distinct:Boolean, randomGenerator:Random):IntArray {
-        if (size <= 0) {
-            return IntArray(0)
-        } else {
-            val tMin = Math.min(min, max)
-            val tMax = Math.max(min, max)
-            val possibleIntegers = max - min + 1
-            val list = SortedListAvl<Int>()
-            for (i in 0..size - 1) {
-                if (distinct && i >= possibleIntegers) {
-                    break
-                }
-                var v = randomInteger(tMin, tMax, randomGenerator)
-
-                while (i > 0 && distinct && list.contains(v)) {
-                    v = randomInteger(tMin, tMax, randomGenerator)
-                }
-                list.add(v)
-            }
-            val arr = list.toTypedArray()
-            val result = IntArray(size)
-            for (i in arr.indices) {
-                result[i] = arr[i] as Int
-            }
-            return result
-        }
+        return RandomUtil.generateRandomIntegerArray(min, max, size, distinct, randomGenerator)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil#generateRandomNumberArray(min, max, precision, size, distinct) instead
+     * 
      * Generate a random number array
      *
      * @param min minimum value of random value
@@ -1256,29 +1175,12 @@ object MathUtil {
     fun generateRandomNumberArray(
         min:Double, max:Double, precision:Int, size:Int, distinct:Boolean
     ):DoubleArray {
-        if (size <= 0) {
-            return DoubleArray(0)
-        } else {
-            val tMin = Math.min(min, max)
-            val tMax = Math.max(min, max)
-            val list = SortedListAvl<Double>()
-            for (i in 0..size - 1) {
-                var v = randomNumber(tMin, tMax, precision)
-                while (i > 0 && distinct && list.contains(v)) {
-                    v = randomNumber(tMin, tMax, precision)
-                }
-                list.add(v)
-            }
-            val arr = list.toTypedArray()
-            val result = DoubleArray(size)
-            for (i in arr.indices) {
-                result[i] = arr[i] as Double
-            }
-            return result
-        }
+        return RandomUtil.generateRandomNumberArray(min, max, precision, size, distinct)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.generateRandomNumberArray(min, max, precision, size, randomGenerator) instead
+     * 
      * Generate a random number array with given random generator for consistent result
      *
      * @param min minimum bound of random value
@@ -1294,29 +1196,12 @@ object MathUtil {
     fun generateRandomNumberArray(
         min:Double, max:Double, precision:Int, size:Int, distinct:Boolean, randomGenerator:Random
     ):DoubleArray {
-        if (size <= 0) {
-            return DoubleArray(0)
-        } else {
-            val tMin = Math.min(min, max)
-            val tMax = Math.max(min, max)
-            val list = SortedListAvl<Double>()
-            for (i in 0..size - 1) {
-                var v = randomNumber(tMin, tMax, precision, randomGenerator)
-                while (i > 0 && distinct && list.contains(v)) {
-                    v = randomNumber(tMin, tMax, precision, randomGenerator)
-                }
-                list.add(v)
-            }
-            val arr = list.toTypedArray()
-            val result = DoubleArray(size)
-            for (i in arr.indices) {
-                result[i] = arr[i] as Double
-            }
-            return result
-        }
+        return RandomUtil.generateRandomNumberArray(min, max, precision, size, distinct, randomGenerator)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomInteger(min, max) instead
+     * 
      * Generate a random integer
      *
      * @param min minimum bound
@@ -1326,10 +1211,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomInteger(min:Int, max:Int):Int {
-        return if (min == max) min else calculateResult(random(), min, max)
+        return RandomUtil.randomInteger(min, max)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomInteger(min, max, randomGenerator) instead
+     * 
      * Generate a random integer with given random generator, for consistent result
      *
      * @param min minimum bound
@@ -1340,10 +1227,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomInteger(min:Int, max:Int, randomGenerator:Random):Int {
-        return if (min == max) min else calculateResult(randomGenerator.nextDouble(), min, max)
+        return RandomUtil.randomInteger(min, max, randomGenerator)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomIntegerWithNormalDistribution(min, max, mean, deviation) instead
+     * 
      * Generate a random integer with standard distribution
      *
      * @param min minimum bound
@@ -1355,11 +1244,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomIntegerWithNormalDistribution(min: Int, max: Int, mean: Int, deviation: Int): Int {
-        initRandom()
-        return randomIntegerWithNormalDistribution(min, max, mean, deviation, randomGenerator!!)
+        return RandomUtil.randomIntegerWithNormalDistribution(min, max, mean, deviation)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomIntegerWithNormalDistribution(min, max, mean, deviation, randomGenerator) instead
+     * 
      * Generate a random integer with standard distribution
      * 
      * @param min minimum bound
@@ -1372,17 +1262,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomIntegerWithNormalDistribution(min: Int, max: Int, mean: Int, deviation: Int, randomGenerator: Random): Int {
-        var v: Int;
-
-        // Since there is no theoretical minimum or maximum value for gaussian, regeneration is required if the value fall outside of range
-        do {
-            v = Math.round(randomGenerator.nextGaussian() * deviation + mean).toInt()
-        } while (v < min || v > max);
-
-        return v
+        return RandomUtil.randomIntegerWithNormalDistribution(min, max, mean, deviation, randomGenerator)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomWeightedValue(weightedRandomValueHolder) instead
+     * 
      * Generate a random value from weighted random value holder, see {@link utils.MathUtil.WeightedRandomValueHolder}
      * 
      * @param weightedRandomValueHolder weighted random value holder
@@ -1391,10 +1276,12 @@ object MathUtil {
      */
     @JvmStatic
     fun <E> randomWeightedValue(weightedRandomValueHolder: WeightedRandomValueHolder<E>): E {
-        return weightedRandomValueHolder.determineValue(randomInteger(1, weightedRandomValueHolder.totalWeight))
+        return RandomUtil.randomWeightedValue(weightedRandomValueHolder)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomLong(min, max)
+     * 
      * Generate a random long integer
      *
      * @param min minimum bound
@@ -1404,10 +1291,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomLong(min:Long, max:Long):Long {
-        return if (min == max) min else calculateResult(random(), min, max)
+        return RandomUtil.randomLong(min, max)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomLong(min, max, randomGenerator) instead
+     * 
      * Generate a random long integer with given random generator
      *
      * @param min minimum bound
@@ -1418,58 +1307,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomLong(min:Long, max:Long, randomGenerator:Random):Long {
-        return if (min == max) min else calculateResult(randomGenerator.nextDouble(), min, max)
+        return RandomUtil.randomLong(min, max, randomGenerator)
     }
 
     /**
-     * Calculate final result from random number and provided min max range
-     * If range overflow use long for calculation
+     * @deprecated use utils.random.RandomUtil.randomNumber(min, max) instead
      *
-     * @param rand double random number, ranging from 0.0 and 1.0, generated from random generator
-     * @param min lower bound value
-     * @param max upper bound value
-     *
-     * @return formalized result
-     */
-    private fun calculateResult(rand:Double, min:Int, max:Int):Int {
-        val range = max - min + 1
-
-        if (range <= 0) {
-            // overflow, use long for calculation
-            val longMax = max.toLong()
-            val longMin = min.toLong()
-
-            return (rand * (longMax - longMin + 1) + longMin).toInt()
-        } else {
-            return (rand * (max - min + 1) + min).toInt()
-        }
-    }
-
-    /**
-     * Calculate final result from random number and provided min max range
-     * If range overflow use BigDecimal for calculation.
-     * @param rand random double random number, ranging from 0.0 and 1.0, generated from random generator
-     * @param min lower bound value
-     * @param max upper bound value
-     *
-     * @return formalized result
-     */
-    private fun calculateResult(rand:Double, min:Long, max:Long):Long {
-        val range = max - min + 1
-
-        if (range <= 0) {
-            // overflow, use BigDecimal for calculation
-            val bigMax = BigDecimal(max.toString())
-            val bigMin = BigDecimal(min.toString())
-            val bigRand = BigDecimal(rand.toString())
-
-            return ((bigMax - bigMin + BigDecimal.ONE) * bigRand + bigMin).toLong()
-        } else {
-            return (rand * (max - min + 1) + min).toLong()
-        }
-    }
-
-    /**
      * Generate a random number
      *
      * @param min minimum bound
@@ -1479,10 +1322,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomNumber(min:Double, max:Double):Double {
-        return if (min == max) min else randomNumber(min, max, 6)
+        return RandomUtil.randomNumber(min, max)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomNumber(min, max, randomGenerator) instead
+     * 
      * Generate a random number based on given random generator for consistent output
      *
      * @param min minimum bound
@@ -1493,10 +1338,12 @@ object MathUtil {
      */
     @JvmStatic
     fun randomNumber(min:Double, max:Double, randomGenerator:Random):Double {
-        return if (min == max) min else randomNumber(min, max, 6, randomGenerator)
+        return RandomUtil.randomNumber(min, max, randomGenerator)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomNumber(min, max, precision) instead
+     * 
      * Generate a random number
      *
      * @param min minimum bound
@@ -1507,14 +1354,16 @@ object MathUtil {
      */
     @JvmStatic
     fun randomNumber(min:Double, max:Double, precision:Int):Double {
-        return roundUp(random() * (max - min) + min, precision)
+        return RandomUtil.randomNumber(min, max, precision)
     }
 
     /**
+     * @deprecated use utils.random.RandomUtil.randomNumber(min, max, precision, randomGenerator) instead
+     * 
      * Generate a random number with given random generator
      *
-     * @param min minmum bound
-     * @param max maxmum bound
+     * @param min minimum bound
+     * @param max maximum bound
      * @param precision precision of result
      * @param randomGenerator given random generator
      *
@@ -1522,62 +1371,7 @@ object MathUtil {
      */
     @JvmStatic
     fun randomNumber(min:Double, max:Double, precision:Int, randomGenerator:Random):Double {
-        return roundUp(randomGenerator.nextDouble() * (max - min) + min, precision)
-    }
-
-    /**
-     * Pick a random value from possibles
-     * 
-     * @param possibles possible value array
-     * @return random value picked
-     */
-    fun <E> randomValue(possibles: Array<E>): E {
-        initRandom()
-        return randomValue(possibles, randomGenerator!!)
-    }
-
-    /**
-     * Pick a random value from possibles
-     * 
-     * @param possibles possible value list
-     * 
-     * @return random value picked
-     */
-    fun <E> randomValue(possibles: List<E>): E {
-        initRandom()
-        return randomValue(possibles, randomGenerator!!)
-    }
-
-    /**
-     * Pick a random value from possibles
-     * 
-     * @param possibles possible value array
-     * @param randomGenerator random generator
-     * 
-     * @return random value picked
-     */
-    fun <E> randomValue(possibles: Array<E>, randomGenerator: Random): E {
-        if (possibles.isEmpty()) {
-            throw IllegalArgumentException("Empty possible value array!")
-        } else {
-            return possibles[randomInteger(0, possibles.size-1)]
-        }
-    }
-
-    /**
-     * Pick a random value from possibles 
-     * 
-     * @param possibles possible value list
-     * @param randomGenerator random generator
-     * 
-     * @return random value picked
-     */
-    fun <E> randomValue(possibles: List<E>, randomGenerator: Random): E {
-        if (possibles.isEmpty()) {
-            throw IllegalArgumentException("Empty possible value list!")
-        } else {
-            return possibles[randomInteger(0, possibles.size-1)]
-        }
+        return RandomUtil.randomNumber(min, max, precision, randomGenerator)
     }
 
     /**
@@ -1588,8 +1382,8 @@ object MathUtil {
      * @return digit count of provided integer value
      */
     @JvmStatic
-    fun getDigitCount(`val`:Int):Int {
-        return Integer.toString(`val`).length
+    fun getDigitCount(value :Int):Int {
+        return Integer.toString(value).length
     }
 
     /**
@@ -3531,101 +3325,4 @@ object MathUtil {
             }
         }
     }
-
-    /**
-     * Weighted random value holder
-     *
-     */
-    class WeightedRandomValueHolder<E> {
-        /**
-         * total possible weight
-         * 
-         * setter is set to private to ensure consistency of total weight (inconsistent total weight will be adjusted during addWeightedRandomValue)
-         */
-        var totalWeight: Int
-            private set(value) {
-                field = value
-            }
-
-        /**
-         * default value to return, if generated weight value exceed all weight intervals
-         *
-         * This can be view as weighted value with weight = totalWeight - sum of other weighted value
-         */
-        val defaultValue: E
-
-        /**
-         * Weighted value list
-         */
-        val weightedRandomValueList = ArrayList<WeightedRandomValue<E>>()
-
-        /**
-         * Weight intervals to determine value with provided weight
-         */
-        private val weightIntervals = ArrayList<Int>()
-        
-        /**
-         * construct a WeightedRandomValueHolder
-         * 
-         * @param totalWeight total weight of the holder, if this is zero defaultValue will never be generated.
-         * @param defaultValue default value, value to return if generated weight value exceed all other weighted values
-         * @param weightedRandomValues all other weighted values
-         */
-        constructor(totalWeight: Int, defaultValue: E, vararg weightedRandomValues: WeightedRandomValue<E>) {
-            this.totalWeight = totalWeight
-            this.defaultValue = defaultValue
-            addWeightedRandomValues(*weightedRandomValues)
-        }
-
-        /**
-         * Add weighted values
-         * 
-         * @param values weighted values
-         */
-        fun addWeightedRandomValues(vararg values: WeightedRandomValue<E>) {
-            values.forEach { 
-                addWeightedRandomValue(it)
-            }
-        }
-
-        /**
-         * Add a weighted value
-         * 
-         * @param value weighted value
-         */
-        fun addWeightedRandomValue(value: WeightedRandomValue<E>) {
-            val lastInterval = if (weightIntervals.isEmpty()) 0 else weightIntervals.last()
-            val newInterval = lastInterval + value.weight
-            
-            weightedRandomValueList.add(value)
-            weightIntervals.add(newInterval)
-            
-            // inconsistent total weight, set to newInterval value (if this happen default value will no longer be returned)
-            if (totalWeight < newInterval) {
-                totalWeight = newInterval
-            }
-        }
-
-        /**
-         * Determine the final random with weight value
-         * 
-         * @param value weight value
-         * @return determined value, if weight value exceed all intervals, default value will be returned 
-         */
-        fun determineValue(value: Int): E {
-            weightIntervals.forEachIndexed {
-                idx, interval -> 
-                if (value <= interval) {
-                    return weightedRandomValueList[idx].value
-                }
-            }
-            
-            return defaultValue
-        }
-    }
-
-    /**
-     * Random value with weight
-     */
-    data class WeightedRandomValue<E>(val value: E, val weight: Int)
 }
