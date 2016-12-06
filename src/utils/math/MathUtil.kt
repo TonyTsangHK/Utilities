@@ -437,7 +437,7 @@ object MathUtil {
      */
     @JvmStatic
     fun divide(n1:Number?, n2:Number?):BigDecimal {
-        if (n2 == null || n2.toInt() == 0) {
+        if (n2 == null || BigDecimal(n2.toString()) == BigDecimal.ZERO) {
             throw NumberFormatException("Divided by ZERO detected, ($n1 / $n2)")
         }
 
@@ -459,7 +459,7 @@ object MathUtil {
      */
     @JvmStatic
     fun divide(n1:Number?, n2:Number?, scale:Int, roundingMode:Int):BigDecimal {
-        if (n2 == null || n2.toInt() == 0) {
+        if (n2 == null || BigDecimal(n2.toString()) == BigDecimal.ZERO) {
             throw NumberFormatException("Divided by ZERO detected, ($n1 / $n2)")
         }
 
@@ -481,7 +481,7 @@ object MathUtil {
      */
     @JvmStatic
     fun divide(n1:Number?, n2:Number?, scale:Int, roundingMode:RoundingMode):BigDecimal {
-        if (n2 == null || n2.toInt() == 0) {
+        if (n2 == null || BigDecimal(n2.toString()) == BigDecimal.ZERO) {
             throw NumberFormatException("Divided by ZERO detected, ($n1 / $n2)")
         }
 
