@@ -791,6 +791,46 @@ object DataManipulator {
     fun findMax(intArr: IntArray): Int {
         return findValue(intArr, MathValueType.MAX)
     }
+    
+    @JvmStatic
+    fun <E: Comparable<E>> findMin(values: Collection<E>): E {
+        if (values.isEmpty()) {
+            throw IllegalArgumentException("Empty value collection not accepted.")
+        } else {
+            val iter = values.iterator()
+            var min = iter.next()
+
+            while (iter.hasNext()) {
+                val value = iter.next()
+                
+                if (min == null || min > value) {
+                    min = value
+                }
+            }
+
+            return min
+        }
+    }
+    
+    @JvmStatic
+    fun <E: Comparable<E>> findMax(values: Collection<E>): E {
+        if (values.isEmpty()) {
+            throw IllegalArgumentException("Empty value collection not accepted.")
+        } else {
+            val iter = values.iterator()
+            var max = iter.next()
+
+            while (iter.hasNext()) {
+                val value = iter.next()
+                
+                if (max < value) {
+                    max = value
+                }
+            }
+
+            return max
+        }
+    }
 
     @JvmStatic
     fun <E> addAllListDatas(datas: Collection<E>, target: MutableList<E>, distinct: Boolean) {
