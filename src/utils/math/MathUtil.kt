@@ -675,6 +675,19 @@ object MathUtil {
     }
 
     /**
+     * Ceilling a big decimal to target precision
+     * 
+     * @param a big decimal value
+     * @param precision required precision
+     * 
+     * @return ceillinged number
+     */
+    @JvmStatic
+    fun ceiling(a: BigDecimal, precision: Int): BigDecimal {
+        return a.divide(BigDecimal.ONE, precision, RoundingMode.CEILING)
+    }
+
+    /**
      * Floor a double precision number to a precision
      *
      * @param a double precision number to floored
