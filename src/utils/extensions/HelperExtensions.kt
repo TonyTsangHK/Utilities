@@ -173,3 +173,17 @@ fun <K, V> Map<K, V>.containsAllKeys(vararg keys: K): Boolean = keys.all { this.
  * @return check result
  */
 fun <K, V> Map<K, V>.containsAnyKeys(vararg keys: K): Boolean = keys.any { this.containsKey(it) }
+
+/**
+ * Find minimum value of the value collection
+ * 
+ * @exception IllegalArgumentException if collection is empty
+ */
+fun <E: Comparable<E>> Collection<E>.findMin(): E = DataManipulator.findMin(this)
+
+/**
+ * Find maximum value of the value collection
+ * 
+ * @exception IllegalArgumentException if collection is empty
+ */
+fun <E: Comparable<E>> Collection<E>.findMax(): E = DataManipulator.findMax(this)
