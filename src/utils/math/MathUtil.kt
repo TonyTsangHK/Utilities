@@ -688,16 +688,27 @@ object MathUtil {
     }
 
     /**
-     * Floor a double precision number to a precision
+     * Floor a double precision number to a specific precision
      *
-     * @param a double precision number to floored
-     * @param precision precision of result
+     * @param a double precision number
+     * @param precision precision of the result
      *
      * @return floored number of precision
      */
     @JvmStatic
     fun floor(a:Double, precision:Int):Double {
         return BigDecimal(a).setScale(precision, BigDecimal.ROUND_FLOOR).toDouble()
+    }
+
+    /**
+     * Floor a big decimal number to a specific precision
+     * 
+     * @param a big decimal number
+     * @param precision precision of the result
+     */
+    @JvmStatic
+    fun floor(a: BigDecimal, precision: Int): BigDecimal {
+        return a.setScale(precision, BigDecimal.ROUND_FLOOR)
     }
 
     /**
