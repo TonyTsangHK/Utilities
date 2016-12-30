@@ -731,6 +731,92 @@ class SortedListAvl<E>: SortedList<E> {
     }
 
     /**
+     * Find the last element index which value is smaller than the searching value, with reference node
+     * 
+     * @param value searching value
+     * @param node reference node
+     * @param index reference node's index
+     * @param possibleIndex possible result index, default -1
+     * 
+     * @return last element index with smaller value of the searching value
+     */
+    private fun lastSmallerIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, possibleIndex: Int = -1): Int {
+        val compareResult = comparator.compare(value, node.element)
+        
+        if (compareResult > 0) {
+            if (node.hasRight()) {
+                return lastSmallerIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, index)
+            } else {
+                return index
+            }
+        } else {
+            if (node.hasLeft()) {
+                return lastSmallerIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, possibleIndex)
+            } else {
+                return possibleIndex
+            }
+        }
+    }
+
+    /**
+     * Find the last element index which value is smaller than the searching value
+     *
+     * @param value searching value
+     *
+     * @return last element index with smaller value of the searching value
+     */
+    fun lastSmallerIndexOf(value: E): Int {
+        if (root == null) {
+            return -1
+        } else {
+            return lastSmallerIndexOf(value, root!!, root!!.leftNodeCount)
+        }
+    }
+
+    /**
+     * Find the first element index which value is greater than the searching value, with reference node
+     * 
+     * @param value searching value
+     * @param node reference node
+     * @param index reference node's index
+     * @param possibleIndex possible result index, default -1
+     * 
+     * @return first element index with greater value of the searching value
+     */
+    private fun firstGreaterIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, possibleIndex: Int = -1): Int {
+        val compareResult = comparator.compare(value, node.element)
+
+        if (compareResult < 0) {
+            if (node.hasLeft()) {
+                return firstGreaterIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, index)
+            } else {
+                return index
+            }
+        } else {
+            if (node.hasRight()) {
+                return firstGreaterIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, possibleIndex)
+            } else {
+                return possibleIndex
+            }
+        }
+    }
+
+    /**
+     * Find the first element index which value is greater than the searching value
+     * 
+     * @param value searching value
+     * 
+     * @return first element index with greater value of the searching value
+     */
+    fun firstGreaterIndexOf(value: E): Int {
+        if (root == null) {
+            return -1
+        } else {
+            return firstGreaterIndexOf(value, root!!, root!!.leftNodeCount)
+        }
+    }
+
+    /**
      * Search for first found index from binary search, no guarantee of first or last index
      *
      * @param o target value

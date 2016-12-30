@@ -174,6 +174,134 @@ class TestSortedListAvl {
             assertEquals(index, n-1)
         }
     }
+    
+    @Test
+    fun testLastSmallerIndexOf() {
+        val list = SortedListAvl<Int>()
+
+        assertEquals(list.lastSmallerIndexOf(2), -1)
+        
+        list.add(1,2,3,3,5,7,9)
+        
+        assertEquals(list.lastSmallerIndexOf(0), -1)
+        assertEquals(list.lastSmallerIndexOf(1), -1)
+        assertEquals(list.lastSmallerIndexOf(2), 0)
+        assertEquals(list.lastSmallerIndexOf(3), 1)
+        assertEquals(list.lastSmallerIndexOf(4), 3)
+        assertEquals(list.lastSmallerIndexOf(5), 3)
+        assertEquals(list.lastSmallerIndexOf(6), 4)
+        assertEquals(list.lastSmallerIndexOf(7), 4)
+        assertEquals(list.lastSmallerIndexOf(8), 5)
+        assertEquals(list.lastSmallerIndexOf(9), 5)
+        assertEquals(list.lastSmallerIndexOf(10), 6)
+        assertEquals(list.lastSmallerIndexOf(11), 6)
+        assertEquals(list.lastSmallerIndexOf(9999), 6)
+        
+        // Random value test
+        val randomList = SortedListAvl<Int>()
+        for (i in 1 .. 1000) {
+            val v = MathUtil.randomInteger(300, 9999)
+            
+            randomList.add(v)
+            
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (j in 1 .. MathUtil.randomInteger(1,3)) {
+                    randomList.add(v)
+                }
+            }
+        }
+        
+        // Test non exist elements
+        assertEquals(randomList.lastSmallerIndexOf(0), -1)
+        assertEquals(randomList.lastSmallerIndexOf(299), -1)
+        
+        // Test last element
+        assertEquals(randomList.lastSmallerIndexOf(10000), randomList.size-1)
+        
+        // Test random values (value withing list values)
+        for (i in 1 .. 1000) {
+            val v = MathUtil.randomInteger(300, 9999)
+            
+            val idx = randomList.lastSmallerIndexOf(v)
+            
+            if (idx != -1) {
+                val listVal = randomList[idx]
+                
+                if (idx < randomList.size - 1) {
+                    // Next element and searching value should be greater than the result value 
+                    assertTrue(randomList[idx + 1] > listVal && v > listVal)
+                } else {
+                    // Result value is last element, only check the searching value
+                    assertTrue(v > listVal)
+                }
+            }
+        }
+    }
+    
+    @Test
+    fun testFirstGreaterIndexOf() {
+        val list = SortedListAvl<Int>()
+
+        assertEquals(list.lastSmallerIndexOf(2), -1)
+
+        list.add(1,2,3,3,5,7,9)
+
+        assertEquals(list.firstGreaterIndexOf(0), 0)
+        assertEquals(list.firstGreaterIndexOf(1), 1)
+        assertEquals(list.firstGreaterIndexOf(2), 2)
+        assertEquals(list.firstGreaterIndexOf(3), 4)
+        assertEquals(list.firstGreaterIndexOf(4), 4)
+        assertEquals(list.firstGreaterIndexOf(5), 5)
+        assertEquals(list.firstGreaterIndexOf(6), 5)
+        assertEquals(list.firstGreaterIndexOf(7), 6)
+        assertEquals(list.firstGreaterIndexOf(8), 6)
+        assertEquals(list.firstGreaterIndexOf(9), -1)
+        assertEquals(list.firstGreaterIndexOf(10), -1)
+        assertEquals(list.firstGreaterIndexOf(11), -1)
+        assertEquals(list.firstGreaterIndexOf(9999), -1)
+
+        // Random value test
+        val randomList = SortedListAvl<Int>()
+        for (i in 1 .. 1000) {
+            val v = MathUtil.randomInteger(300, 9999)
+
+            randomList.add(v)
+
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (j in 1 .. MathUtil.randomInteger(1,3)) {
+                    randomList.add(v)
+                }
+            }
+        }
+
+        // Test non exist elements
+        assertEquals(randomList.firstGreaterIndexOf(10000), -1)
+        assertEquals(randomList.firstGreaterIndexOf(99999), -1)
+
+        // Test first element
+        assertEquals(randomList.firstGreaterIndexOf(randomList.first()-1), 0)
+
+        // Test random values (value withing list values)
+        for (i in 1 .. 1000) {
+            val v = MathUtil.randomInteger(300, 9999)
+
+            val idx = randomList.firstGreaterIndexOf(v)
+
+            if (idx != -1) {
+                val listVal = randomList[idx]
+
+                if (idx > 0) {
+                    // Next element and searching value should be greater than the result value 
+                    assertTrue(randomList[idx - 1] < listVal && v < listVal)
+                } else {
+                    // Result is the first element, only check the searching value
+                    assertTrue(v < listVal)
+                }
+            }
+        }
+    }
 
     @Test
     fun testRemoveWithObject() {
