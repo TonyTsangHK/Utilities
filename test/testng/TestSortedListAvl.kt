@@ -232,7 +232,7 @@ class TestSortedListAvl {
                     // Next element and searching value should be greater than the result value 
                     assertTrue(randomList[idx + 1] > listVal && v > listVal)
                 } else {
-                    // Result value is last element, only check the searching value
+                    // Result value is the last element, only check the searching value
                     assertTrue(v > listVal)
                 }
             }
@@ -293,7 +293,7 @@ class TestSortedListAvl {
                 val listVal = randomList[idx]
 
                 if (idx > 0) {
-                    // Next element and searching value should be greater than the result value 
+                    // Previous element and searching value should be smaller than the result value 
                     assertTrue(randomList[idx - 1] < listVal && v < listVal)
                 } else {
                     // Result is the first element, only check the searching value
