@@ -7,6 +7,18 @@ import utils.data.sort.MergeSort;
 
 /**
  * Sorted list implemented as java list, (binary search tree in array form)
+ * Extremely slow performance for insertion & removal comparing SortedListAvl
+ * Best for random access & searching
+ * 
+ * General performance comparision between AVL & Array sorted list implementation:
+ * Insertion:
+ * AVL: 1, Array: ~30x
+ * Removal:
+ * AVL: 1, Array: ~50x
+ * Random access:
+ * AVL: 3.5x, Array: 1
+ * Search:
+ * AVL: 1.02, Array: 1
  * 
  * @author Tony Tsang
  *
@@ -221,9 +233,7 @@ public class SortedListArray<E> implements SortedList<E> {
     }
     
     private void insert(int insertIndex, E e) {
-        for (int i = size - 1; i >= insertIndex; i--) {
-            elements[i+1] = elements[i];
-        }
+        System.arraycopy(elements, insertIndex, elements, insertIndex+1, size-insertIndex);
         elements[insertIndex] = e;
         size++;
     }
