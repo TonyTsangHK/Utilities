@@ -258,9 +258,7 @@ public class SortedListArray<E> implements SortedList<E> {
             
             MergeSort.sort(
                 cArr,
-                (o1, o2) -> {
-                    return comparator.compare((E)o1, (E)o2);
-                }
+                (o1, o2) -> comparator.compare((E)o1, (E)o2)
             );
             
             int minIndex = findInsertionIndex((E)cArr[0]), maxIndex = findInsertionIndex((E)cArr[cArr.length-1]);
@@ -389,6 +387,176 @@ public class SortedListArray<E> implements SortedList<E> {
         } catch (ClassCastException cce) {
             return -1;
         }
+    }
+
+    @Override
+    // Same as SortedList's default implementation, seems java does not accept kotlin interface's default implementation
+    public boolean add(E element, boolean allowDuplicate) {
+        if (allowDuplicate || !contains(element)) {
+            return add(element);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    // Same as SortedList's default implementation, seems java does not accept kotlin interface's default implementation
+    public void add(int index, E element, boolean allowDuplicate) {
+        // Index is ignored as this is a sortedList
+        add(element, allowDuplicate);
+    }
+
+    @Override
+    public int greaterIndexOf(E value) {
+        if (size == 0) {
+            System.out.println("from here 0");
+            return -1;
+        }
+        
+        int min = 0, max = size - 1;
+
+        while (min <= max) {
+            int mid = (max + min) >>> 1;
+            int comp = comparator.compare(value, (E) elements[mid]);
+
+            if (comp >= 0) {
+                min = mid + 1;
+            } else {
+                int foundIndex = mid;
+
+                max = mid - 1;
+
+                while (min <= max) {
+                    int newMid = (max + min) >>> 1;
+                    int newComp = comparator.compare(value, (E) elements[newMid]);
+
+                    if (newComp < 0) {
+                        foundIndex = newMid;
+                        max = newMid - 1;
+                    } else {
+                        min = newMid + 1;
+                    }
+                }
+                
+                return foundIndex;
+            }
+        }
+        
+        return -1;
+    }
+
+    @Override
+    public int greaterOrEqualsIndexOf(E value) {
+        if (size == 0) {
+            return -1;
+        }
+
+        int min = 0, max = size - 1;
+
+        while (min <= max) {
+            int mid = (max + min) >>> 1;
+            int comp = comparator.compare(value, (E) elements[mid]);
+
+            if (comp > 0) {
+                min = mid + 1;
+            } else {
+                int foundIndex = mid;
+
+                max = mid - 1;
+
+                while (min <= max) {
+                    int newMid = (max + min) >>> 1;
+                    int newComp = comparator.compare(value, (E) elements[newMid]);
+
+                    if (newComp <= 0) {
+                        foundIndex = newMid;
+                        max = newMid - 1;
+                    } else {
+                        min = newMid + 1;
+                    }
+                }
+
+                return foundIndex;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int smallerIndexOf(E value) {
+        if (size == 0) {
+            return -1;
+        }
+
+        int min = 0, max = size - 1;
+
+        while (min <= max) {
+            int mid = (max + min) >>> 1;
+            int comp = comparator.compare(value, (E) elements[mid]);
+
+            if (comp <= 0) {
+                max = mid - 1;
+            } else {
+                int foundIndex = mid;
+
+                min = mid + 1;
+
+                while (min <= max) {
+                    int newMid = (max + min) >>> 1;
+                    int newComp = comparator.compare(value, (E) elements[newMid]);
+
+                    if (newComp > 0) {
+                        foundIndex = newMid;
+                        min = newMid + 1;
+                    } else {
+                        max = newMid - 1;
+                    }
+                }
+
+                return foundIndex;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int smallerOrEqualsIndexOf(E value) {
+        if (size == 0) {
+            return -1;
+        }
+
+        int min = 0, max = size - 1;
+
+        while (min <= max) {
+            int mid = (max + min) >>> 1;
+            int comp = comparator.compare(value, (E) elements[mid]);
+
+            if (comp < 0) {
+                max = mid - 1;
+            } else {
+                int foundIndex = mid;
+
+                min = mid + 1;
+
+                while (min <= max) {
+                    int newMid = (max + min) >>> 1;
+                    int newComp = comparator.compare(value, (E) elements[newMid]);
+
+                    if (newComp >= 0) {
+                        foundIndex = newMid;
+                        min = newMid + 1;
+                    } else {
+                        max = newMid - 1;
+                    }
+                }
+
+                return foundIndex;
+            }
+        }
+
+        return -1;
     }
 
     @Override
@@ -596,15 +764,7 @@ public class SortedListArray<E> implements SortedList<E> {
     @Override
     public void resort() {
         MultiSort.sort(
-                elements,
-                new Comparator<Object>() {
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public int compare(Object o1, Object o2) {
-                        return comparator.compare((E) o1, (E) o2);
-                    }
-                },
-                0, size-1
+            elements, (o1, o2) -> comparator.compare((E) o1, (E) o2),0,size-1
         );
     }
     

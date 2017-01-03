@@ -2,11 +2,7 @@ package testng;
 
 import static org.testng.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -165,6 +161,277 @@ public class TestSortedList {
                     .indexOf(n);
             assertEquals(new Integer(index1), new Integer(n - 1));
             assertEquals(new Integer(index2), new Integer(n - 1));
+        }
+    }
+
+    @Test
+    public void testSmallerIndexOf() {
+        testSmallerIndexOf(new SortedListAvl<>());
+        testSmallerIndexOf(new SortedListArray<>());
+    }
+    
+    private void testSmallerIndexOf(SortedList<Integer> list) {
+        assertEquals(list.smallerIndexOf(2), -1);
+
+        list.addAll(Arrays.asList(1,2,3,3,5,7,9));
+
+        assertEquals(list.smallerIndexOf(0), -1);
+        assertEquals(list.smallerIndexOf(1), -1);
+        assertEquals(list.smallerIndexOf(2), 0);
+        assertEquals(list.smallerIndexOf(3), 1);
+        assertEquals(list.smallerIndexOf(4), 3);
+        assertEquals(list.smallerIndexOf(5), 3);
+        assertEquals(list.smallerIndexOf(6), 4);
+        assertEquals(list.smallerIndexOf(7), 4);
+        assertEquals(list.smallerIndexOf(8), 5);
+        assertEquals(list.smallerIndexOf(9), 5);
+        assertEquals(list.smallerIndexOf(10), 6);
+        assertEquals(list.smallerIndexOf(11), 6);
+        assertEquals(list.smallerIndexOf(9999), 6);
+
+        // Random value test
+        list.clear();
+        
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            list.add(v);
+
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (int j = 1; j <= MathUtil.randomInteger(1,3); j++) {
+                    list.add(v);
+                }
+            }
+        }
+
+        // Test non exist elements
+        assertEquals(list.smallerIndexOf(0), -1);
+        assertEquals(list.smallerIndexOf(299), -1);
+
+        // Test last element
+        assertEquals(list.smallerIndexOf(10000), list.size()-1);
+
+        // Test random values (value withing list values)
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            int idx = list.smallerIndexOf(v);
+
+            if (idx != -1) {
+                int listVal = list.get(idx);
+
+                if (idx < list.size() - 1) {
+                    // Next element and searching value should be greater than the result value 
+                    assertTrue(list.get(idx + 1) > listVal && v > listVal);
+                } else {
+                    // Result value is the last element, only check the searching value
+                    assertTrue(v > listVal);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testSmallerOrEqualsIndexOf() {
+        testSmallerOrEqualsIndexOf(new SortedListAvl<>());
+        testSmallerOrEqualsIndexOf(new SortedListArray<>());
+    }
+    
+    private void testSmallerOrEqualsIndexOf(SortedList<Integer> list) {
+        assertEquals(list.smallerOrEqualsIndexOf(2), -1);
+
+        list.addAll(Arrays.asList(1,2,3,3,5,7,9));
+
+        assertEquals(list.smallerOrEqualsIndexOf(0), -1);
+        assertEquals(list.smallerOrEqualsIndexOf(1), 0);
+        assertEquals(list.smallerOrEqualsIndexOf(2), 1);
+        assertEquals(list.smallerOrEqualsIndexOf(3), 3);
+        assertEquals(list.smallerOrEqualsIndexOf(4), 3);
+        assertEquals(list.smallerOrEqualsIndexOf(5), 4);
+        assertEquals(list.smallerOrEqualsIndexOf(6), 4);
+        assertEquals(list.smallerOrEqualsIndexOf(7), 5);
+        assertEquals(list.smallerOrEqualsIndexOf(8), 5);
+        assertEquals(list.smallerOrEqualsIndexOf(9), 6);
+        assertEquals(list.smallerOrEqualsIndexOf(10), 6);
+        assertEquals(list.smallerOrEqualsIndexOf(11), 6);
+        assertEquals(list.smallerOrEqualsIndexOf(9999), 6);
+
+        // Random value test
+        list.clear();
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            list.add(v);
+
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (int j = 1; j <= MathUtil.randomInteger(1,3); j++) {
+                    list.add(v);
+                }
+            }
+        }
+
+        // Test non exist elements
+        assertEquals(list.smallerOrEqualsIndexOf(0), -1);
+        assertEquals(list.smallerOrEqualsIndexOf(299), -1);
+
+        // Test last element
+        assertEquals(list.smallerOrEqualsIndexOf(list.get(list.size()-1)), list.size() - 1);
+
+        // Test random values (value withing list values)
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            int idx = list.smallerOrEqualsIndexOf(v);
+
+            if (idx != -1) {
+                int listVal = list.get(idx);
+
+                if (idx < list.size() - 1) {
+                    // Next element is greater than and searching value should be greater or equals to the result value
+                    // Since last index is guaranteed, next element should always be greater than the searching value
+                    assertTrue(list.get(idx + 1) > listVal && v >= listVal);
+                } else {
+                    // Result value is the last element, only check the searching value
+                    assertTrue(v >= listVal);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testGreaterIndexOf() {
+        testGreaterIndexOf(new SortedListAvl<>());
+        testGreaterIndexOf(new SortedListArray<>());
+    }
+    
+    private void testGreaterIndexOf(SortedList<Integer> list) {
+        assertEquals(list.greaterIndexOf(2), -1);
+
+        list.addAll(Arrays.asList(1,2,3,3,5,7,9));
+
+        assertEquals(list.greaterIndexOf(0), 0);
+        assertEquals(list.greaterIndexOf(1), 1);
+        assertEquals(list.greaterIndexOf(2), 2);
+        assertEquals(list.greaterIndexOf(3), 4);
+        assertEquals(list.greaterIndexOf(4), 4);
+        assertEquals(list.greaterIndexOf(5), 5);
+        assertEquals(list.greaterIndexOf(6), 5);
+        assertEquals(list.greaterIndexOf(7), 6);
+        assertEquals(list.greaterIndexOf(8), 6);
+        assertEquals(list.greaterIndexOf(9), -1);
+        assertEquals(list.greaterIndexOf(10), -1);
+        assertEquals(list.greaterIndexOf(11), -1);
+        assertEquals(list.greaterIndexOf(9999), -1);
+
+        // Random value test
+        list.clear();
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            list.add(v);
+
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (int j = 1; j <= MathUtil.randomInteger(1,3); j++) {
+                    list.add(v);
+                }
+            }
+        }
+
+        // Test non exist elements
+        assertEquals(list.greaterIndexOf(10000), -1);
+        assertEquals(list.greaterIndexOf(99999), -1);
+
+        // Test first element
+        assertEquals(list.greaterIndexOf(list.get(0)-1), 0);
+
+        // Test random values (value withing list values)
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            int idx = list.greaterIndexOf(v);
+
+            if (idx != -1) {
+                int listVal = list.get(idx);
+
+                if (idx > 0) {
+                    // Previous element and searching value should be smaller than the result value 
+                    assertTrue(list.get(idx - 1) < listVal && v < listVal);
+                } else {
+                    // Result is the first element, only check the searching value
+                    assertTrue(v < listVal);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testGreaterOrEqualsIndexOf() {
+        testGreaterOrEqualsIndexOf(new SortedListAvl<>());
+        testGreaterOrEqualsIndexOf(new SortedListArray<>());
+    }
+    
+    private void testGreaterOrEqualsIndexOf(SortedList<Integer> list) {
+        assertEquals(list.greaterOrEqualsIndexOf(2), -1);
+
+        list.addAll(Arrays.asList(1,2,3,3,5,7,9));
+
+        assertEquals(list.greaterOrEqualsIndexOf(0), 0);
+        assertEquals(list.greaterOrEqualsIndexOf(1), 0);
+        assertEquals(list.greaterOrEqualsIndexOf(2), 1);
+        assertEquals(list.greaterOrEqualsIndexOf(3), 2);
+        assertEquals(list.greaterOrEqualsIndexOf(4), 4);
+        assertEquals(list.greaterOrEqualsIndexOf(5), 4);
+        assertEquals(list.greaterOrEqualsIndexOf(6), 5);
+        assertEquals(list.greaterOrEqualsIndexOf(7), 5);
+        assertEquals(list.greaterOrEqualsIndexOf(8), 6);
+        assertEquals(list.greaterOrEqualsIndexOf(9), 6);
+        assertEquals(list.greaterOrEqualsIndexOf(10), -1);
+        assertEquals(list.greaterOrEqualsIndexOf(11), -1);
+        assertEquals(list.greaterOrEqualsIndexOf(9999), -1);
+
+        // Random value test
+        list.clear();
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            list.add(v);
+
+            // Ensure duplicate elements
+            if (i % 333 == 0) {
+                for (int j = 1; j <= MathUtil.randomInteger(1,3); j++) {
+                    list.add(v);
+                }
+            }
+        }
+
+        // Test non exist elements
+        assertEquals(list.greaterOrEqualsIndexOf(10000), -1);
+        assertEquals(list.greaterOrEqualsIndexOf(10299), -1);
+
+        // Test first element
+        assertEquals(list.greaterOrEqualsIndexOf(list.get(0)), 0);
+
+        // Test random values (value withing list values)
+        for (int i = 1; i <= 1000; i++) {
+            int v = MathUtil.randomInteger(300, 9999);
+
+            int idx = list.greaterOrEqualsIndexOf(v);
+
+            if (idx != -1) {
+                int listVal = list.get(idx);
+
+                if (idx > 0) {
+                    // Previous element should be smaller than and searching value should be smaller or equals to the result value
+                    // Since first index is guaranteed, previous element should always be smaller than the result value
+                    assertTrue(list.get(idx - 1) < listVal && v <= listVal);
+                } else {
+                    // Result value is the first element, only check the searching value
+                    assertTrue(v <= listVal);
+                }
+            }
         }
     }
 

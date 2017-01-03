@@ -520,24 +520,22 @@ class SortedListAvl<E>: SortedList<E> {
     /**
      * {@inheritDoc}
      */
-    override fun addAll(c: Collection<E>?, allowDuplicate: Boolean): Boolean {
-        if (c != null) {
-            var modified = false
-            c.forEach {
-                if (allowDuplicate || !contains(it)) {
-                    if (privateAdd(it)) {
-                        modified = true
-                    }
+    override fun addAll(elements: Collection<E>, allowDuplicate: Boolean): Boolean {
+        var modified = false
+        
+        for (element in elements) {
+            if (allowDuplicate || !contains(element)) {
+                if (privateAdd(element)) {
+                    modified = true
                 }
             }
-
-            if (modified) {
-                modCount++
-            }
-            return modified
-        } else {
-            return false
         }
+        
+        if (modified) {
+            modCount++
+        }
+        
+        return modified
     }
 
     /**
@@ -731,27 +729,30 @@ class SortedListAvl<E>: SortedList<E> {
     }
 
     /**
-     * Find the last element index which value is smaller than the searching value, with reference node
+     * Find the last element index which value is smaller or equals to the searching value, with reference node
      * 
      * @param value searching value
      * @param node reference node
      * @param index reference node's index
+     * @param includeEquals include equals results
      * @param possibleIndex possible result index, default -1
      * 
      * @return last element index with smaller value of the searching value
      */
-    private fun lastSmallerIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, possibleIndex: Int = -1): Int {
+    private fun smallerOrEqualsIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, includeEquals: Boolean = false, possibleIndex: Int = -1): Int {
         val compareResult = comparator.compare(value, node.element)
         
-        if (compareResult > 0) {
+        val comp = if (includeEquals) compareResult >= 0 else compareResult > 0
+        
+        if (comp) {
             if (node.hasRight()) {
-                return lastSmallerIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, index)
+                return smallerOrEqualsIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, includeEquals, index)
             } else {
                 return index
             }
         } else {
             if (node.hasLeft()) {
-                return lastSmallerIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, possibleIndex)
+                return smallerOrEqualsIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, includeEquals, possibleIndex)
             } else {
                 return possibleIndex
             }
@@ -765,36 +766,54 @@ class SortedListAvl<E>: SortedList<E> {
      *
      * @return last element index with smaller value of the searching value
      */
-    fun lastSmallerIndexOf(value: E): Int {
+    override fun smallerIndexOf(value: E): Int {
         if (root == null) {
             return -1
         } else {
-            return lastSmallerIndexOf(value, root!!, root!!.leftNodeCount)
+            return smallerOrEqualsIndexOf(value, root!!, root!!.leftNodeCount)
         }
     }
 
     /**
-     * Find the first element index which value is greater than the searching value, with reference node
+     * Find the last element index which value is smaller or equals to the searching value
+     *
+     * @param value searching value
+     *
+     * @return last element index with smaller or equals value of the searching value
+     */
+    override fun smallerOrEqualsIndexOf(value: E): Int {
+        if (root == null) {
+            return -1
+        } else {
+            return smallerOrEqualsIndexOf(value, root!!, root!!.leftNodeCount, true)
+        }
+    }
+
+    /**
+     * Find the first element index which value is greater or equals to the searching value, with reference node
      * 
      * @param value searching value
      * @param node reference node
      * @param index reference node's index
+     * @param includeEquals include equals results
      * @param possibleIndex possible result index, default -1
      * 
      * @return first element index with greater value of the searching value
      */
-    private fun firstGreaterIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, possibleIndex: Int = -1): Int {
+    private fun greaterOrEqualsIndexOf(value: E, node: BinaryTreeNode<E>, index: Int, includeEquals: Boolean = false, possibleIndex: Int = -1): Int {
         val compareResult = comparator.compare(value, node.element)
 
-        if (compareResult < 0) {
+        val comp = if (includeEquals) compareResult <= 0 else compareResult < 0
+        
+        if (comp) {
             if (node.hasLeft()) {
-                return firstGreaterIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, index)
+                return greaterOrEqualsIndexOf(value, node.left!!, index - node.left!!.rightNodeCount - 1, includeEquals, index)
             } else {
                 return index
             }
         } else {
             if (node.hasRight()) {
-                return firstGreaterIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, possibleIndex)
+                return greaterOrEqualsIndexOf(value, node.right!!, index + node.right!!.leftNodeCount + 1, includeEquals, possibleIndex)
             } else {
                 return possibleIndex
             }
@@ -808,11 +827,26 @@ class SortedListAvl<E>: SortedList<E> {
      * 
      * @return first element index with greater value of the searching value
      */
-    fun firstGreaterIndexOf(value: E): Int {
+    override fun greaterIndexOf(value: E): Int {
         if (root == null) {
             return -1
         } else {
-            return firstGreaterIndexOf(value, root!!, root!!.leftNodeCount)
+            return greaterOrEqualsIndexOf(value, root!!, root!!.leftNodeCount)
+        }
+    }
+
+    /**
+     * Find the first element index which value is greater or equals to the searching value
+     *
+     * @param value searching value
+     *
+     * @return first element index with greater or equals value of the searching value
+     */
+    override fun greaterOrEqualsIndexOf(value: E): Int {
+        if (root == null) {
+            return -1
+        } else {
+            return greaterOrEqualsIndexOf(value, root!!, root!!.leftNodeCount, true)
         }
     }
 
