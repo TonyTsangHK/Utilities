@@ -10,16 +10,16 @@ import java.util.*
  *
  * AVL tree implemented as java list
  * Best overall performance over SortedListArray, esp. insertion & removal
- * 
- * General performance comparision between AVL & Array sorted list implementation:
+ *
+ * General performance comparision between AVL & Array sorted list implementation (not formally tested):
  * Insertion:
- * AVL: 1, Array: ~30x
+ * AVL: 1, Array: ~30x (1,000,000 elements), ~4x (100,000 elements)
  * Removal:
- * AVL: 1, Array: ~50x
+ * AVL: 1, Array: ~50x (1,000,000 elements), ~2.5x (100,000 elements)
  * Random access:
- * AVL: 3.5x, Array: 1
+ * AVL: ~3.5x, Array: 1
  * Search:
- * AVL: 1.02x, Array: 1
+ * AVL: ~1.02x (1,000,000 elements), ~1.7x(100,000 elements), Array: 1
  *
  * @author Tony Tsang
  *
