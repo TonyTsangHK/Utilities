@@ -9,7 +9,9 @@ import java.util.*
  * Time: 10:33
  *
  * AVL tree implemented as java list
- * Best overall performance over SortedListArray, esp. insertion & removal
+ * 
+ * Best overall performance over SortedListArray for large data size, over 35,000 elements, esp. insertion & removal
+ * For small data size, less than 35,000 elements, it is better to use SortedListArray.
  *
  * General performance comparision between AVL & Array sorted list implementation (not formally tested):
  * Insertion:

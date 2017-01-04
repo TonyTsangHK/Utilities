@@ -7,7 +7,8 @@ import utils.data.sort.MergeSort;
 
 /**
  * Sorted list implemented as java list, (binary search tree in array form)
- * Extremely slow performance for insertion & removal comparing to SortedListAvl
+ * Extremely slow performance for insertion & removal when comparing to SortedListAvl for large data size, over 35,000 elements.
+ * For small data size, less than 35,000 elements, it always performs better than or equals to SortedListAvl in all aspect. 
  * Best for random access & searching
  * 
  * General performance comparision between AVL & Array sorted list implementation (not formally tested):
