@@ -7,7 +7,7 @@ public class StringValidator {
         if (str == null || str.equals("")) {
             return allowEmpty;
         } else {
-            return Pattern.matches("^[-|+]?\\d+$", str);
+            return Pattern.matches("^[-+]?\\d+$", str);
         }
     }
     
@@ -31,7 +31,7 @@ public class StringValidator {
         if (str == null || str.equals("")) {
             return allowEmpty;
         } else {
-            return Pattern.matches("^[-|+]?\\d+\\.?\\d*$", str);
+            return Pattern.matches("^[-+]?\\d+\\.?\\d*$", str);
         }
     }
     
@@ -81,9 +81,9 @@ public class StringValidator {
         if (precision < 0) {
             return str;
         } else if (precision == 0) {
-            return Pattern.compile("([-|+]?\\d+)\\.?\\d*").matcher(str).replaceAll("$1");
+            return Pattern.compile("([-+]?\\d+)\\.?\\d*").matcher(str).replaceAll("$1");
         } else {
-            return Pattern.compile("([-|+]?\\d+\\.?\\d{0," + precision + "})\\d*").matcher(str).replaceAll("$1");
+            return Pattern.compile("([-+]?\\d+\\.?\\d{0," + precision + "})\\d*").matcher(str).replaceAll("$1");
         }
     }
 }
