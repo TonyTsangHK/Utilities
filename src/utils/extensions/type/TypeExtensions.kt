@@ -23,16 +23,16 @@ fun String.toDate(pattern: String = DateTimeParser.NORMAL_DATETIME_FORMAT, defau
     return DateTimeParser.parse(this, pattern) ?: default
 }
 
-fun String.toDateOrNull(pattern: String = DateTimeParser.NORMAL_DATETIME_FORMAT, default: Date? = Date()): Date? {
-    return DateTimeParser.parse(this, pattern) ?: default
+fun String.toDateOrNull(pattern: String = DateTimeParser.NORMAL_DATETIME_FORMAT): Date? {
+    return DateTimeParser.parse(this, pattern)
 }
 
 fun String.toBigDecimal(default: BigDecimal = BigDecimal.ZERO): BigDecimal {
     return MathUtil.parseBigDecimalNotNull(this, default)
 }
 
-fun String.toBigDecimalOrNull(default: BigDecimal? = BigDecimal.ZERO): BigDecimal? {
-    return MathUtil.parseBigDecimal(this, default)
+fun String.toBigDecimalOrNull(): BigDecimal? {
+    return MathUtil.parseBigDecimal(this, null)
 }
 
 fun <K, V> Map<K, V>.getInt(key: K, default: Int = -1): Int {
