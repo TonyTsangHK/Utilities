@@ -969,6 +969,27 @@ public class StringUtil {
             return input;
         }
     }
+
+    /**
+     * Convert non ascii character into unicode representation
+     *
+     * @param str target string
+     * @return converted string
+     */
+    public static String convertToUnicodeRepresentation(String str) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (Character.UnicodeBlock.of(ch) != Character.UnicodeBlock.BASIC_LATIN) {
+                builder.append("\\u").append(Integer.toHexString(ch));
+            } else {
+                builder.append(ch);
+            }
+        }
+
+        return builder.toString();
+    }
     
     /**
      * Read next hex value from the string reader
