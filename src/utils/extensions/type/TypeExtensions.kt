@@ -59,6 +59,10 @@ fun <K, V> Map<K, V>.getBigDecimalOrNull(key: K, default: BigDecimal? = BigDecim
     return DataManipulator.getBigDecimal(this, key, default)
 }
 
+fun <K, V> Map<K, V>.getDouble(key: K, default: Double = 0.0): Double {
+    return DataManipulator.getDoubleValue(this, key, default)
+}
+
 fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date {
     return DataManipulator.getDate(this, key, default) ?: default
 }
