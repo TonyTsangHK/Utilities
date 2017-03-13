@@ -58,7 +58,7 @@ public class SimpleDateUtils {
      * Get month info from provided date info
      *
      * @param date provided date info, current time will be used for null
-     * @return month value of the date info
+     * @return month value of the date info, result will be within 1 and 12
      */
     public static int getMonth(Date date) {
         // 1 compensated for 0-11
@@ -69,7 +69,7 @@ public class SimpleDateUtils {
      * Get month info from provided calendar info
      *
      * @param calendar provided calendar info, null will trigger NullPointer exception.
-     * @return month value of the calendar info
+     * @return month value of the calendar info, result will be within 1 and 12
      */
     public static int getMonth(Calendar calendar) {
         // 1 compensated for 0-11
