@@ -5,7 +5,6 @@ import utils.data.DataManipulator
 import utils.date.DateProgression
 import utils.date.DateRange
 import utils.date.DateTimeParser
-import utils.date.SimpleDateUtils
 
 import utils.math.MathUtil
 import java.math.BigDecimal
@@ -69,6 +68,33 @@ fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date {
 
 fun <K, V> Map<K, V>.getDateOrNull(key: K, default: Date? = Date()): Date? {
     return DataManipulator.getDate(this, key, default)
+}
+
+fun <EV> Map<*, *>.getListOrNull(key: Any): List<EV>? {
+    if (this.containsKey(key)) {
+        val l = this[key]
+        if (l != null && l is List<*>) {
+            return l as List<EV>
+        } else {
+            return null
+        }
+    } else {
+        return null
+    }
+}
+
+fun <EK, EV> Map<*, *>.getMapOrNull(key: Any): Map<EK, EV>? {
+    if (this.containsKey(key)) {
+        val m = this[key]
+        
+        if (m != null && m is Map<*, *>) {
+            return m as Map<EK, EV>
+        } else {
+            return null
+        }
+    } else {
+        return null
+    }
 }
 
 infix operator fun Date.plus(days: Int): Date {
