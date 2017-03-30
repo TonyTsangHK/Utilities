@@ -46,7 +46,7 @@ fun <K, V> Map<K, V>.getString(key: K, default: String = ""): String {
     return DataManipulator.getStringValue(this, key, default) ?: default
 }
 
-fun <K, V> Map<K, V>.getStringOrNull(key: K, defaultValue: String? = ""): String? {
+fun <K, V> Map<K, V>.getStringOrNull(key: K, defaultValue: String? = null): String? {
     return DataManipulator.getStringValue(this, key, defaultValue)
 }
 
@@ -54,7 +54,7 @@ fun <K, V> Map<K, V>.getBigDecimal(key: K, default: BigDecimal = BigDecimal.ZERO
     return DataManipulator.getBigDecimal(this, key, default) ?: default
 }
 
-fun <K, V> Map<K, V>.getBigDecimalOrNull(key: K, default: BigDecimal? = BigDecimal.ZERO): BigDecimal? {
+fun <K, V> Map<K, V>.getBigDecimalOrNull(key: K, default: BigDecimal? = null): BigDecimal? {
     return DataManipulator.getBigDecimal(this, key, default)
 }
 
@@ -66,7 +66,7 @@ fun <K, V> Map<K, V>.getDate(key: K, default: Date = Date()): Date {
     return DataManipulator.getDate(this, key, default) ?: default
 }
 
-fun <K, V> Map<K, V>.getDateOrNull(key: K, default: Date? = Date()): Date? {
+fun <K, V> Map<K, V>.getDateOrNull(key: K, default: Date? = null): Date? {
     return DataManipulator.getDate(this, key, default)
 }
 
