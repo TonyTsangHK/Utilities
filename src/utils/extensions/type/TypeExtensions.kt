@@ -38,6 +38,10 @@ fun <K, V> Map<K, V>.getInt(key: K, default: Int = -1): Int {
     return DataManipulator.getIntValue(this, key, 10, default)
 }
 
+fun <K, V> Map<K, V>.getLong(key: K, default: Long = -1): Long {
+    return DataManipulator.getLongValue(this, key, 10, default)
+}
+
 fun <K, V> Map<K, V>.getBoolean(key: K, default: Boolean = false): Boolean {
     return DataManipulator.getBooleanValue(this, key, default)
 }
