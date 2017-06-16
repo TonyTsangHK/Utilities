@@ -1,5 +1,7 @@
 package utils.math;
 
+import utils.string.FormatUtils;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -572,9 +574,11 @@ public class Fraction extends Number implements Cloneable, Comparable<Number> {
         boolean hasMixedNumber = false;
         if (mixedNumber.compareTo(BigDecimal.ZERO) != 0) {
             if (mixedNumber.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0) {
-                builder.append(mixedNumber);
+                // Trim the trailing zeros from BigDecimal's scale
+                builder.append(FormatUtils.formatNumber(mixedNumber, 0));
             } else {
-                builder.append(mixedNumber);
+                // Does not expect this, allow not normalized fraction number?
+                builder.append(mixedNumber.toString());
             }
             
             hasMixedNumber = true;
