@@ -1,6 +1,8 @@
 package utils.sync;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -82,5 +84,33 @@ public class LogEntryHolder {
         }
 
         writer.close();
+    }
+    
+    public String getSaveContent() {
+        StringBuilder builder = new StringBuilder();
+        
+        for (String filePath : this.logEntryMap.keySet()) {
+            LogEntry logEntry = logEntryMap.get(filePath);
+            
+            builder.append(logEntry.toString()).append('\n');
+        }
+        
+        return builder.toString();
+    }
+    
+    public void removeNotComparedEntries() {
+        List<String> filePathNotCompared = new ArrayList<>();
+        
+        for (String filePath : this.logEntryMap.keySet()) {
+            LogEntry logEntry = logEntryMap.get(filePath);
+            
+            if (!logEntry.isNew() && !logEntry.isCompared()) {
+                filePathNotCompared.add(filePath);
+            }
+        }
+        
+        for (String filePath : filePathNotCompared) {
+            this.logEntryMap.remove(filePath);
+        }
     }
 }
