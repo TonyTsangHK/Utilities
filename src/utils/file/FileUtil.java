@@ -437,6 +437,23 @@ public class FileUtil {
             return new File[0];
         }
     }
+    
+    public static void decompressGzippedFile(File gzippedFile, File targetFile) throws IOException {
+        GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzippedFile));
+        FileOutputStream fos = new FileOutputStream(targetFile);
+        
+        byte[] bytes = new byte[4096];
+        
+        int len = gzipInputStream.read(bytes);
+        
+        while (len != -1) {
+            fos.write(bytes, 0, len);
+            len = gzipInputStream.read(bytes);
+        }
+        
+        gzipInputStream.close();
+        fos.close();
+    }
 
     /**
      * Close reader without handling IOException. Raised exception will be ignored, be careful
