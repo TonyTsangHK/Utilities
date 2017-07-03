@@ -4,10 +4,14 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.filechooser.FileFilter;
 
 public class FileUtil {
+    // Default byte array size for stream operation
+    private static final int BYTE_LENGTH = 4096;
+    
     public static final boolean CaseSensitive = File.separatorChar == '/';
     
     public static String getExtension(File f) {
@@ -128,8 +132,6 @@ public class FileUtil {
             String fileContent = getFileContent(inputStreamReader);
             inputStreamReader.close();
             return fileContent;
-        } catch (UnsupportedEncodingException usee) {
-            return null;
         } catch (IOException iox) {
             // Nothing to be down here!
             return null;
@@ -377,7 +379,7 @@ public class FileUtil {
     }
 
     public static boolean copyFile(InputStream in, OutputStream out) {
-        byte[] bytes = new byte[4096];
+        byte[] bytes = new byte[BYTE_LENGTH];
 
         try {
             BufferedInputStream bin = new BufferedInputStream(in);
@@ -437,22 +439,124 @@ public class FileUtil {
             return new File[0];
         }
     }
+
+    /**
+     * Compress a file with gzip format, overwrite output file if exists
+     * 
+     * @param input input file, uncompressed
+     * @param output output file, to be compressed with gzip
+     * @return compress result
+     * @throws IOException
+     */
+    public static boolean compressFileWithGZIP(File input, File output) throws IOException{
+        // always overwrite
+        return compressFileWithGZIP(input, output, true);
+    }
     
-    public static void decompressGzippedFile(File gzippedFile, File targetFile) throws IOException {
-        GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(gzippedFile));
-        FileOutputStream fos = new FileOutputStream(targetFile);
-        
-        byte[] bytes = new byte[4096];
-        
-        int len = gzipInputStream.read(bytes);
-        
+    /**
+     * Compress a file with gzip format
+     * 
+     * @param input input file, uncompressed
+     * @param output output file, to be compressed with gzip format
+     * @param overwrite allow overwrite if output file already exists
+     * 
+     * @throws IOException
+     */
+    public static boolean compressFileWithGZIP(File input, File output, boolean overwrite) throws IOException {
+        if (!overwrite && output.exists()) {
+            // Output file already exists and overwrite not allowed
+            return false;
+        } else {
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(input));
+            FileOutputStream outputStream = new FileOutputStream(output);
+            compressWithGZIP(inputStream, outputStream, true);
+            return true;
+        }
+    }
+
+    /**
+     * Compress an input stream to specified output stream
+     * 
+     * @param inputStream input data stream
+     * @param outputStream output data stream, will be wrapped by GZIPOutputStream, don't use GZIPOutputStream
+     * @param closeStreams close both input and output stream when done
+     * @throws IOException
+     */
+    public static void compressWithGZIP(InputStream inputStream, OutputStream outputStream, boolean closeStreams) throws IOException {
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
+
+        byte[] bytes = new byte[BYTE_LENGTH];
+
+        int len = inputStream.read(bytes);
+
         while (len != -1) {
-            fos.write(bytes, 0, len);
+            gzipOutputStream.write(bytes, 0, len);
+            len = inputStream.read(bytes);
+        }
+
+        if (closeStreams) {
+            gzipOutputStream.close();
+            inputStream.close();
+        }
+    }
+
+    /**
+     * Decompress a file with gzip format, overwrite output file if exists
+     *
+     * @param input input file, compressed with gzip format
+     * @param output output file, decompressed
+     *
+     * @throws IOException
+     */
+    public static boolean decompressFileWithGZIP(File input, File output) throws IOException {
+        return decompressFileWithGZIP(input, output, true);
+    }
+
+    /**
+     * Decompress a file with gzip format
+     * 
+     * @param input input file, compressed with gzip format
+     * @param output output file, decompressed
+     * @param overwrite allow overwrite if output file already exists
+     * 
+     * @throws IOException
+     */
+    public static boolean decompressFileWithGZIP(File input, File output, boolean overwrite) throws IOException {
+        if (!overwrite && output.exists()) {
+            // Output file already exists and overwrite not allowed
+            return false;
+        } else {
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(input));
+            FileOutputStream outputStream = new FileOutputStream(output);
+            decompressWithGZIP(inputStream, outputStream, true);
+            return true;
+        }
+    }
+    
+    /**
+     * Decompress an input stream to specified output stream
+     *
+     * @param inputStream input data stream, gzipped, will be wrapped with GZIPInputStream, don't use GZIPInputStream 
+     * @param outputStream output data stream
+     * @param closeStreams close both input and output stream when done
+     * @throws IOException
+     */
+    public static void decompressWithGZIP(InputStream inputStream, OutputStream outputStream, boolean closeStreams) throws IOException {
+        GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+        
+        byte[] bytes = new byte[BYTE_LENGTH];
+
+        int len = gzipInputStream.read(bytes);
+
+        while (len != -1) {
+            outputStream.write(bytes, 0, len);
             len = gzipInputStream.read(bytes);
         }
-        
-        gzipInputStream.close();
-        fos.close();
+
+        if (closeStreams) {
+            gzipInputStream.close();
+            outputStream.close();
+        }
     }
 
     /**
