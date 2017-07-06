@@ -29,7 +29,7 @@ object RandomUtil {
         if (randomGenerator == null) {
             if (USE_SECURE_RANDOM) {
                 try {
-                    randomGenerator = SecureRandom.getInstanceStrong()
+                    randomGenerator = SecureRandom.getInstance("NativePRNGBlocking")
                 } catch (e: NoSuchAlgorithmException) {
                     randomGenerator = SecureRandom()
                 }
