@@ -248,37 +248,6 @@ class ListUtil private constructor() {
         fun <T> syncLists(targetList: MutableList<T>, sourceList: List<T>, comparator: Comparator<T>): Boolean {
             return syncList(targetList, compareList(targetList, sourceList, comparator))
         }
-        
-        class ListDiff<T>(
-            val newElements: List<T>, val removedElements: List<T>, val sameElements: List<T>
-        ) {
-            fun hasRemovedElements(): Boolean {
-                return removedElements.isNotEmpty()
-            }
-
-            fun hasNewElements(): Boolean {
-                return newElements.isNotEmpty()
-            }
-
-            fun hasSameElements(): Boolean {
-                return sameElements.isNotEmpty()
-            }
-
-            val isSame: Boolean
-                get() = newElements.isEmpty() && removedElements.isEmpty()
-
-            val isNotSame: Boolean
-                get() = !isSame
-
-            val newElementCount: Int
-                get() = newElements.size
-
-            val removedElementCount: Int
-                get() = removedElements.size
-
-            val sameElementCount: Int
-                get() = sameElements.size
-        }
 
         private fun createList(size: Int): List<Int> {
             val list = ArrayList<Int>(size);
@@ -289,5 +258,34 @@ class ListUtil private constructor() {
 
             return list
         }
+    }
+
+    class ListDiff<T>(val newElements: List<T>, val removedElements: List<T>, val sameElements: List<T>) {
+        fun hasRemovedElements(): Boolean {
+            return removedElements.isNotEmpty()
+        }
+
+        fun hasNewElements(): Boolean {
+            return newElements.isNotEmpty()
+        }
+
+        fun hasSameElements(): Boolean {
+            return sameElements.isNotEmpty()
+        }
+
+        val isSame: Boolean
+            get() = newElements.isEmpty() && removedElements.isEmpty()
+
+        val isNotSame: Boolean
+            get() = !isSame
+
+        val newElementCount: Int
+            get() = newElements.size
+
+        val removedElementCount: Int
+            get() = removedElements.size
+
+        val sameElementCount: Int
+            get() = sameElements.size
     }
 }
