@@ -1,8 +1,11 @@
 package utils.random
 
+import utils.data.ArrayUtil
 import utils.data.SortedListAvl
 import utils.math.MathUtil
 import java.math.BigDecimal
+import java.nio.CharBuffer
+import java.nio.charset.Charset
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.*
@@ -14,6 +17,19 @@ import java.util.*
  * Time: 16:24
  */
 object RandomUtil {
+    val CHARACTERS = listOf(
+        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+    )
+    
+    val DIGITS = listOf(
+        '0','1','2','3','4','5','6','7','8','9'
+    )
+    
+    val SYMBOLS = listOf(
+        '`','~','!','@','#','$','%','^','&','*','(',')','_','+','-','=','[',']','{','}',';',':','\'','"',',','.','/','<','>','?','|','\\',' '
+    )
+    
     // Use of secure random, default false
     private var USE_SECURE_RANDOM = false
 
@@ -496,5 +512,67 @@ object RandomUtil {
         } else {
             return possibles[randomInteger(0, possibles.size-1)]
         }
+    }
+    
+    @JvmStatic
+    fun clearCharArray(charArray: CharArray) {
+        Arrays.fill(charArray, ' ')
+    }
+    
+    @JvmStatic
+    fun clearByteArray(byteArray: ByteArray) {
+        Arrays.fill(byteArray, 0)
+    }
+    
+    @JvmOverloads
+    @JvmStatic
+    fun randomPassword(charCount: Int, digitCount: Int = 0, symbolCount: Int = 0): CharArray {
+        val c = if (charCount>0) charCount else 0
+        val d = if (digitCount>0) digitCount else 0
+        val s = if (symbolCount>0) symbolCount else 0
+        val len = c+d+s
+        
+        val result = CharArray(len)
+        
+        val indices = IntArray(len, {it})
+        
+        ArrayUtil.shuffle(indices)
+        
+        var i = 0
+        
+        while (i < len) {
+            val idx = indices[i]
+            
+            if (i < c) {
+                result[idx] = randomValue(CHARACTERS)
+            } else if (i < c+d) {
+                result[idx] = randomValue(DIGITS)
+            } else {
+                result[idx] = randomValue(SYMBOLS)
+            }
+            
+            i++
+        }
+        
+        return result
+    }
+    
+    @JvmOverloads
+    @JvmStatic
+    fun randomPasswordBytes(charCount: Int, digitCount: Int = 0, symbolCount: Int = 0): ByteArray {
+        val pwdArray = randomPassword(charCount, digitCount, symbolCount)
+        val bytes = encodeCharsToBytes(pwdArray)
+        clearCharArray(pwdArray)
+        return bytes
+    }
+    
+    @JvmStatic
+    fun encodeCharsToBytes(charArray: CharArray): ByteArray {
+        val charBuffer = CharBuffer.wrap(charArray)
+        val byteBuffer = Charset.forName("UTF-8").encode(charBuffer)
+        val bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())
+        clearCharArray(charBuffer.array())
+        clearByteArray(byteBuffer.array())
+        return bytes
     }
 }
