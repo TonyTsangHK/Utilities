@@ -166,8 +166,8 @@ public class TestSortedList {
 
     @Test
     public void testSmallerIndexOf() {
-        testSmallerIndexOf(new SortedListAvl<>());
-        testSmallerIndexOf(new SortedListArray<>());
+        testSmallerIndexOf(new SortedListAvl<Integer>());
+        testSmallerIndexOf(new SortedListArray<Integer>());
     }
     
     private void testSmallerIndexOf(SortedList<Integer> list) {
@@ -234,8 +234,8 @@ public class TestSortedList {
 
     @Test
     public void testSmallerOrEqualsIndexOf() {
-        testSmallerOrEqualsIndexOf(new SortedListAvl<>());
-        testSmallerOrEqualsIndexOf(new SortedListArray<>());
+        testSmallerOrEqualsIndexOf(new SortedListAvl<Integer>());
+        testSmallerOrEqualsIndexOf(new SortedListArray<Integer>());
     }
     
     private void testSmallerOrEqualsIndexOf(SortedList<Integer> list) {
@@ -302,8 +302,8 @@ public class TestSortedList {
 
     @Test
     public void testGreaterIndexOf() {
-        testGreaterIndexOf(new SortedListAvl<>());
-        testGreaterIndexOf(new SortedListArray<>());
+        testGreaterIndexOf(new SortedListAvl<Integer>());
+        testGreaterIndexOf(new SortedListArray<Integer>());
     }
     
     private void testGreaterIndexOf(SortedList<Integer> list) {
@@ -369,8 +369,8 @@ public class TestSortedList {
 
     @Test
     public void testGreaterOrEqualsIndexOf() {
-        testGreaterOrEqualsIndexOf(new SortedListAvl<>());
-        testGreaterOrEqualsIndexOf(new SortedListArray<>());
+        testGreaterOrEqualsIndexOf(new SortedListAvl<Integer>());
+        testGreaterOrEqualsIndexOf(new SortedListArray<Integer>());
     }
     
     private void testGreaterOrEqualsIndexOf(SortedList<Integer> list) {

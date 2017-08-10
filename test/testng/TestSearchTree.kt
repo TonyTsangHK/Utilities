@@ -46,12 +46,12 @@ class TestSearchTree {
         assertEquals(getTotalCost(moi2), getTotalCost(mni2))
         assertEquals(getTotalCost(moi3), getTotalCost(mni3))
 
-        assertEquals(oi1.data, ni1!!.data)
-        assertEquals(oi2.data, ni2!!.data)
-        assertEquals(oi3.data, ni3!!.data)
-        assertEquals(moi1.data, mni1!!.data)
-        assertEquals(moi2.data, mni2!!.data)
-        assertEquals(moi3.data, mni3!!.data)
+        assertEquals(oi1.getData(), ni1!!.getData())
+        assertEquals(oi2.getData(), ni2!!.getData())
+        assertEquals(oi3.getData(), ni3!!.getData())
+        assertEquals(moi1.getData(), mni1!!.getData())
+        assertEquals(moi2.getData(), mni2!!.getData())
+        assertEquals(moi3.getData(), mni3!!.getData())
     }
 
     fun addNodes(levelToGo: Int, childNodeCount: Int, node: SearchTreeNode<Int?>) {
@@ -67,9 +67,9 @@ class TestSearchTree {
     fun getTotalCost(node: SearchTreeNode<Int?>?): Int {
         var localNode = node
         var cost = 0
-        while (localNode != null) {
-            cost += localNode.data!!
-            localNode = localNode.parentNode
+        while (localNode !== null) {
+            cost += localNode.getData()!!
+            localNode = localNode.getParentNode()
         }
         return cost
     }
@@ -78,14 +78,14 @@ class TestSearchTree {
         var minCost = Integer.MAX_VALUE
         var minIndex = -1
 
-        val nodes = tree.allLeafNode!!
+        val nodes = tree.getAllLeafNode()!!
         
         for (i in nodes.indices) {
             var cost = 0
             var c: SearchTreeNode<Int?>? = nodes[i]
-            while (c != null) {
-                cost += c.data!!
-                c = c.parentNode
+            while (c !== null) {
+                cost += c.getData()!!
+                c = c.getParentNode()
             }
             if (cost < minCost) {
                 minCost = cost
@@ -99,14 +99,14 @@ class TestSearchTree {
         var maxCost = Integer.MIN_VALUE
         var maxIndex = -1
 
-        val nodes = tree.allLeafNode
+        val nodes = tree.getAllLeafNode()
 
         for (i in nodes!!.indices) {
             var cost = 0
             var c: SearchTreeNode<Int?>? = nodes[i]
-            while (c != null) {
-                cost += c.data!!
-                c = c.parentNode
+            while (c !== null) {
+                cost += c.getData()!!
+                c = c.getParentNode()
             }
             if (cost > maxCost) {
                 maxCost = cost
