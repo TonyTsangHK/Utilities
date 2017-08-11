@@ -73,4 +73,8 @@ class CircularInteger {
 
         return upDiff <= upperRange || lowDiff <= lowerRange
     }
+    
+    override fun toString(): String {
+        return value.toString()
+    }
 }
