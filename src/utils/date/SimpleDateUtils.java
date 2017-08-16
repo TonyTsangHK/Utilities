@@ -271,6 +271,8 @@ public class SimpleDateUtils {
 
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.DAY_OF_YEAR, dayOfYear);
+        
+        clearTimePart(calendar);
 
         return calendar.getTime();
     }
@@ -281,8 +283,19 @@ public class SimpleDateUtils {
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month-1);
         cal.set(Calendar.DAY_OF_MONTH, day);
+        
+        clearTimePart(cal);
 
         return cal.getTime();
+    }
+    
+    // Set time part to 0
+    private static void clearTimePart(Calendar calendar) {
+        // Set hour part to 0
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
     }
 
     public static Date nextWeekDay(Date date, int weekDay) {
