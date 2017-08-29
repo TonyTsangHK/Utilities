@@ -58,8 +58,20 @@ public class StringUtil {
     }
 
     /**
+     * Check whether the input string is not empty (not null and not empty string: "")
+     * Simply the opposite of isEmpty(String)
+     * 
+     * @param str input string
+     * 
+     * @return check result
+     */
+    public static boolean isNotEmptyString(String str) {
+        return !isEmptyString(str);
+    }
+
+    /**
      * Check if all the input strings are empty (null or equals to "")
-     *
+     * 
      * @param strs input strings
      * @return check result
      */

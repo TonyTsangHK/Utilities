@@ -11,7 +11,12 @@ import utils.string.StringUtil
 
 // Null safe empty string check, null means empty
 fun String?.isEmptyString(): Boolean {
-    return this == null || "".equals(this)
+    return this == null || "" == this
+}
+
+// Opposite of String?.isEmptyString()
+fun String?.isNotEmptyString(): Boolean {
+    return !this.isEmptyString()
 }
 
 // Null safe string size getter
