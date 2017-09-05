@@ -45,7 +45,7 @@ class SearchTree<V> : AbstractTree<V> {
         } else {
             var maxLevel = currentLevel
             for (n in node.childNodes) {
-                val level = findDepth(n!!, currentLevel + 1)
+                val level = findDepth(n, currentLevel + 1)
                 if (level > maxLevel) {
                     maxLevel = level
                 }
@@ -70,7 +70,7 @@ class SearchTree<V> : AbstractTree<V> {
             if (node.hasChild()) {
                 var resultNode: SearchTreeNode<V?>? = null
                 for (n in node.childNodes) {
-                    resultNode = findTreeNode(n!!, data)
+                    resultNode = findTreeNode(n, data)
                     if (resultNode != null) {
                         break
                     }
@@ -127,7 +127,7 @@ class SearchTree<V> : AbstractTree<V> {
             list.add(node)
         } else {
             for (n in node.childNodes) {
-                list.addAll(getLeaf(n!!))
+                list.addAll(getLeaf(n))
             }
         }
         return list
@@ -146,7 +146,7 @@ class SearchTree<V> : AbstractTree<V> {
             list.add(node)
         } else {
             for (n in node.childNodes) {
-                list.addAll(getLeaf(n!!))
+                list.addAll(getLeaf(n))
             }
         }
         return list
@@ -214,7 +214,7 @@ class SearchTree<V> : AbstractTree<V> {
             return node
         } else {
             for (c in node.childNodes) {
-                val n = getMaxCostLeaf(c!!)
+                val n = getMaxCostLeaf(c)
                 if (maxCost == null) {
                     maxCost = n.cost
                     maxNode = n
@@ -270,7 +270,7 @@ class SearchTree<V> : AbstractTree<V> {
             return node
         } else {
             for (c in node.childNodes) {
-                val n = getMinCostLeaf(c!!)
+                val n = getMinCostLeaf(c)
                 if (minCost == null) {
                     minCost = n.cost
                     minNode = n
@@ -302,9 +302,9 @@ class SearchTree<V> : AbstractTree<V> {
             for (i in childNodes.indices) {
                 val c = childNodes[i]
                 if (i == 0) {
-                    allowedCost = c!!.cost
+                    allowedCost = c.cost
                 } else {
-                    if (allowedCost!!.compareTo(c!!.cost) < 0) {
+                    if (allowedCost!!.compareTo(c.cost) < 0) {
                         break
                     }
                 }

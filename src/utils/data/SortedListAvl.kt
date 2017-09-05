@@ -41,7 +41,7 @@ class SortedListAvl<E>: SortedList<E> {
     /**
      * Comparator used for sorting
      */
-    private lateinit var comparator: Comparator<E>
+    private var comparator: Comparator<E>
 
     /**
      * Modification count for concurrent modification check
@@ -246,7 +246,7 @@ class SortedListAvl<E>: SortedList<E> {
      * @param rebalance this AVL Tree should be rebalanced or not
      */
     private fun notifyNodeRemoved(
-        n: BinaryTreeNode<E>, parent: BinaryTreeNode<E>?, nodeType: BinaryTreeNode.Type, rebalance: Boolean
+        node: BinaryTreeNode<E>, parent: BinaryTreeNode<E>?, nodeType: BinaryTreeNode.Type, rebalance: Boolean
     ) {
         if (parent != null) {
             if (nodeType == BinaryTreeNode.Type.LEFT) {
@@ -1113,16 +1113,16 @@ class SortedListAvl<E>: SortedList<E> {
     /**
      * Get the last index of the target element
      *
-     * @param o target element
+     * @param element target element
      *
      * @return index of the target element, -1 if not found
      */
-    override fun lastIndexOf(o: E): Int {
+    override fun lastIndexOf(element: E): Int {
         if (root == null) {
             return -1
         }
 
-        return indexOf(o, root!!, root!!.leftNodeCount, false)
+        return indexOf(element, root!!, root!!.leftNodeCount, false)
     }
 
     /**
@@ -1571,7 +1571,7 @@ class SortedListAvl<E>: SortedList<E> {
             inorder(node.left!!)
         }
         print(
-            "${node.element.toString()} -[${node.leftDepth}, ${node.rightDepth}, ${node.leftNodeCount}, ${node.rightNodeCount}](p: ${(if (node.parent!=null) node.parent!!.element else "null")}), (l: ${(if (node.left !=null) node.left!!.element else "null")}), (r: ${(if (node.right !=null) node.right!!.element else "null")})-"
+            "${node.element.toString()} -[${node.leftDepth}, ${node.rightDepth}, ${node.leftNodeCount}, ${node.rightNodeCount}](p: ${(if (node.parent!=null) node.parent!!.element.toString() else "null")}), (l: ${(if (node.left !=null) node.left!!.element else "null")}), (r: ${(if (node.right !=null) node.right!!.element else "null")})-"
         )
         if (node.hasRight()) {
             inorder(node.right!!)

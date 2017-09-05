@@ -18,8 +18,8 @@ class DoubleMap<K, V> : MutableMap<K, V> {
     override val values: MutableCollection<V>
         get() = keyReferencedMap.values
 
-    private lateinit var keyReferencedMap: MutableMap<K, V>
-    private lateinit var valueReferencedMap: MutableMap<V, MutableSet<K>>
+    private var keyReferencedMap: MutableMap<K, V>
+    private var valueReferencedMap: MutableMap<V, MutableSet<K>>
 
     constructor(initialCapacity: Int) {
         keyReferencedMap = HashMap(initialCapacity)

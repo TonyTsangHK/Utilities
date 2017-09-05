@@ -261,7 +261,7 @@ class SearchTreeNode<V>: AbstractTreeNode<V> {
      */
     override fun setChildNodeData(i: Int, data: V?): Boolean {
         if (i >= 0 && i < childNodes.size) {
-            childNodes[i]?.setData(data)
+            childNodes[i].setData(data)
             return true
         } else {
             return false

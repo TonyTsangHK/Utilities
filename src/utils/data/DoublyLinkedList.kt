@@ -395,7 +395,7 @@ class DoublyLinkedList<V>: AbstractList<V>, Iterable<V>, List<V>, Serializable {
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): DoublyLinkedList<V> {
-        return getSubList(fromIndex, toIndex-fromIndex+1)!!
+        return getSubList(fromIndex, toIndex-fromIndex+1)
     }
 
     override fun indexOf(element: V): Int {
