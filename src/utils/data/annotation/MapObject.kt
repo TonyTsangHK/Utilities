@@ -6,6 +6,9 @@ package utils.data.annotation
  * Date: 2017-09-07
  * Time: 12:22
  */
+/**
+ * Implemented class must define default public constructor with empty parameter
+ */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MapObject

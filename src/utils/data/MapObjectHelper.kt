@@ -148,6 +148,7 @@ object MapObjectHelper{
                             fieldValue = null
                         }
                         
+                        // Find setter or just set the field value??
                         val modifier = it.modifiers
                         if (Modifier.isPrivate(modifier) || Modifier.isFinal(modifier)) {
                             it.isAccessible = true
