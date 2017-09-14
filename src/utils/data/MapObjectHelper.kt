@@ -46,7 +46,7 @@ object MapObjectHelper{
                     val mapField = it.getAnnotation(MapField::class.java)
                     val fieldName = mapField.fieldName
                     
-                    if (it.modifiers.and(Modifier.PRIVATE) == Modifier.PRIVATE) {
+                    if (!it.isAccessible) {
                         it.isAccessible = true
                     }
                     
@@ -150,7 +150,7 @@ object MapObjectHelper{
                         
                         // Find setter or just set the field value??
                         val modifier = it.modifiers
-                        if (Modifier.isPrivate(modifier) || Modifier.isFinal(modifier)) {
+                        if (!it.isAccessible) {
                             it.isAccessible = true
                         }
                         
@@ -166,6 +166,59 @@ object MapObjectHelper{
     }
 
     /**
+     * Get MapObject's field value
+     * 
+     * @param obj MapObject instance
+     * @param fieldName field name
+     * 
+     * @return field value
+     */
+    @JvmStatic
+    fun getFieldValue(obj: Any, fieldName: String): Any? {
+        val field = obj.javaClass.getDeclaredField(fieldName)
+        
+        if (!field.isAccessible) {
+            field.isAccessible = true
+        }
+        
+        return field.get(obj)
+    }
+
+    /**
+     * Set MapObject's field value
+     * 
+     * @param obj MapObject
+     * @param field field name
+     * @param value target value
+     */
+    @JvmStatic
+    fun setFieldValue(obj: Any, fieldName: String, value: Any?) {
+        val field = obj.javaClass.getDeclaredField(fieldName)
+        
+        if (!field.isAccessible) {
+            field.isAccessible = true
+        }
+        
+        field.set(obj, value)
+    }
+
+    /**
+     * Clone MapObject
+     * 
+     * @param obj MapObject to be cloned
+     * @return cloned MapObject
+     */
+    @JvmStatic
+    fun <T: Any> clone(obj: T): T {
+        // Simply do a toMap & fromMap operation
+        val clz = obj.javaClass
+        
+        val map = toMap(obj, false)
+        
+        return fromMap(map, clz)
+    }
+
+        /**
      * Convert map to MapObject, the map must contains class info field
      * 
      * @param dataMap data map with class info

@@ -41,7 +41,7 @@ class TestMapObject {
             key, value ->
             if (key != MapObjectHelper.CLZ_FIELD) {
                 Assert.assertTrue(map.containsKey(key), "Missing key: $key")
-                Assert.assertEquals(map[key], value, "Value mismatch, expected: $value, actual: ${map[key]}")
+                Assert.assertEquals(map[key], value)
             }
         }
     }
@@ -61,5 +61,45 @@ class TestMapObject {
         
         Assert.assertNotNull(resultWithoutClassInfo)
         Assert.assertTrue(testObject.equals(resultWithoutClassInfo))
+    }
+    
+    @Test
+    fun testGetFieldValue() {
+        expectedMap.forEach {
+            key, value ->
+            if (key != MapObjectHelper.CLZ_FIELD) {
+                Assert.assertEquals(MapObjectHelper.getFieldValue(testObject, key), value)
+            }
+        }
+    }
+    
+    @Test
+    fun testSetFieldValue() {
+        // Clone testObject before testing to avoid modifying testObject
+        val clone = MapObjectHelper.clone(testObject)
+        
+        val newValueMap = mapOf(
+            "strValue" to "new string value",
+            "intValue" to 999,
+            "decimalValue" to BigDecimal("123456789.0123456789")
+        )
+        
+        newValueMap.forEach {
+            key, value ->
+            MapObjectHelper.setFieldValue(clone, key, value)
+        }
+        
+        // Verify
+        newValueMap.forEach {
+            key, value ->
+            Assert.assertEquals(value, MapObjectHelper.getFieldValue(clone, key))
+        }
+    }
+    
+    @Test
+    fun testClone() {
+        val clone = MapObjectHelper.clone(testObject)
+        
+        Assert.assertTrue(testObject.equals(clone))
     }
 }

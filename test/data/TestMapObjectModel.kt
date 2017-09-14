@@ -39,6 +39,4 @@ class TestMapObjectModel(
         result = 31 * result + decimalValue.hashCode()
         return result
     }
-
-
 }
