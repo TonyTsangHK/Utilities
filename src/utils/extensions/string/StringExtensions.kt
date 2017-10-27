@@ -97,3 +97,11 @@ fun String.fillPrefix(prefix: String, length: Int): String {
 fun String.trimPostfix(postfix: String, ignoreCase: Boolean = false): String {
     return StringUtil.trimPostfix(this, postfix, ignoreCase)
 }
+
+fun String.compare(other: String?, ignoreCase: Boolean, ignoreWidth: Boolean): Int {
+    return StringUtil.stringCompare(this, other, ignoreCase, ignoreWidth)
+}
+
+fun String.equals(other: String?, ignoreCase: Boolean, ignoreWidth: Boolean): Boolean {
+    return StringUtil.stringEquals(this, other, ignoreCase, ignoreWidth)
+}

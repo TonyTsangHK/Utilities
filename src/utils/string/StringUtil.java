@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import utils.data.DoubleMap;
 import utils.math.MathUtil;
 
 public class StringUtil {
@@ -43,6 +44,13 @@ public class StringUtil {
         },
         HEX_CHARS   = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'},
         DIGIT_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    
+    // Half & full with character code point difference, except space which is 12256
+    // Half width character code point range:    33 ..   126
+    // Full width character code point range: 65281 .. 65374
+    public static final int HALF_TO_FULL_CODE_POINT_DIFF = 65248, 
+        HALF_WIDTH_CODE_POINT_LOWER_BOUND =    33, HALF_WIDTH_CODE_POINT_UPPER_BOUND =   126,
+        FULL_WIDTH_CODE_POINT_LOWER_BOUND = 65281, FULL_WIDTH_CODE_POINT_UPPER_BOUND = 65374;
     
     private StringUtil() {}
     
@@ -381,6 +389,60 @@ public class StringUtil {
      */
     public static boolean stringEqualsIgnoreCase(String str1, String str2) {
         return stringEquals(str1, str2, true);
+    }
+
+    /**
+     * Check two strings' equality with ignore case & ignore width flags (ignore half / full width character), null string will be treated as empty string
+     * 
+     * @param str1 target string 1
+     * @param str2 target string 2
+     * @param ignoreCase ignore case flag
+     * @param ignoreWidth ignore width flag
+     * @return check result
+     */
+    public static boolean stringEquals(String str1, String str2, boolean ignoreCase, boolean ignoreWidth) {
+        return stringCompare(str1, str2, ignoreCase, ignoreWidth) == 0;
+    }
+
+    /**
+     * Compare two string with ignore case & ignore width (ignore half / full width character), null string will be treated as empty string
+     * 
+     * @param str1 target string 1
+     * @param str2 target string 2
+     * @param ignoreCase ignore case flag
+     * @param ignoreWidth ignore width flag
+     * @return compare result
+     */
+    public static int stringCompare(String str1, String str2, boolean ignoreCase, boolean ignoreWidth) {
+        if (str1 == null) {
+            str1 = "";
+        }
+        
+        if (str2 == null) {
+            str2 = "";
+        }
+        
+        int len1 = str1.length(), len2 = str2.length(), lmt = Math.min(len1, len2);
+
+        for (int i = 0; i < lmt; i++) {
+            char ch1 = str1.charAt(i), ch2 = str2.charAt(i);
+
+            if (ignoreWidth) {
+                ch1 = convertFullWidthCharacterToHalfWidthCharacter(ch1);
+                ch2 = convertFullWidthCharacterToHalfWidthCharacter(ch2);
+            }
+
+            if (ignoreCase) {
+                ch1 = Character.toLowerCase(ch1);
+                ch2 = Character.toLowerCase(ch2);
+            }
+
+            if (ch1 != ch2) {
+                return ch1 - ch2;
+            }
+        }
+
+        return len1 - len2;
     }
     
     /**
@@ -1800,5 +1862,73 @@ public class StringUtil {
         } else {
             return v;
         }
+    }
+
+    /**
+     * Convert half with character to full width character
+     * 
+     * @param ch
+     * @return
+     */
+    public static char convertHalfWidthCharacterToFullWidthCharacter(char ch) {
+        if (ch == ' '){
+            return '　';
+        } else if (ch >= HALF_WIDTH_CODE_POINT_LOWER_BOUND && ch <= HALF_WIDTH_CODE_POINT_UPPER_BOUND) {
+            return (char)(ch+HALF_TO_FULL_CODE_POINT_DIFF);
+        } else {
+            return ch;
+        }
+    }
+
+    /**
+     * Convert full width character to half width character
+     * 
+     * @param ch input character
+     * @return converted character
+     */
+    public static char convertFullWidthCharacterToHalfWidthCharacter(char ch) {
+        if (ch == '　') {
+            return ' ';
+        } else if (ch >= FULL_WIDTH_CODE_POINT_LOWER_BOUND && ch <= FULL_WIDTH_CODE_POINT_UPPER_BOUND) {
+            return (char)(ch - HALF_TO_FULL_CODE_POINT_DIFF);
+        } else {
+            return ch;
+        }
+    }
+
+    /**
+     * Convert any half with character to full width character
+     * 
+     * @param str input string
+     * @return converted string
+     */
+    public static String convertHalfWidthCharacterToFullWidthCharacter(String str) {
+        StringBuilder builder = new StringBuilder();
+        
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            
+            builder.append(convertHalfWidthCharacterToFullWidthCharacter(ch));
+        }
+        
+        return builder.toString();
+    }
+
+    /**
+     * Convert any full width character to half with character
+     * 
+     * @param str input string
+     * @return converted string
+     */
+    public static String convertFullWidthCharacterToHalfWidthCharacter(String str) {
+        StringBuilder builder = new StringBuilder();
+        
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            
+            builder.append(convertFullWidthCharacterToHalfWidthCharacter(ch));
+        }
+        
+        return builder.toString();
     }
 }
