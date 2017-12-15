@@ -18,16 +18,10 @@ import java.util.List;
 public class FormatUtils {
     private FormatUtils() {}
 
-    private static final NumberFormat DEFAULT_NUMBER_FORMAT, DEFAULT_INTEGER_FORMAT,
+    private static final NumberFormat DEFAULT_INTEGER_FORMAT,
                                       CustomFormat = NumberFormat.getInstance();
 
     static {
-        DEFAULT_NUMBER_FORMAT = NumberFormat.getInstance();
-        DEFAULT_NUMBER_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
-        DEFAULT_NUMBER_FORMAT.setMinimumFractionDigits(2);
-        DEFAULT_NUMBER_FORMAT.setMaximumFractionDigits(2);
-        DEFAULT_NUMBER_FORMAT.setGroupingUsed(true);
-
         DEFAULT_INTEGER_FORMAT = NumberFormat.getInstance();
         DEFAULT_INTEGER_FORMAT.setGroupingUsed(true);
         DEFAULT_INTEGER_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
@@ -37,7 +31,7 @@ public class FormatUtils {
     }
 
     public static String formatNumber(float number) {
-        return DEFAULT_NUMBER_FORMAT.format(number);
+        return formatNumber(number, 2, 2, true);
     }
 
     public static String formatNumber(float number, int maxFractionDigits) {
@@ -65,7 +59,7 @@ public class FormatUtils {
     }
 
     public static String formatNumber(double number) {
-        return DEFAULT_NUMBER_FORMAT.format(number);
+        return formatNumber(number, 2, 2, true);
     }
 
     public static String formatNumber(double number, int maxFractionDigits) {
@@ -93,7 +87,7 @@ public class FormatUtils {
     }
 
     public static String formatNumber(BigDecimal number) {
-        return DEFAULT_NUMBER_FORMAT.format(number);
+        return formatNumber(number, 2, 2, true);
     }
 
     public static String formatNumber(BigDecimal number, int maxFractionDigits) {
@@ -109,15 +103,20 @@ public class FormatUtils {
     }
 
     public static String formatNumber(BigDecimal number, int minFractionDigits, int maxFractionDigits, boolean grouping) {
-        CustomFormat.setMaximumFractionDigits(maxFractionDigits);
-        if (maxFractionDigits >= minFractionDigits) {
-            CustomFormat.setMinimumFractionDigits(minFractionDigits);
+        if (number == null) {
+            // Return empty string for null number
+            return "";
         } else {
-            CustomFormat.setMinimumFractionDigits(maxFractionDigits);
-        }
-        CustomFormat.setGroupingUsed(grouping);
+            CustomFormat.setMaximumFractionDigits(maxFractionDigits);
+            if (maxFractionDigits >= minFractionDigits) {
+                CustomFormat.setMinimumFractionDigits(minFractionDigits);
+            } else {
+                CustomFormat.setMinimumFractionDigits(maxFractionDigits);
+            }
+            CustomFormat.setGroupingUsed(grouping);
 
-        return CustomFormat.format(number);
+            return CustomFormat.format(number);
+        }
     }
 
     public static String formatInteger(int integer) {
