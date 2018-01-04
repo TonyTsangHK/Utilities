@@ -62,6 +62,7 @@ class WeighedRandomPicker<E> {
      */
     fun clear() {
         items.clear()
+        intervals.clear()
         totalWeight = 0
     }
 
