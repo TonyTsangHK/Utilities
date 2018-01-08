@@ -1634,7 +1634,7 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> createDefaultList(length: Int, defaultValue: E): List<E> {
+    fun <E> createDefaultList(length: Int, defaultValue: E): MutableList<E> {
         val list = ArrayList<E>(length)
 
         for (i in 0..length - 1) {
