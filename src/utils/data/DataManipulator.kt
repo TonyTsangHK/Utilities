@@ -1577,7 +1577,7 @@ object DataManipulator {
     @JvmStatic
     fun <K, V> createMap(mapClass: Class<out MutableMap<*, *>>, keys: List<K>, values: List<V>): Map<K, V>? {
         try {
-            val resultMap = mapClass.newInstance() as MutableMap<K, V>
+            val resultMap = mapClass.getConstructor().newInstance() as MutableMap<K, V>
 
             val keyIter = keys.listIterator()
             val valueIter = values.listIterator()
@@ -1654,9 +1654,9 @@ object DataManipulator {
     }
 
     @JvmStatic
-    fun <E> createList(listclass: Class<out MutableList<*>>, vararg values: E): List<E>? {
+    fun <E> createList(listClass: Class<out MutableList<*>>, vararg values: E): List<E>? {
         try {
-            val list = listclass.newInstance() as MutableList<E>
+            val list = listClass.getConstructor().newInstance() as MutableList<E>
 
             for (value in values) {
                 list.add(value)

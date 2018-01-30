@@ -46,9 +46,7 @@ object MapObjectHelper{
                     val mapField = it.getAnnotation(MapField::class.java)
                     val fieldName = mapField.fieldName
                     
-                    if (!it.isAccessible) {
-                        it.isAccessible = true
-                    }
+                    it.isAccessible = true
                     
                     val fieldValue = it.get(mapObject)
                     
@@ -121,9 +119,8 @@ object MapObjectHelper{
             
             val declaredFields = clz.declaredFields
             
-            if (!constructor.isAccessible) {
-                constructor.isAccessible = true
-            }
+            // set the constructor to accessible anyway, skip isAccessible check since it will be deprecated in java9 
+            constructor.isAccessible = true
             
             val obj = constructor.newInstance()
             
@@ -150,9 +147,8 @@ object MapObjectHelper{
                         
                         // Find setter or just set the field value??
                         val modifier = it.modifiers
-                        if (!it.isAccessible) {
-                            it.isAccessible = true
-                        }
+                        
+                        it.isAccessible = true
                         
                         it.set(obj, fieldValue)
                     }
@@ -177,9 +173,7 @@ object MapObjectHelper{
     fun getFieldValue(obj: Any, fieldName: String): Any? {
         val field = obj.javaClass.getDeclaredField(fieldName)
         
-        if (!field.isAccessible) {
-            field.isAccessible = true
-        }
+        field.isAccessible = true
         
         return field.get(obj)
     }
@@ -195,9 +189,7 @@ object MapObjectHelper{
     fun setFieldValue(obj: Any, fieldName: String, value: Any?) {
         val field = obj.javaClass.getDeclaredField(fieldName)
         
-        if (!field.isAccessible) {
-            field.isAccessible = true
-        }
+        field.isAccessible = true
         
         field.set(obj, value)
     }
