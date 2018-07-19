@@ -1,8 +1,8 @@
 package utils.string;
 
-import java.text.AttributedString;
-
 import utils.constants.HorizontalAlignment;
+
+import java.text.AttributedString;
 
 public class MessageBlock {
     private HorizontalAlignment horizontalAlignment;

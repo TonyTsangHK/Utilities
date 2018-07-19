@@ -1,7 +1,9 @@
 package utils.listener;
 
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActionListenerWrapper implements ActionListener {
     private List<ActionListener> listeners;

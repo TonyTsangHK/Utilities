@@ -1,6 +1,6 @@
 package utils.data;
 
-import java.util.regex.*;
+import java.util.regex.Pattern;
 
 public class StringValidator {
     public static boolean isInteger(String str, boolean allowEmpty) {

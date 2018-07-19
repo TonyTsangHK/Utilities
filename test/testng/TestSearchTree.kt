@@ -1,9 +1,6 @@
 package testng
 
-import org.testng.Assert.*
-
-import java.util.ArrayList
-
+import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
 import utils.data.Cost
 import utils.data.SearchTree

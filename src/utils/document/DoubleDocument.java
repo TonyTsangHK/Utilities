@@ -1,8 +1,10 @@
 package utils.document;
 
-import javax.swing.text.*;
-
 import utils.data.StringValidator;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 /**
  * Accept integer & . inputs only

@@ -1,6 +1,7 @@
 package utils.listener;
 
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MouseListenerWrapper implements MouseListener {
     private MouseListener listener;

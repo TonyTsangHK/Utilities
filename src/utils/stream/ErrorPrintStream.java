@@ -1,12 +1,12 @@
 package utils.stream;
 
+import utils.date.DateTimeParser;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
-
-import utils.date.DateTimeParser;
 
 public class ErrorPrintStream extends PrintStream {
     private boolean started = false;

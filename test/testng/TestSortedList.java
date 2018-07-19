@@ -1,9 +1,5 @@
 package testng;
 
-import static org.testng.Assert.*;
-
-import java.util.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.data.SortedList;
@@ -11,6 +7,10 @@ import utils.data.SortedListArray;
 import utils.data.SortedListAvl;
 import utils.data.sort.MultiSort;
 import utils.math.MathUtil;
+
+import java.util.*;
+
+import static org.testng.Assert.*;
 
 public class TestSortedList {
     private int testSize = 10000;

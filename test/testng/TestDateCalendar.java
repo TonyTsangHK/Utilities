@@ -1,10 +1,10 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import utils.date.*;
+import utils.date.DateCalendar;
+
+import static org.testng.Assert.*;
 
 public class TestDateCalendar {
     private String tt1, tt2, tt3, tt4, tt5, tt6, tt7, tt8; /*, tt9;*/

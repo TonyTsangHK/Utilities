@@ -1,9 +1,9 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.Test;
 import utils.string.StringUtil;
+
+import static org.testng.Assert.assertEquals;
 
 public class TestStringUtil {
     @Test

@@ -1,13 +1,13 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.data.WeightData;
-import utils.date.*;
 
 import java.math.BigDecimal;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.

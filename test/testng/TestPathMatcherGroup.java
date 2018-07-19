@@ -1,7 +1,5 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.file.FileUtil;
@@ -10,6 +8,8 @@ import utils.file.path.PathPatternMatcherGroupParser;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.testng.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.

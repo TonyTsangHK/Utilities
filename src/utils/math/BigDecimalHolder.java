@@ -1,16 +1,12 @@
 package utils.math;
 
+import utils.data.SortedListAvl;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Collection;
 
-import utils.data.SortedListAvl;
-
-/**
- * 
- *
- */
 public class BigDecimalHolder {
     public static final MathContext DEFAULT_MATH_CONTEXT = new MathContext(16, RoundingMode.HALF_UP);
     

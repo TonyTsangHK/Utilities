@@ -2,7 +2,6 @@ package utils.data
 
 import utils.data.annotation.MapField
 import utils.data.annotation.MapObject
-import java.lang.reflect.Modifier
 import java.util.*
 
 /**

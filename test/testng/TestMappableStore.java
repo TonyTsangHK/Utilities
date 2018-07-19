@@ -1,7 +1,5 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import data.TestMappableModel;
 import org.testng.annotations.Test;
 import utils.data.DataManipulator;
@@ -10,7 +8,10 @@ import utils.data.query.MappableIndexComparator;
 import utils.data.query.MappableStore;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.testng.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.

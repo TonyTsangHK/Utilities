@@ -1,12 +1,12 @@
 package utils.data;
 
+import utils.math.MathUtil;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
-
-import utils.math.MathUtil;
 
 public class RandomObjectGenerator<T> {
     private ArrayList<T> objectList;

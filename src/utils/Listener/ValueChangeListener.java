@@ -1,8 +1,8 @@
 package utils.listener;
 
-import java.util.*;
+import utils.event.ValueChangeEvent;
 
-import utils.event.*;
+import java.util.EventListener;
 
 public interface ValueChangeListener<T> extends EventListener {
     public void valueChanged(ValueChangeEvent<T> evt);

@@ -1,13 +1,12 @@
 package testng
 
 import org.testng.Assert.*
-
-import java.util.*
-
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
-import utils.data.*
+import utils.data.DoublyLinkedList
+import utils.data.DoublyNode
 import utils.exception.NonMemberNodeException
+import java.util.*
 
 class TestDoublySequence {
     private lateinit var defaultSequence: DoublyLinkedList<String?>

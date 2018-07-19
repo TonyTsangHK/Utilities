@@ -1,6 +1,6 @@
 package utils.data;
 
-import java.util.*;
+import java.util.List;
 
 public interface AbstractTreeNode<V> {
     /**

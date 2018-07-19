@@ -1,11 +1,11 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.data.TreeList;
 import utils.math.MathUtil;
+
+import static org.testng.Assert.*;
 
 public class TestTreeList {
     private int testSize = 10000;

@@ -1,9 +1,8 @@
 package utils.data;
 
-import java.util.*;
-
-import utils.data.sort.MultiSort;
-import utils.data.sort.MergeSort;
+import utils.data.sort.MergeSort
+import utils.data.sort.MultiSort
+import java.util.*
 
 /**
  * Sorted list implemented as java list, (binary search tree in array form)

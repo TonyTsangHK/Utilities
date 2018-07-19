@@ -1,12 +1,13 @@
 package testng;
 
-import static org.testng.Assert.*;
+import org.testng.annotations.Test;
+import utils.math.PrimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.Test;
-import utils.math.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class TestPrime {
     @Test

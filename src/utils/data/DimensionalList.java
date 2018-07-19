@@ -4,8 +4,9 @@
 
 package utils.data;
 
-import java.util.Collection;
 import utils.exception.DimensionException;
+
+import java.util.Collection;
 
 /**
  *

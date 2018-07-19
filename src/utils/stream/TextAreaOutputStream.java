@@ -3,7 +3,6 @@ package utils.stream;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 /**
  * Created with IntelliJ IDEA.

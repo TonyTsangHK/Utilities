@@ -1,9 +1,9 @@
 package utils.search;
 
+import utils.regex.WildcardToRegularExpression;
+
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import utils.regex.WildcardToRegularExpression;
 
 public class SearchMatcher {
     private SearchType searchType;

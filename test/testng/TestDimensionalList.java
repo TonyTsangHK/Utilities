@@ -5,13 +5,13 @@
 
 package testng;
 
-import static org.testng.Assert.*;
-
-import java.util.ArrayList;
-
 import org.testng.annotations.Test;
 import utils.data.DimensionalIndex;
 import utils.data.DimensionalList;
+
+import java.util.ArrayList;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  *

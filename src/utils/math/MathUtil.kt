@@ -1,5 +1,9 @@
 package utils.math
 
+import utils.data.DataManipulator
+import utils.random.RandomUtil
+import utils.random.WeightedRandomValueHolder
+import utils.string.StringUtil
 import java.awt.geom.Point2D
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -7,11 +11,6 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.util.ArrayList
 import java.util.Random
-
-import utils.data.DataManipulator
-import utils.random.RandomUtil
-import utils.random.WeightedRandomValueHolder
-import utils.string.StringUtil
 
 object MathUtil {
     /**

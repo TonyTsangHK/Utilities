@@ -1,12 +1,12 @@
 package utils.date;
 
+import utils.data.CharacterQueue;
+import utils.math.MathUtil;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import utils.data.CharacterQueue;
-import utils.math.MathUtil;
 
 @SuppressWarnings("serial")
 public class DateCalendar implements Comparable<DateCalendar>, Serializable {

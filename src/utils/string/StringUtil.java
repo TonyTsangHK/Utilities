@@ -1,22 +1,18 @@
 package utils.string;
 
-import java.awt.Color;
+import utils.math.MathUtil;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
-
 import java.nio.ByteBuffer;
-
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.text.CharacterIterator;
-
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import utils.data.DoubleMap;
-import utils.math.MathUtil;
 
 public class StringUtil {
     public static final String DefaultRegex = "\t|\n|\r|\f";

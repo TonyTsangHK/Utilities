@@ -1,12 +1,12 @@
 package utils.graph;
 
+import utils.data.SortedListAvl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import utils.data.SortedListAvl;
 
 public class DirectionalNode<T> implements Cloneable {
     private T data;

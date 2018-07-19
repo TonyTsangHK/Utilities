@@ -1,8 +1,8 @@
 package utils.listener;
 
-import java.awt.event.*;
-
-import javax.swing.text.*;
+import javax.swing.text.JTextComponent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class SelectAllListener implements FocusListener {
     private JTextComponent tf;

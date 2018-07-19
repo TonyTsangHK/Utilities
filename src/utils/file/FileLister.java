@@ -1,12 +1,12 @@
 package utils.file;
 
+import utils.regex.WildcardToRegularExpression;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import utils.regex.WildcardToRegularExpression;
 
 public class FileLister {
     private List<FilePattern> includes, excludes;

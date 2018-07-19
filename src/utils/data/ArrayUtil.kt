@@ -1,8 +1,7 @@
 package utils.data
 
-import java.util.*
-
 import utils.math.MathUtil
+import java.util.*
 
 object ArrayUtil {
     /**

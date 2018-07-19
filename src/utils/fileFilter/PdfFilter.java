@@ -1,10 +1,9 @@
 package utils.fileFilter;
 
-import java.io.File;
+import utils.file.FileUtil;
 
 import javax.swing.filechooser.FileFilter;
-
-import utils.file.FileUtil;
+import java.io.File;
 
 public class PdfFilter extends FileFilter {
     private String desc;

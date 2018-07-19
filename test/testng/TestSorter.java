@@ -1,11 +1,11 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.data.sort.*;
 import utils.math.MathUtil;
+
+import static org.testng.Assert.assertTrue;
 
 public class TestSorter {
     private int testSize = 1000000;

@@ -1,5 +1,7 @@
 package utils.string;
 
+import utils.constants.HorizontalAlignment;
+
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,8 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import utils.constants.HorizontalAlignment;
 
 public class MessageBlockHolder {
     private List<MessageBlock> blocks;

@@ -1,9 +1,10 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.Test;
 import utils.math.MathUtil;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 public class TestRoundUp {
     private double delta = 0.0000001;

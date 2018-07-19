@@ -1,10 +1,10 @@
 package utils.data.sort;
 
-import java.util.Comparator;
-import java.util.List;
-
 import utils.data.DataComparator;
 import utils.data.DataManipulator;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class InsertionSort implements Sorter {
     private InsertionSort() {}

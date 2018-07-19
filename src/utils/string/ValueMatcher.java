@@ -1,6 +1,7 @@
 package utils.string;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ValueMatcher {
     private char[] startTag, endTag, seperator, scanChars;

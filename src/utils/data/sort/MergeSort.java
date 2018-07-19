@@ -1,10 +1,10 @@
 package utils.data.sort;
 
-import java.util.Comparator;
-import java.util.List;
-
 import utils.data.DataComparator;
 import utils.data.DataManipulator;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class MergeSort implements Sorter {
     public static final int INSERTION_SORT_THRESHOLD = 7;

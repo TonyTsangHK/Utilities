@@ -1,21 +1,17 @@
 package testng;
 
-import static org.testng.Assert.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import utils.graph.*;
+import utils.math.MathUtil;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import utils.graph.Direction;
-import utils.graph.DirectionalMovement;
-import utils.graph.DirectionalMovementGroup;
-import utils.graph.RepetitiveDirectionalMovement;
-import utils.graph.SingleDirectionalMovement;
-import utils.math.MathUtil;
+import static org.testng.Assert.*;
 
 public class TestDirectionalMovement {
     private int testSize = 10;

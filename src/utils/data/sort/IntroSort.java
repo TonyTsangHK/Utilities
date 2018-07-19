@@ -1,11 +1,11 @@
 package utils.data.sort;
 
-import java.util.Comparator;
-import java.util.List;
-
 import utils.data.DataComparator;
 import utils.data.DataManipulator;
 import utils.math.MathUtil;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class IntroSort implements Sorter {
     public static final int INSERTION_SORT_THRESHOLD = 7;

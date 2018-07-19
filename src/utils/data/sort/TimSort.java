@@ -25,12 +25,12 @@
 
 package utils.data.sort;
 
+import utils.data.DataComparator;
+import utils.data.DataManipulator;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
-import utils.data.DataComparator;
-import utils.data.DataManipulator;
 
 /**
  * A stable, adaptive, iterative mergesort that requires far fewer than

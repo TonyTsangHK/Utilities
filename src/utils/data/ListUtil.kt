@@ -61,12 +61,12 @@ class ListUtil private constructor() {
                 cIter = newElements.iterator()
 
                 while (cIter.hasNext()) {
-                    val cEle = cIter.next();
+                    val cEle = cIter.next()
                     if (comparator.compare(ele, cEle) == 0) {
-                        sameElements.add(ele);
-                        cIter.remove();
-                        iter.remove();
-                        break;
+                        sameElements.add(ele)
+                        cIter.remove()
+                        iter.remove()
+                        break
                     }
                 }
             }
@@ -90,12 +90,12 @@ class ListUtil private constructor() {
         fun <T> compareSortedList(
             list: List<T>, compareList: List<T>, comparator: Comparator<T>
         ): ListDiff<T> {
-            val sameElements = ArrayList<T>(list.size)
+            val sameElements = ArrayList<T>()
             val newElements = ArrayList<T>(compareList)
-            val removedElements = ArrayList<T>(list);
+            val removedElements = ArrayList<T>(list)
 
             if (removedElements.isEmpty() || newElements.isEmpty()) {
-                return ListDiff<T>(sameElements, newElements, removedElements)
+                return ListDiff(newElements = newElements, removedElements = removedElements, sameElements = sameElements)
             }
 
             val iter = removedElements.iterator()
@@ -109,29 +109,29 @@ class ListUtil private constructor() {
 
                 if (cmp > 0) {
                     if (cIter.hasNext()) {
-                        cele = cIter.next();
+                        cele = cIter.next()
                     } else {
-                        break;
+                        break
                     }
                 } else if (cmp < 0) {
                     if (iter.hasNext()) {
-                        ele = iter.next();
+                        ele = iter.next()
                     } else {
-                        break;
+                        break
                     }
                 } else {
-                    sameElements.add(ele);
-                    iter.remove();
-                    cIter.remove();
+                    sameElements.add(ele)
+                    iter.remove()
+                    cIter.remove()
                     if (iter.hasNext()) {
-                        ele = iter.next();
+                        ele = iter.next()
                     } else {
-                        break;
+                        break
                     }
                     if (cIter.hasNext()) {
-                        cele = cIter.next();
+                        cele = cIter.next()
                     } else {
-                        break;
+                        break
                     }
                 }
             }
@@ -170,7 +170,7 @@ class ListUtil private constructor() {
         @JvmStatic 
         fun <T> isListEquals(list: List<T>, compareList: List<T>, comparator: Comparator<T>): Boolean {
             if (list.size != compareList.size) {
-                return false;
+                return false
             } else {
                 val newList = ArrayList<T>(list)
                 val newCompareList = ArrayList<T>(compareList)
@@ -194,7 +194,7 @@ class ListUtil private constructor() {
         @JvmStatic
         fun <T> isListExactlyEquals(list: List<T>, compareList: List<T>, comparator: Comparator<T>): Boolean {
             if (list.size != compareList.size) {
-                return false;
+                return false
             } else {
                 for (i in 0 .. list.size - 1) {
                     val e1 = list[i]
@@ -250,7 +250,7 @@ class ListUtil private constructor() {
         }
 
         private fun createList(size: Int): List<Int> {
-            val list = ArrayList<Int>(size);
+            val list = ArrayList<Int>(size)
 
             for (i in 0 .. size-1) {
                 list.add(MathUtil.randomInteger(0, size))

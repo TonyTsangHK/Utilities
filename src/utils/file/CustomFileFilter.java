@@ -1,6 +1,6 @@
 package utils.file;
-import javax.swing.filechooser.*;
 
+import javax.swing.filechooser.FileFilter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

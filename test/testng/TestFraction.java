@@ -1,14 +1,14 @@
 package testng;
 
-import static org.testng.Assert.*;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import utils.math.Fraction;
 import utils.math.MathUtil;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import static org.testng.Assert.*;
 
 public class TestFraction {
     private BigDecimal[] mixes, numers, denos, nMixes, nNumers, nDenos;

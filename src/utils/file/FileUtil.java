@@ -1,12 +1,11 @@
 package utils.file;
 
+import javax.swing.filechooser.FileFilter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import javax.swing.filechooser.FileFilter;
 
 public class FileUtil {
     // Default byte array size for stream operation

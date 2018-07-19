@@ -1,9 +1,9 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import data.TestMappableModel;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import utils.data.DataComparator;
 import utils.data.DataManipulator;
 import utils.data.Mappable;
@@ -13,6 +13,8 @@ import utils.string.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static org.testng.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.

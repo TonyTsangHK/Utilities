@@ -1,25 +1,29 @@
 package utils.date;
 
-import java.text.*;
-import java.util.*;
-
 import utils.string.StringUtil;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DateTimeParser {
-    public static String
-        CLEAR_DATETIME_FORMAT         = "yyyyMMddHHmmss",
-        CLEAR_DATETIME_MILLIS_FORMAT  = "yyyyMMddHHmmssSSS",
-        SIMPLE_DATE_FORMAT_ENG        = "dd/MM",
-        SIMPLE_DATE_FORMAT_US         = "MM/dd",
-        CLEAR_DATE_FORMAT             = "yyyyMMdd",
-        NORMAL_DATE_FORMAT            = "yyyy-MM-dd",
-        NORMAL_DATE_FORAMT_ENG        = "dd-MM-yyyy", 
-        NORMAL_DATE_FORMAT_US         = "MM-dd-yyyy",
-        NORMAL_TIME_FORMAT            = "HH:mm:ss",
-        NORMAL_DATETIME_FORMAT        = "yyyy-MM-dd HH:mm:ss",
-        JAVA_DATETIME_FORMAT          = "yyyy-MM-dd'T'HH:mm:ss",
-        NORMAL_DATETIME_MILLIS_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS",
-        SQL_TIMESTAMP_FORMAT          = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+    public static final String
+        CLEAR_DATETIME_FORMAT           = "yyyyMMddHHmmss",
+        CLEAR_DATETIME_MILLIS_FORMAT    = "yyyyMMddHHmmssSSS",
+        SIMPLE_DATE_FORMAT_ENG          = "dd/MM",
+        SIMPLE_DATE_FORMAT_US           = "MM/dd",
+        CLEAR_DATE_FORMAT               = "yyyyMMdd",
+        NORMAL_DATE_FORMAT              = "yyyy-MM-dd",
+        NORMAL_DATE_FORAMT_ENG          = "dd-MM-yyyy", 
+        NORMAL_DATE_FORMAT_US           = "MM-dd-yyyy",
+        NORMAL_TIME_FORMAT              = "HH:mm:ss",
+        NORMAL_DATETIME_LESS_SEC_FORMAT = "yyyy-MM-dd HH:mm",
+        NORMAL_DATETIME_FORMAT          = "yyyy-MM-dd HH:mm:ss",
+        JAVA_DATETIME_FORMAT            = "yyyy-MM-dd'T'HH:mm:ss",
+        NORMAL_DATETIME_MILLIS_FORMAT   = "yyyy-MM-dd HH:mm:ss.SSS",
+        SQL_TIMESTAMP_FORMAT            = "yyyy-MM-dd HH:mm:ss.SSSSSS";
     
     private DateTimeParser() {}
     

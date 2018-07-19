@@ -1,6 +1,6 @@
 package utils.date
 
-import utils.extensions.format.*
+import utils.extensions.format.toFormattedDate
 import java.util.*
 
 /**

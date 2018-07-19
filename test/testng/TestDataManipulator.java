@@ -1,12 +1,12 @@
 package testng;
 
-import static org.testng.Assert.*;
+import org.testng.annotations.Test;
+import utils.data.DataManipulator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.Test;
-import utils.data.DataManipulator;
+import static org.testng.Assert.assertEquals;
 
 public class TestDataManipulator {
     @Test

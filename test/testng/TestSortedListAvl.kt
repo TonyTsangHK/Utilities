@@ -1,11 +1,11 @@
 package testng
 
+import org.testng.Assert.*
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
 import utils.data.*
 import utils.math.MathUtil
 import java.util.*
-import org.testng.Assert.*
 
 /**
  * Created with IntelliJ IDEA.

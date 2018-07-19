@@ -1,9 +1,8 @@
 package utils.data;
 
-import java.io.*;
-import java.util.*;
-
-import utils.constants.MathValueType;
+import utils.constants.MathValueType
+import java.io.Serializable
+import java.util.*
 
 class MinMaxQueue<T>: Iterable<T>, Serializable {
     private val elements: SortedListAvl<T>

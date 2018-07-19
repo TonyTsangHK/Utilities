@@ -1,9 +1,9 @@
 package testng;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.*;
 import utils.data.KeyValuePair;
+
+import static org.testng.Assert.assertTrue;
 
 public class TestKeyValuePair {
     public TestKeyValuePair() {

@@ -1,12 +1,13 @@
 package testng;
 
-import static org.testng.Assert.*;
-
-import java.util.Comparator;
-
 import org.testng.annotations.Test;
 import utils.data.MinMaxQueue;
 import utils.data.NotComparableException;
+
+import java.util.Comparator;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class TestMinMax {
     @Test
