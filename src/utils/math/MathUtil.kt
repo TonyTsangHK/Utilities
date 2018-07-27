@@ -4,6 +4,7 @@ import utils.data.DataManipulator
 import utils.random.RandomUtil
 import utils.random.WeightedRandomValueHolder
 import utils.string.StringUtil
+import java.awt.Point
 import java.awt.geom.Point2D
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -1422,6 +1423,17 @@ object MathUtil {
     }
 
     /**
+     * Square of integer
+     * 
+     * @param v target integer
+     * 
+     * @return square of target number
+     */
+    fun square(v: Int): Int {
+        return v * v
+    }
+
+    /**
      * Get the length of two points (x1, y1) & (x2, y2)
      *
      * @param x1 x coordinate of point1
@@ -1859,33 +1871,6 @@ object MathUtil {
         val c = getLength(x2, y2, x3, y3)
 
         return calculateTriangleArea(a, b, c)
-    }
-
-    /**
-     * Calculate triangle area
-     *
-     * @param p1 point 1 of triangle
-     * @param p2 point 2 of triangle
-     * @param p3 point 3 of triangle
-     *
-     * @return area of triangle
-     */
-    @JvmStatic
-    fun calculateTriangleArea(p1:Point2D.Double, p2:Point2D.Double, p3:Point2D.Double):Double {
-        return calculateTriangleArea(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY())
-    }
-
-    /**
-     * Calculate triangle area
-     * @param p1 point 1 of triangle
-     * @param p2 point 2 of triangle
-     * @param p3 point 3 of triangle
-     *
-     * @return area of triangle
-     */
-    @JvmStatic
-    fun calculateTriangleArea(p1:Point2D.Float, p2:Point2D.Float, p3:Point2D.Float):Double {
-        return calculateTriangleArea(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY())
     }
 
     /**
@@ -3320,6 +3305,37 @@ object MathUtil {
             // small prime exhausted, return -1
             return -1
         }
+    }
+    
+    fun distanceFromPointToLine(px: Double, py: Double, x1: Double, y1: Double, x2: Double, y2: Double): Double {
+        val a = y1 - y2
+        val b = x2 - x1
+        val c = x1 * y2 - x2 * y1
+
+        val closestLineX = (b * (b * px-a * py)-a * c)/(a * a + b * b)
+        val closestLineY = (a * (-b * px + a * py) - b * c)/(a * a + b * b)
+        
+        return distanceOfPoints(closestLineX, closestLineY, px, py)
+    }
+    
+    fun distanceFromPointToLine(point: Point, linePoint1: Point, linePoint2: Point): Double {
+        return distanceFromPointToLine(point.x.toDouble(), point.y.toDouble(), linePoint1.x.toDouble(), linePoint1.y.toDouble(), linePoint2.x.toDouble(), linePoint2.y.toDouble())
+    }
+    
+    fun distanceFromPointToLine(point: Point2D, point1: Point2D, point2: Point2D): Double {
+        return distanceFromPointToLine(point.x, point.y, point1.x, point1.y, point2.x, point2.y)
+    }
+    
+    fun distanceOfPoints(x1:  Double, y1: Double, x2: Double, y2: Double): Double {
+        return sqrt(square(x1-x2) + square(y1-y2))
+    }
+    
+    fun distanceOfPoints(point1: Point, point2: Point): Double {
+        return sqrt((square(point1.x - point2.x) + square(point1.y - point2.y)).toDouble())
+    }
+    
+    fun distanceOfPoints(point1: Point2D, point2: Point2D): Double {
+        return sqrt(square(point1.x - point2.x) + square(point1.y - point2.y))
     }
 
     /**
