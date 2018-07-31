@@ -918,8 +918,8 @@ object MathUtil {
     @JvmStatic
     @JvmOverloads
     fun sqrt(
-            n:BigDecimal, scale:Int = DEFAULT_SCALE, maxIteration:Int = DEFAULT_MAX_ITERATIONS,
-            tolerance:BigDecimal = DEFAULT_BIG_TOLERANCE
+        n:BigDecimal, scale:Int = DEFAULT_SCALE, maxIteration:Int = DEFAULT_MAX_ITERATIONS,
+        tolerance:BigDecimal = DEFAULT_BIG_TOLERANCE
     ):BigDecimal {
         if (n.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO
@@ -3290,7 +3290,7 @@ object MathUtil {
         }
     }
 
-    // This method only find the smallest possible factor, if small prime numbers exhausted it just stop.
+    // This method only find the smallest possible factor, if small prime numbers exhausted it just stop, not for general use
     @JvmStatic
     fun findSmallestFactor(number:Long):Int {
         if (number == 1L) {
@@ -3306,7 +3306,210 @@ object MathUtil {
             return -1
         }
     }
-    
+
+    /**
+     * Find minimum value within variable values
+     * 
+     * @param values values of concern
+     * @return minimum value
+     */
+    @JvmStatic
+    fun min(vararg values: Double): Double {
+        if (values.isEmpty()) {
+            return Double.NaN
+        } else {
+            var min = values[0]
+            
+            for (i in 1 until values.size) {
+                if (min > values[i]) {
+                    min = values[i]
+                }
+            }
+            
+            return min
+        }
+    }
+
+    /**
+     * Find maximum value within variable values
+     * 
+     * @param values values of concern
+     * @return maximum value
+     */
+    @JvmStatic
+    fun max(vararg values: Double): Double {
+        if (values.isEmpty()) {
+            return Double.NaN
+        } else {
+            var max = values[0]
+            
+            for (i in 1 until values.size) {
+                if (max < values[i]) {
+                    max = values[i]
+                }
+            }
+            
+            return max
+        }
+    }
+
+    /**
+     * Check if point is between line points
+     * 
+     * @param point target point
+     * @param linePoint1 line point 1
+     * @param linePoint2 line point 2
+     * @return check result
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun isPointBetweenLine(point: Point2D, linePoint1: Point2D, linePoint2: Point2D, tolerance: Double = 0.000001): Boolean {
+        if (isPointAlignedWithLine(point, linePoint1, linePoint2, tolerance)) {
+            val dotProduct = (point.x - linePoint1.x) * (linePoint2.x - linePoint1.x) + (point.y - linePoint1.y)*(linePoint2.y - linePoint1.y)
+            if (dotProduct < 0.0) {
+                return false
+            } else {
+                val squareLength = (linePoint2.x - linePoint1.x)*(linePoint2.x - linePoint1.x) + (linePoint2.y - linePoint1.y)*(linePoint2.y - linePoint2.y)
+                if (dotProduct > squareLength) {
+                    return false
+                } else {
+                    return true
+                }
+            }
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Check if point aligned with line
+     * 
+     * @param point target point
+     * @param linePoint1 line point 1
+     * @param linePoint2 line point 2
+     * @return check result
+     */
+    @JvmOverloads
+    @JvmStatic
+    fun isPointAlignedWithLine(point: Point2D, linePoint1: Point2D, linePoint2: Point2D, tolerance: Double = 0.000001): Boolean {
+        val crossDeltaX = point.x - linePoint1.x
+        val crossDeltaY = point.y - linePoint1.y
+        
+        val deltaX = linePoint2.x - linePoint1.x
+        val deltaY = linePoint2.y - linePoint1.y
+        
+        val crossProduct = crossDeltaX * deltaY - crossDeltaY * deltaX
+
+        return isFloatingPointNumberEquals(crossProduct, 0.0, tolerance)
+    }
+
+    /**
+     * Find interception point of two lines (a & b)
+     * 
+     * @param line1Point1 point 1 of line 1
+     * @param line1Point2 point 2 of line 1
+     * @param line2Point1 point 1 of line 2
+     * @param line2Point2 point 2 of line 2
+     * @return interception point, null for no interception
+     */
+    @JvmStatic
+    fun findInterception(line1Point1: Point2D, line1Point2: Point2D, line2Point1: Point2D, line2Point2: Point2D): Point2D? {
+        val a1 = line1Point1.y - line1Point2.y
+        val b1 = line1Point2.x - line1Point1.x
+        val c1 = line1Point1.x * line1Point2.y - line1Point2.x * line1Point1.y
+
+        val a2 = line2Point1.y - line2Point2.y
+        val b2 = line2Point2.x - line2Point1.x
+        val c2 = line2Point1.x * line2Point2.y - line2Point2.x * line2Point1.y
+        
+        if (b1 == 0.0 && b2 == 0.0) {
+            if (-c1/a1 == -c2/a2) {
+                // y can be any value, use middle y as result
+                val minY = min(line1Point1.y, line1Point2.y, line2Point1.y, line2Point2.y)
+                val maxY = max(line1Point1.y, line1Point2.y, line2Point1.y, line2Point2.y)
+                
+                return Point2D.Double(-c1/a1, (minY+maxY)/2.0)
+            } else {
+                // both lines are vertical and never intercept
+                return null
+            }
+        } else if (b1 == 0.0) {
+            // line 1 is vertical
+            val x = -c1 / a1
+            
+            val y = (-a2*x - c2) / b2
+            
+            return Point2D.Double(x, y)
+        } else if (b2 == 0.0) {
+            // line 2 is vertical
+            val x = -c2 / a2
+            
+            val y = (-a1*x - c1) / b1
+            
+            return Point2D.Double(x, y)
+        } else if (a1 == 0.0 && a2 == 0.0) {
+            if (-c1/b1 == -c2/b2) {
+                // x can be any value, use middle x as result
+                val minX = min(line1Point1.x, line1Point2.x, line2Point1.x, line2Point2.x)
+                val maxX = max(line1Point1.x, line1Point2.x, line2Point1.x, line2Point2.x)
+                
+                return Point2D.Double((minX+maxX)/2.0, -c1/b1)
+            } else {
+                // both lines are horizontal and never intercept
+                return null
+            }
+        } else if (a1 == 0.0) {
+            // Line 1 is horizontal
+            val y = -c1 / b1
+            
+            val x = (-b2*y-c2) / a2
+            
+            return Point2D.Double(x, y)
+        } else if (a2 == 0.0) {
+            // line 2 is horizontal
+            val y = -c2 / b2
+            
+            val x = (-b1*y-c1) / a1
+            
+            return Point2D.Double(x, y)
+        } else {
+            val s = (a1*b2 - a2*b1)
+            
+            if (s == 0.0) {
+                if (c1 / b1 == c2 / b2) {
+                    // use middle x as interception point
+                    val minX = min(line1Point1.x, line1Point2.x, line2Point1.x, line2Point2.x)
+                    val maxX = max(line1Point1.x, line1Point2.x, line2Point1.x, line2Point2.x)
+                    
+                    val x = (minX + maxX) / 2.0
+                    val y = (-a1*x - c1) / b1
+                    
+                    return Point2D.Double(x, y)
+                } else {
+                    // both line are parallel that will never intercept
+                    return null
+                }
+            } else {
+                val x = (b1 * c2 - b2 * c1) / s
+                val y = (-a2 * x - c2) / b2
+                return Point2D.Double(x, y)
+            }
+        }
+    }
+
+    /**
+     * Find shortest distance between a point to a line
+     * 
+     * @param px x coordinate of point
+     * @param py y coordinate of point
+     * @param x1 x coordinate of line point 1
+     * @param y1 y coordinate of line point 1
+     * @param x2 x coordinate of line point 2
+     * @param y2 y coordinate of line point 2
+     * 
+     * @return shortest distance
+     */
+    @JvmStatic
     fun distanceFromPointToLine(px: Double, py: Double, x1: Double, y1: Double, x2: Double, y2: Double): Double {
         val a = y1 - y2
         val b = x2 - x1
@@ -3317,23 +3520,72 @@ object MathUtil {
         
         return distanceOfPoints(closestLineX, closestLineY, px, py)
     }
-    
+
+    /**
+     * Find shortest distance between a point to a line
+     * 
+     * @param point target point
+     * @param linePoint1 line point 1
+     * @param linePoint2 line point 2
+     * 
+     * @return shortest distance
+     */
+    @JvmStatic
     fun distanceFromPointToLine(point: Point, linePoint1: Point, linePoint2: Point): Double {
         return distanceFromPointToLine(point.x.toDouble(), point.y.toDouble(), linePoint1.x.toDouble(), linePoint1.y.toDouble(), linePoint2.x.toDouble(), linePoint2.y.toDouble())
     }
-    
+
+    /**
+     * Find shortest distance between a point to a line (Point2D)
+     *
+     * @param point target point
+     * @param linePoint1 line point 1
+     * @param linePoint2 line point 2
+     *
+     * @return shortest distance
+     */
+    @JvmStatic
     fun distanceFromPointToLine(point: Point2D, point1: Point2D, point2: Point2D): Double {
         return distanceFromPointToLine(point.x, point.y, point1.x, point1.y, point2.x, point2.y)
     }
-    
+
+    /**
+     * Find distance between two points
+     * 
+     * @param x1 x coordinate of point 1
+     * @param y1 y coordinate of point 1
+     * @param x2 x coordinate of point 2
+     * @param y2 y coordinate of point 2
+     * 
+     * @return distaince of two points
+     */
+    @JvmStatic
     fun distanceOfPoints(x1:  Double, y1: Double, x2: Double, y2: Double): Double {
         return sqrt(square(x1-x2) + square(y1-y2))
     }
-    
+
+    /**
+     * Find distance between two points
+     * 
+     * @param point1 point 1
+     * @param point2 point 2
+     * 
+     * @return distance of two points
+     */
+    @JvmStatic
     fun distanceOfPoints(point1: Point, point2: Point): Double {
         return sqrt((square(point1.x - point2.x) + square(point1.y - point2.y)).toDouble())
     }
-    
+
+    /**
+     * Find distance between two points (Point2D)
+     * 
+     * @param point1 point 1
+     * @param point2 point 2
+     * 
+     * @return distance of two points
+     */
+    @JvmStatic
     fun distanceOfPoints(point1: Point2D, point2: Point2D): Double {
         return sqrt(square(point1.x - point2.x) + square(point1.y - point2.y))
     }
