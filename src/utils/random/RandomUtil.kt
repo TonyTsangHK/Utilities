@@ -43,15 +43,20 @@ object RandomUtil {
      */
     private fun initRandom() {
         if (randomGenerator == null) {
-            if (USE_SECURE_RANDOM) {
-                try {
-                    randomGenerator = SecureRandom.getInstance("NativePRNGBlocking")
-                } catch (e: NoSuchAlgorithmException) {
-                    randomGenerator = SecureRandom()
-                }
-            } else {
-                randomGenerator = Random()
-            }
+            reinitializeRandomGenerator()
+        }
+    }
+
+    /**
+     * Programmatically trigger reinitialization of random generator
+     */
+    @JvmStatic
+    fun reinitializeRandomGenerator() {
+        if (USE_SECURE_RANDOM) {
+            randomGenerator = SecureRandom.getInstanceStrong()
+        } else {
+            // Seed Random with SecureRandom, does it make any different???
+            randomGenerator = Random(SecureRandom.getInstanceStrong().nextLong())
         }
     }
 
