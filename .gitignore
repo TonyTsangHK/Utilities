@@ -8,3 +8,7 @@ test/dummy
 .gradle
 .idea
 *.iml
+/.settings
+.classpath
+.project
+/bin
