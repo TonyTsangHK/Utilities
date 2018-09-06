@@ -3591,6 +3591,37 @@ object MathUtil {
     }
 
     /**
+     * Calculate Euler number to specified decimal places
+     * 
+     * @param decimalPlaces target decimal places
+     * 
+     * @return Euler number to target decimal places
+     */
+    @JvmStatic
+    fun calculateEulerNumberToDecimalPlaces(decimalPlaces: Int): BigDecimal {
+        val mathContext = MathContext(decimalPlaces+1, RoundingMode.HALF_UP)
+        
+        var currentValue = BigDecimal("2.5")
+        var v = BigDecimal("0.5")
+        var currentFactorialBase = TWO
+        
+        while(true) {
+            currentFactorialBase++
+
+            // Extend decimal places by 2 to prevent lost of precision
+            v = v.divide(currentFactorialBase, decimalPlaces+3, RoundingMode.FLOOR)
+            
+            if (v.compareTo(BigDecimal.ZERO) > 0) {
+                currentValue += v
+            } else {
+                break
+            }
+        }
+        
+        return currentValue.round(mathContext)
+    }
+
+    /**
      * Solution of quadratic equation, result are in positive & negative form
      */
     class QuadraticSolution(
