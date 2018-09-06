@@ -3608,8 +3608,8 @@ object MathUtil {
         while(true) {
             currentFactorialBase++
 
-            // Extend decimal places by 2 to prevent lost of precision
-            v = v.divide(currentFactorialBase, decimalPlaces+3, RoundingMode.FLOOR)
+            // Extend decimal places by 4 to prevent lost of precision
+            v = v.divide(currentFactorialBase, decimalPlaces+5, RoundingMode.FLOOR)
             
             if (v.compareTo(BigDecimal.ZERO) > 0) {
                 currentValue += v
