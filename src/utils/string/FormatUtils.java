@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,12 +21,49 @@ public class FormatUtils {
 
     private static final NumberFormat DEFAULT_INTEGER_FORMAT,
                                       CustomFormat = NumberFormat.getInstance();
-
+    
+    private static final Map<String, String> DURATION_LANGUAGE_MAP_EN;
+    private static final Map<String, String> DURATION_LANGUAGE_MAP_ZH;
+    
+    private static final Map<String, Map<String, String>> DURATION_LANGUAGE_MAP;
+    
     static {
         DEFAULT_INTEGER_FORMAT = NumberFormat.getInstance();
         DEFAULT_INTEGER_FORMAT.setGroupingUsed(true);
         DEFAULT_INTEGER_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
         DEFAULT_INTEGER_FORMAT.setMaximumFractionDigits(0);
+
+        DURATION_LANGUAGE_MAP_EN = new HashMap<>();
+
+        DURATION_LANGUAGE_MAP_EN.put("concatenationWord", "and");
+        DURATION_LANGUAGE_MAP_EN.put("dayPlural", "days");
+        DURATION_LANGUAGE_MAP_EN.put("daySingular", "day");
+        DURATION_LANGUAGE_MAP_EN.put("hourPlural", "hours");
+        DURATION_LANGUAGE_MAP_EN.put("hourSingular", "hour");
+        DURATION_LANGUAGE_MAP_EN.put("minutePlural", "minutes");
+        DURATION_LANGUAGE_MAP_EN.put("minuteSingular", "minute");
+        DURATION_LANGUAGE_MAP_EN.put("secondPlural", "seconds");
+        DURATION_LANGUAGE_MAP_EN.put("secondSingular", "second");
+        DURATION_LANGUAGE_MAP_EN.put("millisecondPlural", "milliseconds");
+        DURATION_LANGUAGE_MAP_EN.put("millisecondSingular", "millisecond");
+
+        DURATION_LANGUAGE_MAP_ZH = new HashMap<>();
+
+        DURATION_LANGUAGE_MAP_ZH.put("concatenationWord", "");
+        DURATION_LANGUAGE_MAP_ZH.put("dayPlural", "日");
+        DURATION_LANGUAGE_MAP_ZH.put("daySingular", "日");
+        DURATION_LANGUAGE_MAP_ZH.put("hourPlural", "小時");
+        DURATION_LANGUAGE_MAP_ZH.put("hourSingular", "小時");
+        DURATION_LANGUAGE_MAP_ZH.put("minutePlural", "分");
+        DURATION_LANGUAGE_MAP_ZH.put("minuteSingular", "分");
+        DURATION_LANGUAGE_MAP_ZH.put("secondPlural", "秒");
+        DURATION_LANGUAGE_MAP_ZH.put("secondSingular", "秒");
+        DURATION_LANGUAGE_MAP_ZH.put("millisecondPlural", "毫秒");
+        DURATION_LANGUAGE_MAP_ZH.put("millisecondSingular", "毫秒");
+        
+        DURATION_LANGUAGE_MAP = new HashMap<>();
+        DURATION_LANGUAGE_MAP.put("en", DURATION_LANGUAGE_MAP_EN);
+        DURATION_LANGUAGE_MAP.put("zh", DURATION_LANGUAGE_MAP_ZH);
 
         CustomFormat.setRoundingMode(RoundingMode.HALF_UP);
     }
@@ -267,6 +306,90 @@ public class FormatUtils {
             return s.replaceAll("0+$", "");
         } else {
             return s;
+        }
+    }
+    
+    public static String formatDuration(long milliseconds) {
+        return formatDuration(milliseconds, "en");
+    }
+    
+    public static String formatDuration(long milliseconds, String lang) {
+        if (DURATION_LANGUAGE_MAP.containsKey(lang)) {
+            return formatDuration(milliseconds, DURATION_LANGUAGE_MAP.get(lang));
+        } else {
+            throw new IllegalArgumentException("["+lang+"] is not supported language");
+        }
+    }
+    
+    public static String formatDuration(long milliseconds, Map<String, String> languageMap) {
+        long millis =  milliseconds % 1000;
+        long seconds = milliseconds / 1000;
+        long minutes = 0;
+        long hours = 0;
+        long days = 0;
+        
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds = seconds % 60;
+        }
+        
+        if (minutes > 60) {
+            hours = minutes / 60;
+            minutes = minutes % 60;
+        }
+        
+        if (hours > 24) {
+            days = hours / 24;
+            hours = hours % 24;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        
+        String concatenationWord = languageMap.get("concatenationWord");
+        boolean hasConcatenationWord = StringUtil.isNotEmptyString(concatenationWord); 
+
+        if (days > 0 || builder.length() > 0) {
+            appendDurationHelper(builder, concatenationWord, hasConcatenationWord, days, languageMap.get("dayPlural"), languageMap.get("daySingular"));
+        }
+
+        if (hours > 0 || builder.length() > 0) {
+            appendDurationHelper(builder, concatenationWord, hasConcatenationWord, hours, languageMap.get("hourPlural"), languageMap.get("hourSingular"));
+        }
+
+        if (minutes > 0 || builder.length() > 0) {
+            appendDurationHelper(builder, concatenationWord, hasConcatenationWord, minutes, languageMap.get("minutePlural"), languageMap.get("minuteSingular"));
+        }
+
+        if (seconds > 0 || builder.length() > 0) {
+            appendDurationHelper(builder, concatenationWord, hasConcatenationWord, seconds, languageMap.get("secondPlural"), languageMap.get("secondSingular"));
+        }
+        
+        if (millis > 0) {
+            appendDurationHelper(builder, concatenationWord, hasConcatenationWord, millis, languageMap.get("millisecondPlural"), languageMap.get("millisecondSingular"));
+        }
+
+        if (builder.length() > 0) {
+            return builder.toString();
+        } else {
+            return "-";
+        }
+    }
+    
+    private static void appendDurationHelper(StringBuilder builder, String concatenationWord, boolean hasConcatenationWord, long value, String plural, String singular) {
+        if (builder.length() > 0) {
+            if (hasConcatenationWord) {
+                builder.append(" ").append(concatenationWord).append(" ");
+            } else {
+                builder.append(" ");
+            }
+        }
+
+        builder.append(value).append(" ");
+
+        if (value > 1) {
+            builder.append(plural);
+        } else {
+            builder.append(singular);
         }
     }
 }
