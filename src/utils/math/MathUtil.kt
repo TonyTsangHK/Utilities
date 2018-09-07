@@ -12,8 +12,6 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.util.ArrayList
 import java.util.Random
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 object MathUtil {
     /**
@@ -3637,119 +3635,48 @@ object MathUtil {
 
     /**
      * Calculate PI to specified decimal places
-     * Since calculating PI is tedious, calculation will be done through multithreading to better utilize modern CPU's parallelism capability
      * 
-     * Using Nilakantha Series: 3 + 4/(2*3*4) - 4/(4*5*6) + 4/(6*7*8) ...
+     * Using Bailey-Borwein-Plouffe formula
+     * Reference implementation (javascript): https://github.com/josdejong/mathjs/blob/master/test/pi_bailey-borwein-plouffe.html
      *
      * @param decimalPlaces target decimal places
-     * @param threadCount target thread count, default to single thread
-     * @param timeout timeout in milliseconds, default to one day 
      *
-     * @return PI to target decimal places, last few digit may not be precise try extending decimal places and round up the last few digits
+     * @return PI to target decimal places
      */
     @JvmStatic
     @JvmOverloads
-    fun calculatePIToDecimalPlaces(
-        decimalPlaces: Int, threadCount: Int = 1, timeout: Long = 24L * 60L * 60L * 1000L
-    ): BigDecimal {
-        var currentValue = BigDecimal(3)
+    fun calculatePIToDecimalPlaces(decimalPlaces: Int): BigDecimal {
+        val zero = BigDecimal.ZERO
+        val one = BigDecimal.ONE
+        val two = TWO
+        val four = BigDecimal(4)
+        val five = BigDecimal(5)
+        val six = BigDecimal(6)
+        val eight = BigDecimal(8)
+        val sixteen = BigDecimal(16)
         
-        val resource = SharedPICalculationResource(TWO, decimalPlaces)
+        var p16 = one
+        var pi = zero
+        var k8 = zero
         
-        val tc = if (threadCount < 1) {
-            1
-        } else {
-            threadCount
-        }
+        val extendedScale = decimalPlaces + 1
         
-        val calculationThreads = Array(
-            tc, { PICalculationRunner(resource) }
-        )
-        
-        val executorService = Executors.newWorkStealingPool()
-        
-        calculationThreads.forEach { 
-            executorService.submit(it)
-        }
-        executorService.shutdown()
-        
-        // Wait for all calculation thread to finish or timeout reached 
-        executorService.awaitTermination(timeout, TimeUnit.MILLISECONDS)
-        
-        // Add up all calculated values
-        calculationThreads.forEach {
-            currentValue += it.culmulativeValue
-        }
-
-        return currentValue.round(MathContext(decimalPlaces+1, RoundingMode.HALF_UP))
-    }
-
-    /**
-     * Shared resource for PI calculation
-     */
-    data class SharedPICalculationResource(
-        private var currentBase: BigDecimal, val decimalPlaces: Int
-    ) {
-        companion object {
-            val three = BigDecimal(3)
-            val four = BigDecimal(4)
-            val numerator = four
-        }
-
-        /**
-         * currentBase must be synchronized to avoid duplicate calculation
-         */
-        @Synchronized
-        fun getAndIncrementBase(): BigDecimal {
-            val v = currentBase
-            // Increment currentBase immediately for next thread
-            currentBase += four
-            return v
-        }
-    }
-
-    /**
-     * PI calculation runner
-     * 
-     * Culmulate Nilakantha series' value for later summation
-     */
-    class PICalculationRunner(private val resource: SharedPICalculationResource): Runnable {
-        var culmulativeValue = BigDecimal.ZERO
-            private set
-        
-        private var stopRequested = false
-        private var finished = false
-        
-        override fun run() {
-            while (!stopRequested) {
-                // Combining 4/(x*(x+1)*(x+2)) - 4/((x+2)*(x+3)*(x+4)) to avoid alternating addition and subtraction
-                val base = resource.getAndIncrementBase()
-
-                // Extending decimal places by 8, precision still can't be ensured  ...
-                val v = SharedPICalculationResource.numerator.divide(
-                    base * (base + BigDecimal.ONE) * (base + TWO), resource.decimalPlaces + 9, RoundingMode.FLOOR
-                ).subtract(
-                    SharedPICalculationResource.numerator.divide(
-                        (base + TWO) * (base + SharedPICalculationResource.three) * (base + SharedPICalculationResource.four), 
-                        resource.decimalPlaces + 9, RoundingMode.FLOOR
-                    )
-                )
-
-                if (v.compareTo(BigDecimal.ZERO) > 0) {
-                    culmulativeValue += v
-                } else {
-                    break
-                }
-            }
+        // for k in 0 to infinity, 1/16^k * (4/(8k+1)-2/(8k+4)-1/(8k+5)-1/(8k+6))
+        for (k in 0 .. decimalPlaces) {
+            val f = four.divide(k8 + one, extendedScale, RoundingMode.FLOOR).subtract(
+                two.divide(k8 + four, extendedScale, RoundingMode.FLOOR)
+            ).subtract(
+                one.divide(k8 + five, extendedScale, RoundingMode.FLOOR)
+            ).subtract(
+                one.divide(k8 + six, extendedScale, RoundingMode.FLOOR)
+            )
             
-            finished = true
+            pi += p16 * f
+            p16 = p16.divide(sixteen, extendedScale, RoundingMode.HALF_UP)
+            k8 += eight
         }
         
-        fun isFinished() = finished
-        
-        fun requestStop() {
-            stopRequested = true
-        }
+        return pi.round(MathContext(decimalPlaces+1, RoundingMode.FLOOR))
     }
 
     /**
