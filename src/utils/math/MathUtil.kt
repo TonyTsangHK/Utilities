@@ -12,6 +12,8 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.util.ArrayList
 import java.util.Random
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 object MathUtil {
     /**
@@ -578,6 +580,7 @@ object MathUtil {
      *
      * @param a number to be floored
      * @param unit target unit
+     * 
      * @return floored number of unit
      */
     @JvmStatic
@@ -617,6 +620,7 @@ object MathUtil {
      *
      * @param a decimal to be rounded up
      * @param unit target unit
+     * 
      * @return rounded up decimal of unit
      */
     @JvmStatic
@@ -886,6 +890,7 @@ object MathUtil {
      * Square root a double precision number by calling Math.sqrt
      *
      * @param n target number
+     * 
      * @return Square root result
      */
     @JvmStatic
@@ -1012,6 +1017,7 @@ object MathUtil {
      * Get negative value of double precision number only, otherwise 0 is returned
      *
      * @param n target double precision number
+     * 
      * @return negative value of provided input, 0 for any positive numbers
      */
     @JvmStatic
@@ -2346,6 +2352,7 @@ object MathUtil {
      * @param min minimum value
      * @param max maximum value
      * @param defaultValue default value
+     * 
      * @return result of limit
      */
     @JvmStatic
@@ -2407,9 +2414,9 @@ object MathUtil {
      */
     @JvmStatic
     fun integerMax(vararg values:Int):Int {
-        if (values.size > 0) {
+        if (values.isNotEmpty()) {
             var max = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 if (max < values[i]) {
                     max = values[i]
                 }
@@ -2429,11 +2436,11 @@ object MathUtil {
      */
     @JvmStatic
     fun integerMax(values:List<Int>?):Int {
-        if (values == null || values.size == 0) {
+        if (values == null || values.isEmpty()) {
             throw IllegalArgumentException("Values is null or no value contained!")
         } else {
             var max = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (max < v) {
                     max = v
@@ -2473,11 +2480,11 @@ object MathUtil {
      */
     @JvmStatic
     fun doubleMax(values:List<Double>?):Double {
-        if (values == null || values.size == 0) {
+        if (values == null || values.isEmpty()) {
             throw IllegalArgumentException("Values is null or no value contained!")
         } else {
             var max = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (v > max) {
                     max = v
@@ -2495,9 +2502,9 @@ object MathUtil {
      */
     @JvmStatic
     fun bigDecimalMax(vararg values:BigDecimal):BigDecimal? {
-        if (values.size > 0) {
+        if (values.isNotEmpty()) {
             var max = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 if (values[i] > max) {
                     max = values[i]
                 }
@@ -2517,11 +2524,11 @@ object MathUtil {
      */
     @JvmStatic
     fun bigDecimalMax(values:List<BigDecimal>?):BigDecimal? {
-        if (values == null || values.size == 0) {
+        if (values == null || values.isEmpty()) {
             return null
         } else {
             var max = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (v > max) {
                     max = v
@@ -2558,11 +2565,11 @@ object MathUtil {
      */
     @JvmStatic
     fun integerMin(values:List<Int>?):Int {
-        if (values == null || values.size == 0) {
+        if (values == null || values.isEmpty()) {
             throw IllegalArgumentException("Values is null or no value contained!")
         } else {
             var min = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (v < min) {
                     min = v
@@ -2602,11 +2609,11 @@ object MathUtil {
      */
     @JvmStatic
     fun doubleMin(values:List<Double>?):Double {
-        if (values == null || values.size == 0) {
+        if (values == null || values.isEmpty()) {
             throw IllegalArgumentException("Values is null or no value contained.")
         } else {
             var min = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (v < min) {
                     min = v
@@ -2625,9 +2632,9 @@ object MathUtil {
      */
     @JvmStatic
     fun bigDecimalMin(vararg values:BigDecimal):BigDecimal? {
-        if (values.size > 0) {
+        if (values.isNotEmpty()) {
             var min = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 if (values[i] < min) {
                     min = values[i]
                 }
@@ -2647,9 +2654,9 @@ object MathUtil {
      */
     @JvmStatic
     fun bigDecimalMin(values:List<BigDecimal>?):BigDecimal? {
-        if (values != null && values.size > 0) {
+        if (values != null && values.isNotEmpty()) {
             var min = values[0]
-            for (i in 1..values.size - 1) {
+            for (i in 1 until values.size) {
                 val v = values[i]
                 if (v < min) {
                     min = v
@@ -2741,6 +2748,7 @@ object MathUtil {
      * @param values integer array
      * @param startIndex calculation starting index
      * @param length calculation length
+     * 
      * @return sum of integer array
      */
     @JvmStatic
@@ -3004,6 +3012,7 @@ object MathUtil {
      *
      * @param v value
      * @param r length
+     * 
      * @return number of combination
      */
     @JvmStatic
@@ -3074,7 +3083,7 @@ object MathUtil {
             lists.add(DataManipulator.createList(list, setIndexes))
         } else {
             val remain = len - setIndexes.size
-            var i = if (setIndexes.size == 0) 0 else setIndexes[setIndexes.size - 1].toInt() + 1
+            var i = if (setIndexes.isEmpty()) 0 else setIndexes[setIndexes.size - 1].toInt() + 1
             while (i < list.size - remain + 1) {
                 val sIndices = ArrayList(setIndexes)
                 sIndices.add(i)
@@ -3311,6 +3320,7 @@ object MathUtil {
      * Find minimum value within variable values
      * 
      * @param values values of concern
+     * 
      * @return minimum value
      */
     @JvmStatic
@@ -3334,6 +3344,7 @@ object MathUtil {
      * Find maximum value within variable values
      * 
      * @param values values of concern
+     * 
      * @return maximum value
      */
     @JvmStatic
@@ -3359,6 +3370,7 @@ object MathUtil {
      * @param point target point
      * @param linePoint1 line point 1
      * @param linePoint2 line point 2
+     * 
      * @return check result
      */
     @JvmOverloads
@@ -3387,6 +3399,7 @@ object MathUtil {
      * @param point target point
      * @param linePoint1 line point 1
      * @param linePoint2 line point 2
+     * 
      * @return check result
      */
     @JvmOverloads
@@ -3410,6 +3423,7 @@ object MathUtil {
      * @param line1Point2 point 2 of line 1
      * @param line2Point1 point 1 of line 2
      * @param line2Point2 point 2 of line 2
+     * 
      * @return interception point, null for no interception
      */
     @JvmStatic
@@ -3619,6 +3633,123 @@ object MathUtil {
         }
         
         return currentValue.round(mathContext)
+    }
+
+    /**
+     * Calculate PI to specified decimal places
+     * Since calculating PI is tedious, calculation will be done through multithreading to better utilize modern CPU's parallelism capability
+     * 
+     * Using Nilakantha Series: 3 + 4/(2*3*4) - 4/(4*5*6) + 4/(6*7*8) ...
+     *
+     * @param decimalPlaces target decimal places
+     * @param threadCount target thread count, default to single thread
+     * @param timeout timeout in milliseconds, default to one day 
+     *
+     * @return PI to target decimal places, last few digit may not be precise try extending decimal places and round up the last few digits
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun calculatePIToDecimalPlaces(
+        decimalPlaces: Int, threadCount: Int = 1, timeout: Long = 24L * 60L * 60L * 1000L
+    ): BigDecimal {
+        var currentValue = BigDecimal(3)
+        
+        val resource = SharedPICalculationResource(TWO, decimalPlaces)
+        
+        val tc = if (threadCount < 1) {
+            1
+        } else {
+            threadCount
+        }
+        
+        val calculationThreads = Array(
+            tc, { PICalculationRunner(resource) }
+        )
+        
+        val executorService = Executors.newWorkStealingPool()
+        
+        calculationThreads.forEach { 
+            executorService.submit(it)
+        }
+        executorService.shutdown()
+        
+        // Wait for all calculation thread to finish or timeout reached 
+        executorService.awaitTermination(timeout, TimeUnit.MILLISECONDS)
+        
+        // Add up all calculated values
+        calculationThreads.forEach {
+            currentValue += it.culmulativeValue
+        }
+
+        return currentValue.round(MathContext(decimalPlaces+1, RoundingMode.HALF_UP))
+    }
+
+    /**
+     * Shared resource for PI calculation
+     */
+    data class SharedPICalculationResource(
+        private var currentBase: BigDecimal, val decimalPlaces: Int
+    ) {
+        companion object {
+            val three = BigDecimal(3)
+            val four = BigDecimal(4)
+            val numerator = four
+        }
+
+        /**
+         * currentBase must be synchronized to avoid duplicate calculation
+         */
+        @Synchronized
+        fun getAndIncrementBase(): BigDecimal {
+            val v = currentBase
+            // Increment currentBase immediately for next thread
+            currentBase += four
+            return v
+        }
+    }
+
+    /**
+     * PI calculation runner
+     * 
+     * Culmulate Nilakantha series' value for later summation
+     */
+    class PICalculationRunner(private val resource: SharedPICalculationResource): Runnable {
+        var culmulativeValue = BigDecimal.ZERO
+            private set
+        
+        private var stopRequested = false
+        private var finished = false
+        
+        override fun run() {
+            while (!stopRequested) {
+                // Combining 4/(x*(x+1)*(x+2)) - 4/((x+2)*(x+3)*(x+4)) to avoid alternating addition and subtraction
+                val base = resource.getAndIncrementBase()
+
+                // Extending decimal places by 8, precision still can't be ensured  ...
+                val v = SharedPICalculationResource.numerator.divide(
+                    base * (base + BigDecimal.ONE) * (base + TWO), resource.decimalPlaces + 9, RoundingMode.FLOOR
+                ).subtract(
+                    SharedPICalculationResource.numerator.divide(
+                        (base + TWO) * (base + SharedPICalculationResource.three) * (base + SharedPICalculationResource.four), 
+                        resource.decimalPlaces + 9, RoundingMode.FLOOR
+                    )
+                )
+
+                if (v.compareTo(BigDecimal.ZERO) > 0) {
+                    culmulativeValue += v
+                } else {
+                    break
+                }
+            }
+            
+            finished = true
+        }
+        
+        fun isFinished() = finished
+        
+        fun requestStop() {
+            stopRequested = true
+        }
     }
 
     /**
