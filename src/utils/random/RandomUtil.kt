@@ -56,7 +56,7 @@ object RandomUtil {
             randomGenerator = SecureRandom.getInstanceStrong()
         } else {
             // Seed Random with SecureRandom, does it make any different???
-            randomGenerator = Random(SecureRandom.getInstanceStrong().nextLong())
+            randomGenerator = Random()
         }
     }
 
