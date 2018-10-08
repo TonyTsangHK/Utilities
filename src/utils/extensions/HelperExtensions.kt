@@ -1,6 +1,7 @@
 package utils.extensions
 
 import utils.data.DataManipulator
+import java.util.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -173,6 +174,104 @@ fun <K, V> Map<K, V>.containsAllKeys(vararg keys: K): Boolean = keys.all { this.
  * @return check result
  */
 fun <K, V> Map<K, V>.containsAnyKeys(vararg keys: K): Boolean = keys.any { this.containsKey(it) }
+
+/**
+ * Check list contains any provided values
+ * 
+ * @param vals values to check
+ * @return check result
+ */
+fun <V> List<V>.containsAnyValue(vararg vals: V): Boolean {
+    for (element in this) {
+        for (v in vals) {
+            if (v == null) {
+                if (element == v) {
+                    return true
+                }
+            } else if (v.equals(element)) {
+                return true
+            }
+        }
+    }
+    
+    return false
+}
+
+/**
+ * Check list contains all provided values
+ *
+ * @param vals values to check
+ * @return check result
+ */
+fun <V> List<V>.containsAllValues(vararg vals: V): Boolean {
+    val remaining = LinkedList<V>()
+    
+    for (v in vals) {
+        remaining += v
+    }
+    
+    for (element in this) {
+        if (remaining.isEmpty()) {
+            break
+        } else {
+            val iter = remaining.listIterator()
+            
+            while (iter.hasNext()) {
+                val v = iter.next()
+                
+                if (v == null) {
+                    if (element == v) {
+                        iter.remove()
+                        break
+                    }
+                } else if (v.equals(element)) {
+                    iter.remove()
+                    break
+                }
+            }
+        }
+    }
+    
+    return remaining.isEmpty()
+}
+
+/**
+ * Count list contained element
+ *
+ * @param vals values to check
+ * @return count result
+ */
+fun <V> List<V>.countContains(vararg vals: V): Int {
+    val remaining = LinkedList<V>()
+
+    for (v in vals) {
+        remaining += v
+    }
+
+    for (element in this) {
+        if (remaining.isEmpty()) {
+            break
+        } else {
+            val iter = remaining.listIterator()
+
+            while (iter.hasNext()) {
+                val v = iter.next()
+
+                if (v == null) {
+                    if (element == v) {
+                        iter.remove()
+                        break
+                    }
+                } else if (v.equals(element)) {
+                    iter.remove()
+                    break
+                }
+            }
+        }
+    }
+
+    return vals.size - remaining.size
+}
 
 /**
  * Find minimum value of the value collection
