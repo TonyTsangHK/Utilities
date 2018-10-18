@@ -38,7 +38,7 @@ class CRC(
         get() = if (register.done) {
             register.getCrcHexExpression(resultReflect)
         } else {
-            throw RuntimeException("CRC computation not finished!")
+            throw RuntimeException("CRC computation not finished, call digest() first!")
         }
 
     // Binary expression of CRC hash
@@ -46,7 +46,7 @@ class CRC(
         get() = if (register.done) {
             register.getCrcBinaryExpression(resultReflect)
         } else {
-            throw RuntimeException("CRC computation not finished!")
+            throw RuntimeException("CRC computation not finished, call digest() first!")
         }
 
     // CRC hash
@@ -54,7 +54,7 @@ class CRC(
         get() = if (register.done) {
             register.getCrc(resultReflect)
         } else {
-            throw RuntimeException("CRC computation not finished, call computeCrc first!")
+            throw RuntimeException("CRC computation not finished, call digest() first!")
         }
     
     // Constructor with predefined parameter
@@ -555,6 +555,7 @@ class CRC(
         CRC8_ROHC(8, 0x07, 0xFF, 0x00, true, true),
         CRC8_WCDMA(8, 0x9B, 0x00, 0x00, true, true),
 
+        // CRC16
         CRC16_CCITT_ZERO(16, 0x1021, 0x0000, 0x0000, false, false),
         CRC16_ARC(16, 0x8005, 0x0000, 0x0000, true, true),
         CRC16_AUG_CCITT(16, 0x1021, 0x1D0F, 0x0000, false, false),
@@ -580,6 +581,7 @@ class CRC(
         CRC16_X_25(16, 0x1021, 0xFFFF, 0xFFFF, true, true),
         CRC16_XMODEM(16, 0x1021, 0x0000, 0x0000, false, false),
 
+        // CRC32
         // -1 = 0xFFFFFFFF, toInt() just to work around kotlin's inability to deal with negative integer literal ...
         CRC32_DEFAULT(32, 0x04C11DB7, -1, -1, true, true),
         CRC32_BZIP2(32, 0x04C11DB7, -1, -1, false, false),
