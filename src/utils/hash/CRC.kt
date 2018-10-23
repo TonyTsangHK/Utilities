@@ -79,7 +79,6 @@ class CRC(
                 n = Register.BitNode(polynomial shr i and 1 == 1)
             }
             p.next = n
-            n.previous = p
 
             p = n
         }
@@ -88,22 +87,45 @@ class CRC(
     }
 
     /**
-     * Append single byte
+     * Update single byte
      * 
      * @param byt byte value
      */
-    fun appendByte(byt: Int) {
-        register.append(byt, inputReflect)
+    fun update(byt: Int) {
+        register.update(byt, inputReflect)
+    }
+
+    /**
+     * Update bytes
+     *
+     * @param byteArr data byte array
+     * @param offset start offset
+     * @param length length of byte to read
+     */
+    fun update(bytes: ByteArray, offset: Int, length: Int) {
+        register.update(bytes, offset, length, inputReflect)
+    }
+
+    /**
+     * Update bytes read from input stream
+     * 
+     * @param inputStream data input stream
+     */
+    fun updateStream(inputStream: InputStream) {
+        val bytes = ByteArray(4096)
+        
+        var len = inputStream.read(bytes)
+        
+        while (len != -1) {
+            register.update(bytes, 0, len, inputReflect)
+            len = inputStream.read(bytes)
+        }
     }
 
     /**
      * Do final digest, this operation cannot be reversed
      */
     fun digest() {
-        for (i in 0 until register.capacity) {
-            register.append(false)
-        }
-
         if (finalXorValue != 0) {
             register.doFinalXor(finalXorValue, resultReflect)
         }
@@ -126,7 +148,7 @@ class CRC(
         var len = inputStream.read(bytes)
         
         while (len != -1) {
-            verifyRegister.append(bytes, 0, len, inputReflect)
+            verifyRegister.update(bytes, 0, len, inputReflect)
             len = inputStream.read(bytes)
         }
         
@@ -144,7 +166,7 @@ class CRC(
         val verifyRegister = Register(register.capacity, initialValue, polynomialHead)
         
         for (byt in bytes) {
-            verifyRegister.append(byt.toInt(), inputReflect)
+            verifyRegister.update(byt.toInt(), inputReflect)
         }
         
         return verify(verifyRegister, crcDigest)
@@ -164,27 +186,27 @@ class CRC(
         }
 
         if (capacity == 8) {
-            verifyRegister.append(digest.and(0x000000FF), resultReflect)
+            verifyRegister.update(digest.and(0x000000FF), resultReflect)
         } else if (capacity == 16) {
             if (resultReflect) {
-                verifyRegister.append(digest.and(0x000000FF), resultReflect)
-                verifyRegister.append(digest.and(0x0000FF00).shr(8), resultReflect)
+                verifyRegister.update(digest.and(0x000000FF), resultReflect)
+                verifyRegister.update(digest.and(0x0000FF00).shr(8), resultReflect)
             } else {
-                verifyRegister.append(digest.and(0x0000FF00).shr(8))
-                verifyRegister.append(digest.and(0x000000FF))
+                verifyRegister.update(digest.and(0x0000FF00).shr(8))
+                verifyRegister.update(digest.and(0x000000FF))
             }
         } else {
             // CRC32
             if (resultReflect) {
-                verifyRegister.append(digest.and(0x00FF), resultReflect)
-                verifyRegister.append(digest.and(0x0000FF00).shr(8), resultReflect)
-                verifyRegister.append(digest.and(0x00FF0000).shr(16), resultReflect)
-                verifyRegister.append(digest.shr(24), resultReflect)
+                verifyRegister.update(digest.and(0x00FF), resultReflect)
+                verifyRegister.update(digest.and(0x0000FF00).shr(8), resultReflect)
+                verifyRegister.update(digest.and(0x00FF0000).shr(16), resultReflect)
+                verifyRegister.update(digest.shr(24), resultReflect)
             } else {
-                verifyRegister.append(digest.shr(24))
-                verifyRegister.append(digest.and(0x00FF0000).shr(16))
-                verifyRegister.append(digest.and(0x0000FF00).shr(8))
-                verifyRegister.append(digest.and(0x00FF))
+                verifyRegister.update(digest.shr(24))
+                verifyRegister.update(digest.and(0x00FF0000).shr(16))
+                verifyRegister.update(digest.and(0x0000FF00).shr(8))
+                verifyRegister.update(digest.and(0x00FF))
             }
         }
 
@@ -200,7 +222,8 @@ class CRC(
         private var head: BitNode? = null
         private var tail: BitNode? = null
         private var polynomialHead: BitNode? = null
-        private var appendBitNode: BitNode? = null
+        
+        private val lookupTable: Array<HeadTailSequence>
 
         var size = 0
             private set
@@ -223,20 +246,50 @@ class CRC(
 
         init {
             this.polynomialHead = polynomialHead
+            
+            lookupTable = Array(256, 
+                {
+                    generateHeadTailSequence(it, false, capacity)
+                }
+            )
+            
+            // Populate lookup table
+            for (i in 0 .. 0xFF) {
+                val seq = lookupTable[i]
+
+                var pn: BitNode?
+
+                for (j in 0 until 8) {
+                    pn = polynomialHead.next!!
+                    
+                    if (seq.head.value) {
+                        seq.shift(false)
+                        
+                        var sn: BitNode? = seq.head
+                        
+                        while (sn != null) {
+                            sn.xor(pn!!.value)
+                            
+                            pn = pn.next
+                            sn = sn.next
+                        }
+                    } else {
+                        seq.shift(false)
+                    }
+                }
+            }
         }
 
         constructor(capacity: Int, initialValue: Int, polynomialHead: BitNode) : this(capacity, polynomialHead) {
             if (capacity == 8 || capacity == 16 || capacity == 32) {
                 for (i in capacity - 1 downTo 0) {
                     if (i == 0) {
-                        append(initialValue and 1 == 1)
+                        update(initialValue and 1 == 1)
                     } else {
-                        append(initialValue shr i and 1 == 1)
+                        update(initialValue shr i and 1 == 1)
                     }
                 }
             }
-
-            appendBitNode = head
         }
         
         fun done() {
@@ -260,6 +313,11 @@ class CRC(
         }
 
         fun pop(): Boolean {
+            // Empty check
+            if (head == null) {
+                throw RuntimeException("Register is empty!")
+            }
+            
             val oldHead = head
 
             if (head === tail) {
@@ -271,10 +329,8 @@ class CRC(
 
                 oldHead!!.next = null
             }
-
-            if (size > 0) {
-                size--
-            }
+            
+            size--
 
             return oldHead!!.value
         }
@@ -286,35 +342,29 @@ class CRC(
         }
 
         /**
-         * Append single boolean value
+         * Update single boolean value
+         * Make private for internal use only
          * 
          * @param value boolean value
          */
-        fun append(value: Boolean) {
+        private fun update(value: Boolean) {
             if (done) {
                 throw RuntimeException("Register closed input data rejected")
             }
 
             val newTail = BitNode(value)
 
-            if (appendBitNode != null) {
-                appendBitNode!!.xor(value)
-                appendBitNode = appendBitNode!!.next
+            if (tail == null) {
+                tail = newTail
+                head = tail
             } else {
-
-                if (tail == null) {
-                    tail = newTail
-                    head = tail
-                } else {
-                    tail!!.next = newTail
-                    newTail.previous = tail
-                    tail = newTail
-                }
-
-                size++
+                tail!!.next = newTail
+                tail = newTail
             }
 
-            // process during append
+            size++
+
+            // process during update
             if (polynomialHead != null && size == capacity + 1) {
                 if (head!!.value) {
                     doXor(polynomialHead!!)
@@ -325,36 +375,69 @@ class CRC(
         }
 
         /**
-         * Append single byte
+         * Update single byte
          * 
          * @param byt data byte
          * @param reflect input reflect parameter
          */
         @JvmOverloads
-        fun append(byt: Int, reflect: Boolean = false) {
+        fun update(byt: Int, reflect: Boolean = false) {
+            // Use lookup table
+            var v = 128
+            var pos = 0
+            
             if (reflect) {
-                append(byt and 1 == 1)
-                append(byt shr 1 and 1 == 1)
-                append(byt shr 2 and 1 == 1)
-                append(byt shr 3 and 1 == 1)
-                append(byt shr 4 and 1 == 1)
-                append(byt shr 5 and 1 == 1)
-                append(byt shr 6 and 1 == 1)
-                append(byt shr 7 and 1 == 1)
+                for (i in 0 .. 7) {
+                    val bv = pop()
+
+                    if (bv xor (byt shr i and 1 == 1)) {
+                        pos += v
+                    }
+
+                    v /= 2
+                }
             } else {
-                append(byt shr 7 and 1 == 1)
-                append(byt shr 6 and 1 == 1)
-                append(byt shr 5 and 1 == 1)
-                append(byt shr 4 and 1 == 1)
-                append(byt shr 3 and 1 == 1)
-                append(byt shr 2 and 1 == 1)
-                append(byt shr 1 and 1 == 1)
-                append(byt and 1 == 1)
+                for (i in 7 downTo 0) {
+                    val bv = pop()
+
+                    if (bv xor (byt shr i and 1 == 1)) {
+                        pos += v
+                    }
+
+                    v /= 2
+                }
+            }
+            
+            val seq = lookupTable[pos]
+            
+            // println("currentCrc: ${getCrc(reflect)}, pos: $pos, seq: $seq, byte: $byt") // debug
+            
+            var n = head
+            var sn: BitNode? = seq.head
+            
+            while (sn != null) {
+                if (n != null) {
+                    n.xor(sn.value)
+                    n = n.next
+                } else {
+                    val node = BitNode(sn.value)
+                    
+                    if (tail != null) {
+                        tail!!.next = node
+                        tail = node
+                    } else {
+                        head = node
+                        tail = node
+                    }
+                    size++
+                }
+                
+                sn = sn.next
             }
         }
 
         /**
-         * Append bytes
+         * Update bytes
          * 
          * @param byteArr data byte array
          * @param offset start offset
@@ -362,9 +445,9 @@ class CRC(
          * @param reflect input reflect parameter
          */
         @JvmOverloads
-        fun append(byteArr: ByteArray, offset: Int, length: Int, reflect: Boolean = false) {
+        fun update(byteArr: ByteArray, offset: Int, length: Int, reflect: Boolean = false) {
             for (i in offset until offset + length) {
-                append(byteArr[i].toInt(), reflect)
+                update(byteArr[i].toInt(), reflect)
             }
         }
 
@@ -508,6 +591,95 @@ class CRC(
             }
         }
 
+        private fun generateHeadTailSequence(byt: Int, reflect: Boolean, capacity: Int):HeadTailSequence {
+            val seq = if (reflect) {
+                HeadTailSequence(
+                    BitNode(byt and 1 == 1),
+                    BitNode(byt shr 1 and 1 == 1),
+                    BitNode(byt shr 2 and 1 == 1), 
+                    BitNode(byt shr 3 and 1 == 1),
+                    BitNode(byt shr 4 and 1 == 1),
+                    BitNode(byt shr 5 and 1 == 1),
+                    BitNode(byt shr 6 and 1 == 1),
+                    BitNode(byt shr 7 and 1 == 1)
+                )
+            } else {
+                HeadTailSequence(
+                    BitNode(byt shr 7 and 1 == 1),
+                    BitNode(byt shr 6 and 1 == 1),
+                    BitNode(byt shr 5 and 1 == 1),
+                    BitNode(byt shr 4 and 1 == 1),
+                    BitNode(byt shr 3 and 1 == 1),
+                    BitNode(byt shr 2 and 1 == 1),
+                    BitNode(byt shr 1 and 1 == 1),
+                    BitNode(byt and 1 == 1)
+                )
+            }
+            
+            for (i in 8 until capacity) {
+                seq.append(false)
+            }
+            
+            return seq
+        }
+        
+        internal class HeadTailSequence(head: BitNode, tail: BitNode, size: Int) {
+            var head: BitNode
+                private set
+            var tail: BitNode
+                private set
+            var size: Int
+                private set
+            
+            init {
+                this.head = head
+                this.tail = tail
+                this.size = size
+            }
+            
+            constructor(vararg nodes: BitNode): this(nodes[0], nodes[nodes.size-1], nodes.size) {
+                var n = head
+                for (i in 1 until nodes.size-1) {
+                    n.next = nodes[i]
+                    n = nodes[i]
+                }
+                n.next = tail
+            }
+            
+            fun append(value: Boolean) {
+                val node = BitNode(value)
+                
+                tail.next = node
+                tail = node
+                
+                size++
+            }
+            
+            fun shift(value: Boolean) {
+                val oldHead = head
+                head = head.next!!
+                
+                val n = BitNode(value)
+                tail.next = n
+                tail = n
+                
+                oldHead.next = null 
+            }
+
+            override fun toString(): String {
+                val builder = StringBuilder()
+                
+                var n: BitNode? = head
+                
+                while (n != null) {
+                    builder.append(if (n.value) '1' else '0')
+                    n = n.next
+                }
+                
+                return builder.toString()
+            }
+        }
+        
         /**
          * Linked node of boolean values
          */
@@ -516,7 +688,21 @@ class CRC(
                 private set
             
             var previous: BitNode? = null
+                set(node) {
+                    field = node
+                    
+                    if (node != null && node.next != this) {
+                        node.next = this
+                    }
+                }
             var next: BitNode? = null
+                set(node) {
+                    field = node
+                    
+                    if (node != null && node.previous != this) {
+                        node.previous = this
+                    }
+                }
 
             init {
                 this.value = value
