@@ -383,7 +383,7 @@ class CRC(
         @JvmOverloads
         fun update(byt: Int, reflect: Boolean = false) {
             // Use lookup table
-            var v = 128
+            var v = 0x80
             var pos = 0
             
             if (reflect) {
@@ -391,26 +391,24 @@ class CRC(
                     val bv = pop()
 
                     if (bv xor (byt shr i and 1 == 1)) {
-                        pos += v
+                        pos = pos or v
                     }
 
-                    v /= 2
+                    v = v shr 1
                 }
             } else {
                 for (i in 7 downTo 0) {
                     val bv = pop()
 
                     if (bv xor (byt shr i and 1 == 1)) {
-                        pos += v
+                        pos = pos or v
                     }
 
-                    v /= 2
+                    v = v shr 1
                 }
             }
             
             val seq = lookupTable[pos]
-            
-            // println("currentCrc: ${getCrc(reflect)}, pos: $pos, seq: $seq, byte: $byt") // debug
             
             var n = head
             var sn: BitNode? = seq.head
@@ -482,12 +480,12 @@ class CRC(
 
                 while (n != null) {
                     if (n.value) {
-                        r += b
+                        r = r or b
                     }
                     if (reflect) {
-                        b /= 2
+                        b = b shr 1
                     } else {
-                        b *= 2
+                        b = b shl 1
                     }
                     n = n.previous
                     c++
