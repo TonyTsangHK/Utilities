@@ -211,17 +211,17 @@ operator fun Short.div(value: BigDecimal): BigDecimal = MathUtil.divide(BigDecim
 operator fun Double.div(value: BigDecimal): BigDecimal = MathUtil.divide(BigDecimal(this.toString()), value)
 operator fun Float.div(value: BigDecimal): BigDecimal = MathUtil.divide(BigDecimal(this.toString()), value)
 
-operator fun BigDecimal.mod(value: Int): BigDecimal = this.remainder(BigDecimal(value.toString()))
-operator fun BigDecimal.mod(value: Long): BigDecimal = this.remainder(BigDecimal(value.toString()))
-operator fun BigDecimal.mod(value: Short): BigDecimal = this.remainder(BigDecimal(value.toString()))
-operator fun BigDecimal.mod(value: Double): BigDecimal = this.remainder(BigDecimal(value.toString()))
-operator fun BigDecimal.mod(value: Float): BigDecimal = this.remainder(BigDecimal(value.toString()))
+operator fun BigDecimal.rem(value: Int): BigDecimal = this.remainder(BigDecimal(value.toString()))
+operator fun BigDecimal.rem(value: Long): BigDecimal = this.remainder(BigDecimal(value.toString()))
+operator fun BigDecimal.rem(value: Short): BigDecimal = this.remainder(BigDecimal(value.toString()))
+operator fun BigDecimal.rem(value: Double): BigDecimal = this.remainder(BigDecimal(value.toString()))
+operator fun BigDecimal.rem(value: Float): BigDecimal = this.remainder(BigDecimal(value.toString()))
 
-operator fun Int.mod(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
-operator fun Long.mod(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
-operator fun Short.mod(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
-operator fun Double.mod(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
-operator fun Float.mod(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
+operator fun Int.rem(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
+operator fun Long.rem(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
+operator fun Short.rem(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
+operator fun Double.rem(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
+operator fun Float.rem(value: BigDecimal): BigDecimal = BigDecimal(this.toString()).remainder(value)
 
 operator fun BigDecimal.dec(): BigDecimal = this.subtract(BigDecimal.ONE)
 
